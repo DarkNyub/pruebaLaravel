@@ -1,0 +1,321 @@
+﻿@model  Nodo.Models.campaigns
+@{
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+<!-- Registration form -->
+    <div class="card flex-fill">
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Actualizar campaña</h6>
+            @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+        </div>
+        <div class="card-body">
+            <form class="" action="@Url.Action("UpdateCampaign")" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="idCampaigns" value="@ViewBag.rowCampaign["idCampaigns"]" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <input type="text" name="name" value="@ViewBag.rowCampaign["name"]" class="form-control form-control-sm" required placeholder="Nombre campaña">
+                            <div class="form-control-feedback">
+                                <i class="icon-flag4 text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <select name="idCompany" id="idCompany" class="form-control form-control-sm" required>
+                                <option></option>
+                                @foreach (dynamic row in ViewBag.rowCompany)
+                                {
+                                    if (Convert.ToInt32(ViewBag.rowCampaign["idCompany"]) == Convert.ToInt32(row["idCompany"]))
+                                    {
+                                        <option value="@row["idCompany"]" selected>@row["name"]</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@row["idCompany"]">@row["name"]</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        @{
+                            ViewBag.om = "";
+                            if (ViewBag.rowCampaign["dateEnd"].ToString() != "")
+                            {
+                                ViewBag.om = DateTime.Parse(ViewBag.rowCampaign["dateEnd"].ToString()).ToString("dd-MM-yyyy");
+                            }
+                        }
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <input type="text" name="dateEnd" value="@ViewBag.om" class="form-control form-control-sm flaterpicker" placeholder="Fecha de finalización">
+                            <div class="form-control-feedback">
+                                <i class="icon-calendar text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <input type="text" name="phoneNumber" value="@ViewBag.rowCampaign["phoneNumber"]" required class="form-control form-control-sm" placeholder="Teléfono de campaña">
+                            <div class="form-control-feedback">
+                                <i class="icon-phone text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2" id="containerDataClient">
+                    <div class="col-sm-12">
+                        <h6>Información de cliente (pre-cargada)</h6>
+                    </div>
+                    <div class="col-sm-12 text-center">
+                        <small class="text-danger">* Puede agregar tantos datos como desee, la primera palabra o cunjuto de palabras que esté en el dato, será el nombre del mismo y los demas, seran sus opciones *</small>
+                        <small class="text-danger d-block">* Si borra opciones de los datos viejos, evite borrar la primera opción, dado que es el nombre del dato en cuestion, esto aplica para los datos viejos *</small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <label class="form-check-label" for="fornormal">
+                                        <input type="radio" id="fornormal" class="form-check-input datasClient cursor-pointer" name="typedata" value="1" checked>
+                                        Manual
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label" for="forexcel">
+                                        <input type="radio" id="forexcel" class="form-check-input datasClient cursor-pointer" name="typedata" value="2">
+                                        Por excel
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 align-self-center">
+                                <a class="btn btn-sm cursor-pointer addDatas" data-container="containerDataClient" data-input="datasClient"><i class="icon-plus-circle2 icon-2x"></i> Agregar datos</a>
+                            </div>
+                        </div>
+                    </div>
+                    @foreach (dynamic rowCatafa in ViewBag.rowcatalogs)
+                    {
+                        if (Convert.ToInt32(rowCatafa["idfather"]) == 0)
+                        {
+                            if (Convert.ToInt32(rowCatafa["type"]) == 1)
+                            {
+                                <div class="col-md-4 mt-2">
+                                    <div class="row">
+                                        <div class="col-sm-11"  style="max-height: 200px !important;overflow-y: auto; overflow-x:hidden;">
+                                            <div class="form-group-feedback form-group-feedback-right border-bottom">
+                                                <input type="hidden" name="catalogtypedata[]" value="#" />
+                                                <select name="catalogtypedata[]" id="idcatalog_@rowCatafa["idCatalog"]" multiple class="form-control form-control-sm selecrr">
+                                                    <option selected value="@rowCatafa["idCatalog"]">@rowCatafa["name"]</option>
+                                                    @foreach (dynamic rowCataSon in ViewBag.rowcatalogs)
+                                                    {
+                                                        if (Convert.ToInt32(rowCatafa["idCatalog"]) == Convert.ToInt32(rowCataSon["idfather"]))
+                                                        {
+                                                            <option selected value="@rowCataSon["idCatalog"]">@rowCataSon["name"]</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="align-self-center col-sm-1 text-center p-0">
+                                            <a class="btn btn-sm icon-cancel-circle2 cursor-pointer p-1 delCatalog"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                <div class="row btm-4" id="containerCatalog">
+                    <div class="col-sm-12">
+                        <h6>Catálogos de la campaña</h6>
+                    </div>
+                    <div class="col-sm-12 text-center">
+                        <small class="text-danger">* Puede agregar tantos catalogos como desee, la primera palabra o cunjuto de palabras que esté en el catálogo, será el nombre del mismo y los demas, seran sus opciones *</small>
+                        <small class="text-danger d-block">* Cada archivo que suba es un (1) catálogo con sus opciones *</small>
+                        <small class="text-danger d-block">* Si borra opciones de los catálogos viejos, evite borrar la primera opción, dado que es el nombre del catálogo, esto aplica para los catálogos viejos *</small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <label class="form-check-label" for="fornormal2">
+                                        <input type="radio" id="fornormal2" class="form-check-input datasCatalog cursor-pointer" name="typedata2" value="1" checked>
+                                        Manual
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label2" for="forexcel2">
+                                        <input type="radio" id="forexcel2" class="form-check-input datasCatalog cursor-pointer" name="typedata2" value="2">
+                                        Por excel
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 align-self-center">
+                                <a class="btn btn-sm cursor-pointer addDatas" data-container="containerCatalog" data-input="datasCatalog"><i class="icon-plus-circle2 icon-2x"></i> Agregar catálogos</a>
+                            </div>
+                        </div>
+                    </div>
+                    @foreach (dynamic rowCatafa in ViewBag.rowcatalogs)
+                    {
+                        if (Convert.ToInt32(rowCatafa["idfather"]) == 0)
+                        {
+                            if (Convert.ToInt32(rowCatafa["type"]) == 2)
+                            {
+                                <div class="col-md-4 mt-2">
+                                    <div class="row">
+                                        <div class="col-sm-11" style="max-height: 200px !important;overflow-y: auto; overflow-x:hidden;">
+                                            <div class="form-group-feedback form-group-feedback-right border-bottom">
+                                                <input type="hidden" name="catalogtypedata2[]" value="#" />
+                                                <select name="catalogtypedata2[]" id="idcatalog_@rowCatafa["idCatalog"]" multiple class="form-control form-control-sm selecrr">
+                                                    <option selected value="@rowCatafa["idCatalog"]">@rowCatafa["name"]</option>
+                                                    @foreach (dynamic rowCataSon in ViewBag.rowcatalogs)
+                                                    {
+                                                        if (Convert.ToInt32(rowCatafa["idCatalog"]) == Convert.ToInt32(rowCataSon["idfather"]))
+                                                        {
+                                                            <option selected value="@rowCataSon["idCatalog"]">@rowCataSon["name"]</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="align-self-center col-sm-1 text-center p-0">
+                                            <a class="btn btn-sm icon-cancel-circle2 cursor-pointer p-1 delCatalog"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                <div class="row p-1">
+                    <div class="col-sm-6 text-center">
+                        <button type="submit" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1" style="background-color:#002171"><b><i class="icon-plus3"></i></b> Actualizar</button>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <a href="@Url.Action("Index", "Campaigns")" class="btn btn-secondary btn-sm btn-labeled btn-labeled-right m-1" style="background-color:#666666"><b><i class="icon-cancel-circle2"></i></b> Cancelar</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+<!-- /registration form -->
+
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+    <script type="text/javascript">
+        function randomIntFromInterval(min, max) { // min and max included 
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+        $(document).ready(function () {
+            $(".flaterpicker").flatpickr({
+                dateFormat: "d-m-Y",
+                "locale": "es",
+                enableTime: false,
+                minDate:new Date()
+            });
+            $("#idCompany").select2({
+                placeholder: "Seleccione o ingrese nombre de empresa",
+                allowClear: true,
+                tags:true
+            })
+            $(".selecrr").select2({
+                placeholder: "Ingrese nombre del cátalogo",
+                tags: true
+            })
+            $(document).on("click", ".addDatas", function () {
+                var vms = "";
+                var nums = randomIntFromInterval(0, 9999);
+                var vobj = $(this);
+                var vcontainer = $("#" + vobj.data("container"))
+                var vinput = $("." + vobj.data("input"));
+                $.each(vinput, function (i, item) {
+                    if ($(item).prop("checked")) {
+                        var ieng = "#";
+                        if ($(item).val() == 1) {//select 
+                            vms += '<div class="col-md-4 mt-2">';
+                            vms += '<div class="row">';
+                            vms += '<div class="col-sm-11" style="max-height: 200px !important;overflow-y: auto; overflow-x:hidden;">';
+                            vms += '<div class=" form-group-feedback form-group-feedback-right border-bottom">';
+                            vms += '<input type="hidden" name="catalog' + $(item).attr("name") + '[]" value="' + ieng + '" />';
+                            vms += '<select name="catalog' + $(item).attr("name") + '[]" id="idcatalog_' + nums + '" required multiple class="form-control form-control-sm selecrr">';
+                            vms += '</select>';
+                            vms += '</div>';
+                            vms += '</div>';
+                            vms += '<div class="align-self-center col-sm-1 text-center p-0">';
+                            vms += '<a class="btn btn-sm icon-cancel-circle2 cursor-pointer p-1 delCatalogNew"></a>';
+                            vms += '</div>';
+                            vms += '</div>';
+                            vms += '</div>';
+                        }
+                        else {//archivo
+                            vms += '<div class="col-md-4 mt-2">';
+                            vms += '<div class="row">';
+                            vms += '<div class="col-sm-11">';
+                            vms += '<div class="form-group-feedback form-group-feedback-right border-bottom">';
+                            vms += '<input type="file" name="catalogExcel' + $(item).attr("name") + '[]" class="form-control form-control-sm" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required />';
+                            vms += '</div>';
+                            vms += '</div>';
+                            vms += '<div class="align-self-center col-sm-1 text-center p-0">';
+                            vms += '<a class="btn btn-sm icon-cancel-circle2 cursor-pointer p-1 delCatalogNew"></a>';
+                            vms += '</div>';
+                            vms += '</div>';
+                            vms += '</div>';
+                        }
+                        vcontainer.append(vms);
+                        $("#idcatalog_" + nums).select2({
+                            placeholder: "Ingrese nombre del cátalogo",
+                            allowClear: true,
+                            tags: true
+                        })
+                        $("#idcatalog_" + nums).focus();
+                    }
+                })
+
+            });
+            $(document).on("click", ".delCatalogNew", function () {
+                var obj = $(this);
+                obj.parent().parent().parent().remove();
+            });
+            
+            $(document).on("click", ".delCatalog", function () {
+                var obj = $(this);
+                Swal.fire({
+                    title: "¿Esta Seguro?",
+                    html: 'Tenga en cuenta, que si elimina un catálogo que ya está usando en algún cliente, este perdera la asociación que tenia',
+                    icon: 'question',
+                    showCancelButton: true,
+                    reverseButtons: false,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#03a9f4',
+                    cancelButtonColor: '#777',
+                }).then((result) => {
+                    if (result.value) {
+                        obj.parent().parent().parent().remove();
+                    }
+                });
+            })
+
+        })
+    </script>
+}

@@ -1,0 +1,273 @@
+﻿@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+<div class="mb-3">
+    <a href="@Url.Action("Create")" class="mb-0 btn-sm btn bg-blue font-weight-semibold" style="background-color:#666666;color:white">
+        <i class="icon-plus2"></i> Nuevo Usuario
+    </a>
+</div>
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Lista de usuarios</h6>
+        @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+    </div>
+    <div class="card-body">
+        <table class="table table-sm w-100">
+            <thead style="background-color:#21618C;color:white">
+                <tr>
+                    <th class="">Nombre</th>
+                    <th class="">Usuario</th>
+                    <th>Correo</th>
+                    <th>Perfil</th>
+                    <th>Condición</th>
+                    <th>Estado</th>
+                    @*<th class="text-center">Operación</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rows in ViewBag.row)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="mr-3">
+                                    <a href="@rows["SrcImage"]" target="_blank">
+                                        <img src="@rows["SrcImage"]" class="rounded-circle" width="32" height="32" alt="">
+                                    </a>
+                                </div>
+                                <div>
+                                    <a class="text-default font-weight-semibold text-uppercase">
+                                        @rows["firstName"] @rows["lastName"]
+                                    </a>
+                                    <div class="text-muted font-size-sm"><span class="badge badge-mark border-danger mr-1"></span>Teléfono - @rows["phoneMobile"]</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@rows["user_cur"]</td>
+                        <td>@rows["email"]</td>
+                        <td>@rows["nameProfile"]</td>
+                        <td>
+                            @if (Convert.ToInt32(Session["idClient"]) != Convert.ToInt32(rows["idEmployee"]))
+                            {
+                                if (Convert.ToInt32(rows["idActivity"]) == 4)
+                                {
+                                    <span>@rows["nameActivity"]</span>
+                                }
+                                else
+                                {
+                                    <select name="jnjn" @ViewBag.name class="form-control form-control-sm changeActivityUser "
+                                            data-idactivity="@Convert.ToInt32(rows["idActivity"])"
+                                            data-href="@Url.Action("ChangeActivityUsers",new {id =rows["idEmployee"] })"
+                                            style="width:100px">
+                                            @foreach (dynamic rowAct in ViewBag.rowActivity)
+                                            {
+                                                if (Convert.ToInt32(rowAct["idActivity"]) == Convert.ToInt32(rows["idActivity"]))
+                                                {
+                                                    <option selected value="@rowAct["idActivity"]">@rowAct["name"]</option> 
+                                                }
+                                                else
+                                                {
+                                                <option value="@rowAct["idActivity"]">@rowAct["name"]</option>
+                                                }
+                                            }
+                                    </select>
+                                }
+                            }
+                        </td>
+                        <td>@rows["nameStatus"]</td>
+                        @*<td class="text-center">
+                            @if (Convert.ToInt32(Session["idClient"]) != Convert.ToInt32(rows["idEmployee"]))
+                            {
+                                <a class="btn btn-sm btn-outline-dark mt-1 mb-1 editUser curpointer disabled"
+                                    data-href="@Url.Action("Edit", new { @id = rows["idEmployee"]})" title="Editar Usuario" 
+                                   style="border-color:#5472d3;">
+                                    <i class="icon-database-edit2" style="color:black"></i>
+                                </a>
+                                if (Convert.ToInt32(@rows["idEstado"]) == 1)
+                                {
+                                    <a class="btn btn-sm btn-outline-warning mt-1 mb-1 curpointer delactUser disabled"
+                                        data-href="@Url.Action("deActivateEmployee", new { @id = rows["idEmployee"] })"
+                                        data-text="De desactivar este usuario"
+                                        title="Desactivar" style="border-color:#5472d3;">
+                                        <i class="icon-close2" style="color:black"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-outline-success mt-1 mb-1 delactUser curpointer disabled"
+                                        data-href="@Url.Action("deActivateEmployee", new {@id=rows["idEmployee"]})"
+                                        data-text="De activar este usuario"
+                                        title="Desactivar" style="border-color:#5472d3;">
+                                        <i class="icon-check2" style="color:black"></i>
+                                    </a>
+                                    <a class=" btn btn-outline-warning bg-warning btn-sm delactUser mt-1 mb-1 curpointer"
+                                        data-href="@Url.Action("deleteEmployee", new {@id=rows["idEmployee"]})"
+                                        data-text="Eliminar este usuario y toda su información de la plataforma"
+                                        style="border-color:#5472d3;">
+                                        <i class="icon-trash-alt" style="color:black"></i>
+                                    </a>
+                                }
+                            }
+                        </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+              icon: '@Session["type"]',
+              title: '@Session["title"]',
+              html: '@Session["message"]',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        </script>
+        Session.Remove("type");
+        Session.Remove("title");
+        Session.Remove("message");
+    }
+    <script type="text/javascript">
+        var eventon = true;
+        $(".table").DataTable({
+            destroy: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+            }
+        });
+        $(".changeActivityUser").select2({
+            placeholder: "Seleccione",
+            minimumResultsForSearch: -1
+        });
+        $(document).on("change", ".changeActivityUser", function () {
+            var obj = $(this);
+            var idActiAnte = $(this).data("idactivity")
+            var href = $(this).data("href");
+            var vidval = $(this).val();
+            if (eventon) {
+
+                Swal.fire({
+                    title: "¿Esta Seguro?",
+                    html: "De querer cambiar la condicion de este usuario",
+                    icon: 'question',
+                    showCancelButton: true,
+                    reverseButtons: false,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#21618C',
+                    cancelButtonColor: '#666666',
+                    allowOutsideClick: false,
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: 'post',
+                            url: href,
+                            timeout: 0,
+                            data: { value: vidval },
+                            beforeSend: function (resp) {
+                            },
+                            success: function (data) {
+                                data = JSON.parse(data)[0];
+                                if (data.idActivity == vidval) {
+                                    toastr.success('Información modificada con éxito', 'Bien');
+                                    obj.data("idactivity", vidval);
+                                    //if (vidval == 4)
+                                    location.reload();
+                                }
+                                else {
+                                    eventon = false;
+                                    obj.val(idActiAnte).trigger("change");
+                                    eventon = true;
+                                    toastr.warning("No se pudo cambiar la opción, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                }
+                            },
+                            error: function (data) {
+                                eventon = false;
+                                obj.val(idActiAnte).trigger("change");
+                                eventon = true;
+                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                            }
+                        });
+                    }
+                    else {
+                        eventon = false;
+                        obj.val(idActiAnte).trigger("change");
+                        eventon = true;
+                    }
+                });
+            }
+        });
+        $(".delactUser").click(function () {
+            var hrefs = $(this).data("href")
+            var text = $(this).data("text")
+            var obj = $(this);
+            Swal.fire({
+                title: "¿Esta Seguro?",
+                html: text,
+                type: 'question',
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#21618C',
+                cancelButtonColor: '#666666',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: 'get',
+                        url: hrefs,
+                        timeout: 0,
+                        beforeSend: function () {
+                            obj.addClass("fa-spin")
+                        },
+                        success: function (data) {
+                            obj.removeClass("fa-spin");
+                            data = $.parseJSON(data)[0]
+                            if (data.respuesta == 1) {
+                                Swal.fire({
+                                    type: 'success',
+                                    title: "Cambio exitosamente",
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        })
+        $(".editUser").click(function () {
+            var hrefs = $(this).data("href")
+            var obj = $(this);
+            Swal.fire({
+                title: "¿Esta Seguro?",
+                html: "de editar este usuario",
+                type: 'question',
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#21618C',
+                cancelButtonColor: '#666666',
+            }).then((result) => {
+                if (result.value) {
+                    location.replace(hrefs)
+                }
+            })
+        })
+
+    </script>
+}

@@ -1,0 +1,58 @@
+﻿@{ 
+    List<Nodo.Models.Activity> LActivity = (List<Nodo.Models.Activity>)Session["Activity"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nodo WS</title>
+    <link rel="apple-touch-icon" href="~/Content/options/img/logo_nodo.ico" />
+    <link rel="shortcut icon" href="~/Content/options/img/logo_nodo.ico" />
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="~/Content/global_assets/css/icons/icomoon/styles.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/layout.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/colors.min.css" rel="stylesheet" type="text/css">
+    <!--Por alguna razon desconocida, este css de abajo daña algunos componentes externos, tuve que modificarlo para que no hiciera daño-->
+    <link href="~/Content/assets/css/components.min.css" rel="stylesheet" type="text/css">
+    <!--Por alguna razon desconocida, este css de arriba daña algunos componentes externos-->
+    <link href="~/Scripts/ToPrint.css" />
+    @RenderSection("css", required: false)
+    <!-- /global stylesheets -->
+    <!-- Core JS files -->
+    <script src="~/Content/global_assets/js/main/jquery.min.js"></script>
+    <script src="~/Content/global_assets/js/main/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/loaders/blockui.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/ui/ripple.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/ui/moment/moment.min.js"></script>
+    <!--/core JS files -->
+    <!-- Theme JS files -->
+    <script src="~/Content/assets/js/app.js"></script>
+    <!-- /theme JS files -->
+
+    @RenderSection("scriptsTop", required: false)
+
+</head>
+<body>
+
+    <!-- Page content -->
+    <div class="page-content">
+        <!-- Main content -->
+        <div class="content-wrapper">
+            <!-- Content area -->
+            <div class="content">
+                @RenderBody()
+            </div>
+            <!-- /content area -->
+        </div>
+        <!-- /main content -->
+    </div>
+    <!-- /page content -->
+    @RenderSection("scriptsButtom", required: false)
+</body>
+</html>

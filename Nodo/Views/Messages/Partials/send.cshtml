@@ -1,0 +1,76 @@
+﻿
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title"><span id="spinerIcon"><i class="spinner-border"></i> Cargando</span> Conversación con <span class="nameUserChat"></span></h6>
+        @*<div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item" data-action="collapse"></a>
+                <a class="list-icons-item" data-action="reload"></a>
+                <a class="list-icons-item" data-action="remove"></a>
+            </div>
+        </div>*@
+    </div>
+    <div class="card-body chatList">
+        @*<li class="media content-divider justify-content-center text-muted mx-0">
+            <span class="text-muted px-2">Today</span>
+        </li>*@
+        <ul class="media-list media-chat media-chat-scrollable mb-2 small border-bottom border-top" id="panelChatList_@Session["idClient"]">
+        </ul>
+        <form id="formChat" class="" method="post" action="@Url.Action("SendMessageText")" enctype="multipart/form-data">
+            <input type="hidden" name="token" value="" id="chatToken" />
+            <input type="hidden" name="numberphone" id="numberPhoneChat" class="form-control" value="">
+            <input type="hidden" name="idclient" id="idclient" class="form-control idClients" value="">
+            <div class="row">
+                <div class="col-sm-12" id="bodyPrimary">
+                    <div class="form-group">
+                        <textarea class="form-control" name="messagebody" id="messagebodyChat" cols="3" rows="3" placeholder="Mensaje a enviar"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-12 d-none text-center" id="bodySecondary">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <img src="" id="imgCompany" class="img-thumbnail d-none" width="150" height="150">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div class="input-group input-group-lg">
+                                <input type="file" name="imageSrc" class="form-control" id="customFile" onchanges="document.getElementById('imgCompany').src = window.URL.createObjectURL(this.files[0])">
+                            </div>
+                        </div>
+                        <div class="col-sm-2 p-0 text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger" id="closeupdload">
+                                <i class="icon-cancel-circle2">
+                                </i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mt-2">
+                <small class="d-block text-danger">
+                    <b>NOTA: </b>solo se permiten los siguientes tipos de archivos:
+                    <br>
+                    AUDIOS: <b>.mp3</b>, <b>.ogg</b>
+                    <br>
+                    DOCUMENTOS: <b>.doc</b>, <b>.docx</b>, <b>.txt</b>, <b>.xls</b>, <b>.xlsx</b>, <b>.pdf</b>, <b>.zip</b>
+                    <br>
+                    IMÁGENES: <b>.png</b>, <b>.jpeg</b>, <b>.jpg</b>, <b>.webp</b>, <b>.gif</b>
+                    <br>
+                    VIDEOS: <b>.mp4</b>
+                </small>
+                @*<a class="list-icons-item btn mr-2 ml-auto" id="addFile" data-popup="tooltip" data-container="body" title="" data-original-title="Adjuntar archivo (cualquiera)" ><i class="icon-file-plus"></i></a>*@
+                @if (Convert.ToInt32(Session["idProfile"]) == 3)
+                {
+                    <a class="list-icons-item btn mr-2 ml-auto"  data-popup="tooltip" data-container="body" title="" data-original-title="Usted no tiene acceso a esta función"><i class="icon-file-plus"></i></a>
+                    <button type="button" class="btn bg-blue btn-sm btn-labeled btn-labeled-right legitRipple sendMessageChat" style="background-color:#949494;color:white" disabled title="Usted no tiene acceso a esta función"><b><i class="icon-paperplane"></i></b> Enviar</button>
+                }
+                else
+                {
+                    <a class="list-icons-item btn mr-2 ml-auto" id="addFile" data-popup="tooltip" data-container="body" title="" data-original-title="Adjuntar archivo (cualquiera)"><i class="icon-file-plus"></i></a>
+                    <button type="button" class="btn bg-blue btn-sm btn-labeled btn-labeled-right legitRipple sendMessageChat" style="background-color:#666666;color:white"><b><i class="icon-paperplane"></i></b> Enviar</button>
+                }
+            </div>
+        </form>
+    </div>
+</div>

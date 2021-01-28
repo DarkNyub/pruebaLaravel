@@ -1,0 +1,665 @@
+﻿@{ 
+    List<Nodo.Models.Activity> LActivity = (List<Nodo.Models.Activity>)Session["Activity"];
+    List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)Session["config"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nodo WS</title>
+    <link rel="apple-touch-icon" href="~/Content/options/img/logo_nodo.ico" />
+    <link rel="shortcut icon" href="~/Content/options/img/logo_nodo.ico" />
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="~/Content/global_assets/css/icons/icomoon/styles.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/layout.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/colors.min.css" rel="stylesheet" type="text/css">
+    <!--Por alguna razon desconocida, este css de abajo daña algunos componentes externos, tuve que modificarlo para que no hiciera daño-->
+    <link href="~/Content/assets/css/components.min.css" rel="stylesheet" type="text/css">
+    <!--Por alguna razon desconocida, este css de arriba daña algunos componentes externos-->
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/sweetalertdark.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    @{ 
+        ViewBag.ksa = ".." + Session["imageBack"];
+        if (HttpContext.Current.Request.Url.AbsoluteUri.Split('/').Length > 5)
+        {
+            ViewBag.ksa = "../.." + Session["imageBack"];
+        }
+    }
+    <style type="text/css">
+        .text-black{
+            color:black !important;
+        }
+        .bg-black-custom {
+            background-color: #666666 !important;
+        }
+        .text-a-black a {
+            color: black !important;
+        }
+        .curpointer{
+            cursor:pointer !important;
+        }
+        .curdefault{
+            cursor:default !important;
+        }
+        .sidebar-user-material .sidebar-user-material-body {
+            background: url( @ViewBag.ksa ) center center no-repeat !important;
+            /*background-size: cover !important;
+            margin-bottom: 44px !important;
+            height: 173px !important;*/
+        }
+        /*.sidebar-xs .sidebar-user-material .sidebar-user-material-body {
+            margin-bottom: 0px !important;
+            height: 51px !important;
+        }*/
+        .dataTables_length {
+            margin: 0 0 1.25rem 0 !important;
+            border-color: #21618C;
+        }
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-bottom-color: #5472d3;
+            box-shadow: 0 1px 0 #5472d3
+        }
+        .card-header {
+            padding-top: .625rem !important;
+            padding-bottom: .625rem !important;
+        }
+        .select2-results__option[aria-selected=true] {
+            background-color: #5472d3
+        }
+        .select2-selection--multiple .select2-selection__choice:hover {
+            background-color: #5472d3;
+        }
+        .bg-blue-custom {
+            background-color: #21618C !important;
+        }
+        .bg-grey-custom {
+            background-color: #e9e4e4c9 !important;
+        }
+    </style>
+    @RenderSection("css", required: false)
+    <!-- /global stylesheets -->
+    <!-- Core JS files -->
+    <script src="~/Content/global_assets/js/main/jquery.min.js"></script>
+    <script src="~/Content/global_assets/js/main/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/loaders/blockui.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/ui/ripple.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/ui/moment/moment.min.js"></script>
+    <!--/core JS files -->
+    <!-- Theme JS files -->
+    <script src="~/Content/assets/js/app.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/tables/datatables/extensions/scroller.min.js"></script>
+    <script src="~/Content/assets/js/sweetalert2_9.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script type="text/javascript" src="https://underscorejs.org/underscore-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    <!-- /theme JS files -->
+    @RenderSection("scriptsTop", required: false)
+
+</head>
+@{ 
+    ViewBag.names = "";
+    if (HttpContext.Current.Request.Url.AbsoluteUri.Contains("Messages"))
+    {
+        ViewBag.names = "sidebar-xs";
+    }
+}
+<body class="@ViewBag.names ">
+
+    <!-- Main navbar -->
+    <div class="navbar navbar-expand-md navbar-dark navbar-static bg-blue-custom">
+        <div class="navbar-brand p-1">
+            <a href="@Url.Action("Dashboard", "Home")" class="d-inline-block">
+                <img src="~/Content/options/img/nodo_blanco.png" style="width: 140px;height: 30px;margin-bottom:5px;margin-top:5px;margin-left:38px;">
+            </a>
+        </div>
+
+        <div class="d-md-none">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
+                <i class="icon-tree5"></i>
+            </button>
+            <button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
+                <i class="icon-paragraph-justify3"></i>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar-mobile">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
+                        <i class="icon-paragraph-justify3"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-md-auto">
+                <li class="nav-item">
+                    <a class="navbar-nav-link cursor-default">
+                        <i class="icon-make-group mr-2"></i>
+                        Campaña - @Session["nameCampaign"]
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="navbar-nav-link cursor-default">
+                        <i class="icon-make-group mr-2"></i>
+                        Perfil - @Session["nameProfile"]
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    @{ Nodo.Models.Activity OActivity = LActivity.Where(u => Convert.ToInt32(u.idActivity) == Convert.ToInt32(Session["idActivity"])).First();}
+                    <a data-href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
+                        <i id="activityIcon" class="badge-mark @OActivity.icon mr-2" data-iconActi="@OActivity.icon"></i>
+                        <span id="activityName">@OActivity.name</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-content">
+                        <div class="dropdown-content-body p-2">
+                            <div class="row no-gutters" id="listActivity">
+                                @for (int i = 0; i < LActivity.Count; i++)
+                                {
+                                    Nodo.Models.Activity rowAc = LActivity[i];
+                                    string vals = "";
+                                    if (Convert.ToInt32(rowAc.idActivity) != Convert.ToInt32(Session["idActivity"]))
+                                    {
+                                        vals = "selecActivity";
+                                    }
+                                    <div class="col-12 col-sm-12 selac @vals"
+                                         data-idactivity="@rowAc.idActivity">
+                                        <a data-href="#" class="d-block text-default ripple-dark p-2  cursor-pointer">
+                                            <i class="badge-mark @rowAc.icon mr-2"></i>
+                                            <span class="font-size-sm font-weight-semibold mt-2">@rowAc.name</span>
+                                        </a>
+                                    </div>}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("LogOut", "Home")" class="navbar-nav-link">
+                        <i class="icon-switch2"></i>
+                        <span class="d-md-none ml-2">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /main navbar -->
+    <!-- Page content -->
+    <div class="page-content">
+
+        <!-- Main sidebar -->
+        <div class="sidebar bg-grey-custom sidebar-light sidebar-main sidebar-expand-md">
+
+            <!-- Sidebar mobile toggler -->
+            <div class="sidebar-mobile-toggler text-center">
+                <a href="#" class="sidebar-mobile-main-toggle">
+                    <i class="icon-arrow-left8"></i>
+                </a>
+                <span class="font-weight-semibold">Navigation</span>
+                <a href="#" class="sidebar-mobile-expand">
+                    <i class="icon-screen-full"></i>
+                    <i class="icon-screen-normal"></i>
+                </a>
+            </div>
+            <!-- /sidebar mobile toggler -->
+            <!-- Sidebar content -->
+            <div class="sidebar-content text-black">
+
+                <!-- User menu -->
+                <div class="sidebar-user-material sidebar-light">
+                    <div class="sidebar-user-material-body">
+                        <div class="card-body text-center">
+                            <a href="#">
+                                <img src="@Session["image"]" class="img-fluid rounded-circle shadow-1 mb-3" width="90" height="90" alt="">
+                            </a>
+                            <h6 class="mb-0 text-shadow-light">@Session["name"]</h6>
+                        </div>
+
+                        <div class="sidebar-user-material-footer">
+                            <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle bg-blue-custom" data-toggle="collapse"><span>Mi cuenta</span></a>
+                        </div>
+                    </div>
+
+                    <div class="collapse  bg-grey-custom" id="user-nav">
+                        <ul class="nav nav-sidebar">
+                            @*<li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="icon-user-plus"></i>
+                                    <span>Mi perfil</span>
+                                </a>
+                            </li>*@
+                            @*<li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="icon-comment-discussion"></i>
+                                        <span>Messages</span>
+                                        <span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
+                                    </a>
+                                </li>*@
+                            @if (Convert.ToInt32(Session["idProfile"]) == 1)
+                            {
+                                @*<li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="icon-cog5"></i>
+                                        <span>Configuracion Plataforma</span>
+                                    </a>
+                                </li>*@
+                            }
+                            <li class="nav-item">
+                                <a href="@Url.Action("LogOut", "Home")" class="nav-link">
+                                    <i class="icon-switch2"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- /user menu -->
+                <!-- Main navigation -->
+                <div class="card card-sidebar-mobile">
+                    <ul class="nav nav-sidebar text-a-black" data-nav-type="accordion">
+                        <!-- Main -->
+                        <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs text-black">MENÚ</div> <i class="icon-menu" title="Main"></i></li>
+                        <li class="nav-item">
+                            @{ ViewBag.urls = "";}
+                            @if (Session["url"].ToString() == "dash")
+                            {
+                                ViewBag.urls = "active";
+                            }
+                            <a href="@Url.Action("Dashboard", "Home")" class="nav-link @ViewBag.urls">
+                                <i class="icon-home4"></i><span>Dashboard</span>
+                            </a>
+                        </li>
+                        @if (Convert.ToInt32(Session["idProfile"]) == 1 || Convert.ToInt32(Session["idProfile"]) == 2)
+                        {
+                            <li class="nav-item">
+                                @{ ViewBag.urls = "";}
+                                @if (Session["url"].ToString() == "user")
+                                {
+                                    ViewBag.urls = "active";
+                                }
+                                <a href="@Url.Action("Index", "Users")" class="nav-link @ViewBag.urls">
+                                    <i class="icon-users2"></i><span>Usuarios</span>
+                                </a>
+                            </li>
+                        }
+                        @if (Convert.ToInt32(Session["idProfile"]) != 4)
+                        {
+                            <li class="nav-item">
+                                @{ ViewBag.urls = "";}
+                                @if (Session["url"].ToString() == "campa")
+                                {
+                                    ViewBag.urls = "active";
+                                }
+                                <a href="@Url.Action("Index", "Campaigns")" class="nav-link @ViewBag.urls">
+                                    <i class="icon-flag3"></i><span>Campañas</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                @{ ViewBag.urls = "";}
+                                @if (Session["url"].ToString() == "cli")
+                                {
+                                    ViewBag.urls = "active";
+                                }
+                                <a href="@Url.Action("Index", "Clients")" class="nav-link @ViewBag.urls">
+                                    <i class="icon-user-tie"></i><span>Clientes</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            @{ ViewBag.urls = "";}
+                            @if (Session["url"].ToString() == "mes")
+                            {
+                                ViewBag.urls = "active";
+                            }
+                            <a href="@Url.Action("Index", "Messages")" class="nav-link @ViewBag.urls">
+                                <i class="icon-bubbles2"></i><span>Mensajes</span>
+                            </a>
+                        </li>
+                        @if (Convert.ToInt32(Session["idProfile"]) == 2 || Convert.ToInt32(Session["idProfile"]) == 4)
+                        {
+                            <li class="nav-item">
+                                @{ ViewBag.urls = "";}
+                                @if (Session["url"].ToString() == "broad")
+                                {
+                                    ViewBag.urls = "active";
+                                }
+                                <a href="@Url.Action("Index", "BroadcastM")" class="nav-link @ViewBag.urls">
+                                    <i class="icon-bubble-notification"></i><span>Difusiones</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <!-- /main navigation -->
+
+            </div>
+            <!-- /sidebar content -->
+        </div>
+        <!-- /main sidebar -->
+        <!-- Main content -->
+        <div class="content-wrapper">
+            <!-- Page header -->
+            <div class="page-header page-header-light">
+                <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+                    <div class="d-flex">
+                        <div class="breadcrumb">
+                            <a href="@Url.Action("Dashboard", "Home")" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Home</a>
+                            @if (Session["url"].ToString() == "dash")
+                            {
+                                <span class="breadcrumb-item active">Dashboard</span>
+                            }
+                            @if (Session["url"].ToString() == "mes")
+                            {
+                                <span class="breadcrumb-item active">Mensajes</span>
+                            }
+                            @if (Session["url"].ToString() == "user")
+                            {
+                                <span class="breadcrumb-item active">Usuarios</span>
+                            }
+                            @if (Session["url"].ToString() == "campa")
+                            {
+                                <span class="breadcrumb-item active">Campañas</span>
+                            }
+                            @if (Session["url"].ToString() == "broad")
+                            {
+                                <span class="breadcrumb-item active">Difusiones</span>
+                            }
+                            @if (Session["url"].ToString() == "cli")
+                            {
+                                <span class="breadcrumb-item active">Clientes</span>
+                            }
+                        </div>
+                        <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+                    </div>
+                    @if ((Convert.ToInt32(Session["idProfile"]) == 1) || (Convert.ToInt32(Session["idProfile"]) == 2))
+                    {
+                        <div class="d-flex">
+                            <a class="btn btn-sm cursor-pointer" id="btnQuequed"><i class="icon-search4"></i> Mensajes en cola</a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!-- /page header -->
+            <!-- Content area -->
+            <div class="content">
+                @RenderBody()
+            </div>
+
+            <div id="ModalMsgQuequed" class="modal fade" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Mensajes en cola <a class="btn cursor-pointer btn-sm btn-info" id="reSendMessaje"><i class="icon-check"></i> Reenviar mensajes</a></h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <table id="tableMsgQue" class="table table-sm table-hover table-responsive w-100 small">
+                                <thead style="background-color:#002171;color:white">
+                                    <tr>
+                                        <th>Número</th>
+                                        <th>Tipo</th>
+                                        <th>Tiempo</th>
+                                        <th>Cuerpo</th>
+                                        <th>Caption</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trMsgQuequed">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link" data-dismiss="modal" style="color:#5472d3">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /content area -->
+            <!-- Footer -->
+            <div class="navbar navbar-expand-lg navbar-light">
+                <input id="hdId" type="hidden" />
+                <input id="vIdCampaign" type="hidden" />
+                <input id="vidProfile" value="@Convert.ToInt32(Session["idProfile"])" type="hidden" />
+                <input id="hdChatClient" type="hidden" />
+                <input id="hdSrcImage" type="hidden" />
+                <input id="hdLastMessageNumber" type="hidden" />
+                <input id="hdLastTimeMessage" type="hidden" value="0" />
+                <input id="hdnCurrentUserID" value="@Convert.ToInt32(Session["idClient"])" type="hidden" />
+                <div class="text-center d-lg-none w-100">
+                    <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse" data-target="#navbar-footer">
+                        <i class="icon-unfold mr-2"></i>
+                        Footer
+                    </button>
+                </div>
+
+                <div class="navbar-collapse collapse" id="navbar-footer">
+                    <span class="navbar-text">
+                        &copy; @DateTime.Now.Year <a href="@Url.Action("Dashboard", "Home")" target="_blank">Nodo WS</a>
+                    </span>
+
+                    <!--<ul class="navbar-nav ml-lg-auto">
+                <li class="nav-item"><a href="https://kopyov.ticksy.com/" class="navbar-nav-link" target="_blank"><i class="icon-lifebuoy mr-2"></i> Support</a></li>
+                <li class="nav-item"><a href="http://demo.interface.club/limitless/docs/" class="navbar-nav-link" target="_blank"><i class="icon-file-text2 mr-2"></i> Docs</a></li>
+                <li class="nav-item"><a href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400"><i class="icon-cart2 mr-2"></i> Purchase</span></a></li>
+            </ul>-->
+                </div>
+            </div>
+            <!-- /footer -->
+
+        </div>
+        <!-- /main content -->
+
+    </div>
+    <script type="text/javascript">
+        var vTypeUrl = '@Session["url"]';
+        var actiArray = new Array();
+        var urlHttp = '@HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0]' + "//" + '@HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[2]';
+
+        var VTOKEN = '@Lconfig.Where(ee => ee.name == "token").First().value';
+        var VINSTANCE = '@Lconfig.Where(ee => ee.name == "instance").First().value';
+        var VURL = '@Lconfig.Where(ee => ee.name == "urlApi").First().value' + VINSTANCE;
+    </script>
+    @{ for (int i = 0; i < LActivity.Count; i++)
+        {
+            <script type="text/javascript">
+                            actiArray.push({ idActivity: @LActivity[i].idActivity, name: '@LActivity[i].name', icon:'@LActivity[i].icon' })
+            </script>
+         }   
+     }
+<script>
+        $(document).ready(function () {
+            $(document).on("click", "#reSendMessaje", function () {
+                var href = VURL + '/showMessagesQueue?token=' + VTOKEN
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    //data: { chatId: "", phone: vphone, body: vbody },
+                    beforeSend: function (resp) {
+                        //obj.addClass("spinner")
+                    },
+                    success: function (data) {
+                        //obj.removeClass("spinner")
+                        if (data.totalMessages > 0) {
+                            $.each(data.first100, function (index, row) {
+                                setTimeout(function () {
+                                    var metData = JSON.parse(row.metadata)
+                                    var vcaption = '';
+                                    if (metData.caption != undefined) {
+                                        vcaption = metData.caption
+                                    }
+                                    if (row.type == 'chat') {
+                                        var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlSendMessage").First().value';
+                                        $.ajax({
+                                            type: 'post',
+                                            url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                                            timeout: 0,
+                                            data: { chatId: row.chatId, body: row.body },
+                                            beforeSend: function (resp) {
+                                                //obj.addClass("spinner")
+                                            },
+                                            success: function (data) {
+                                                //obj.removeClass("spinner")
+                                                if (data.sent)
+                                                    toastr.success('Mensaje ha sido enviado', 'Bien', { timeOut: 500 });
+                                                else
+                                                    toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                            },
+                                            error: function (data) {
+                                                //obj.removeClass("spinner")
+                                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                                            }
+                                        });
+                                    }
+                                    else if (row.type == 'image') {
+                                        var VURLMESSAGE = "sendFile";//pfile.sendUrl;
+                                        var datas;
+                                        datas = { chatId: row.chatId, body: row.body, filename: 'image_0.png', caption: vcaption };
+                                        $.ajax({
+                                            type: 'post',
+                                            url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                                            timeout: 0,
+                                            data: datas,
+                                            beforeSend: function (resp) {
+                                                //pobj.addClass("spinner");
+                                            },
+                                            success: function (data) {
+                                                //pobj.removeClass("spinner");
+                                                if (data.sent)
+                                                    toastr.success('Mensaje ha sido enviado', 'Bien', { timeOut: 500 });
+                                                else
+                                                    toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                            },
+                                            error: function (data) {
+                                                //pobj.removeClass("spinner");
+                                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                                            }
+                                        });
+                                    }
+                                }, 1000);
+                            });
+                            $.ajax({
+                                type: 'post',
+                                url: VURL + '/clearMessagesQueue?token=' + VTOKEN,
+                                timeout: 0,
+                                //data: datas,
+                                beforeSend: function (resp) {
+                                    //pobj.addClass("spinner");
+                                },
+                                success: function (data) {
+                                    //pobj.removeClass("spinner");
+                                    toastr.success('Mensajes se han limpiado correctamente', 'Bien', { timeOut: 500 });
+                                },
+                                error: function (data) {
+                                    //pobj.removeClass("spinner");
+                                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                                }
+                            });
+
+                        }
+
+                    },
+                    error: function (data) {
+                        //obj.removeClass("spinner")
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                });
+            });
+            $(document).on("click", "#btnQuequed", function () {
+                var href = VURL + '/showMessagesQueue?token=' + VTOKEN
+                var obj = $(this).children("i");
+                $("#ModalMsgQuequed").modal("hide");
+                $("#trMsgQuequed").html("");
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    //data: { chatId: "", phone: vphone, body: vbody },
+                    beforeSend: function (resp) {
+                        obj.addClass("spinner")
+                    },
+                    success: function (data) {
+                        obj.removeClass("spinner")
+                        if (data.totalMessages > 0) {
+                            $.each(data.first100, function (index, row) {
+                                var metData = JSON.parse(row.metadata)
+                                var vhtml = '';
+                                var vtime = new Date(row.last_try).toLocaleString();
+                                vhtml += '<tr>';
+                                    vhtml += '<td>' + row.chatId + '</td>';
+                                    vhtml += '<td>' + row.type + '</td>';
+                                    vhtml += '<td>' + vtime  + '</td>';
+                                    vhtml += '<td>' + row.body + '</td>';
+                                    var vcaption = '';
+                                    if (metData.caption != undefined) {
+                                        vcaption = metData.caption
+                                    }
+                                    vhtml += '<td>' + vcaption + '</td>';
+                                vhtml += '</tr>';
+
+                                $("#trMsgQuequed").append(vhtml);
+                            });
+                            $("#tableMsgQue").DataTable({
+                                destroy: true,
+                                language: {
+                                    url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+                                }
+                            });
+                            $("#ModalMsgQuequed").modal("show");
+
+                        }
+                        else
+                            toastr.success("No hay mensajes en cola... Gracias a Dios", "Información", { timeOut: 2000 })
+
+                    },
+                    error: function (data) {
+                        obj.removeClass("spinner")
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                });
+            });
+        });
+        $(document).on("click", ".selecActivity", function () {
+            var vidActi = $(this).data("idactivity");
+            var obj = $(this);
+            Swal.fire({
+                title: "¿Esta Seguro?",
+                html: "De cambiar de estado",
+                icon: 'question',
+                showCancelButton: true,
+                reverseButtons: false,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#03a9f4',
+                cancelButtonColor: '#777',
+            }).then((result) => {
+                if (result.value) {
+                    var selActi = actiArray.find(u => u.idActivity == vidActi);
+                    $("#activityName").html(selActi.name);
+                    $("#activityIcon").removeClass($("#activityIcon").data("iconActi")).addClass(selActi.icon).data("iconActi", selActi.icon)
+                    $(".selac").addClass("selecActivity")
+                    obj.removeClass("selecActivity");
+                }
+            });
+        })
+
+</script>
+    <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script type="text/javascript" src="/signalr/hubs"></script>
+    <script type="text/javascript" src="~/Scripts/SignalJquery.js"></script>
+
+    <!-- /page content -->
+    @RenderSection("scriptsButtom", required: false)
+</body>
+</html>

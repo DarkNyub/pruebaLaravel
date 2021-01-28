@@ -1,0 +1,311 @@
+﻿@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+@if(Convert.ToInt32(Session["idProfile"]) == 1)
+{
+    <div class="mb-3">
+        <a id="modelCreateExcel" data-href="@Url.Action("CreateExcel")" class="mb-0 btn-sm btn bg-blue font-weight-semibold cursor-pointer" style="background-color:#666666;color:white">
+            <i class="icon-table2"></i> Importar desde excel
+        </a>
+    </div>
+}
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Lista de clientes</h6>
+        @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+    </div>
+    <div class="card-body">
+        <table class="table table-sm w-100">
+            <thead style="background-color:#21618C;color:white">
+                <tr>
+                    <th class="">Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Campaña actual</th>
+                    @*<th>Estado</th>
+        <th class="text-center">Operación</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rows in ViewBag.row)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="mr-3">
+                                    <a href="@rows["SrcImage"]" target="_blank">
+                                        <img src="@rows["srcImage"]" class="rounded-circle" width="32" height="32" alt="">
+                                    </a>
+                                </div>
+                                <div>
+                                    <a class="text-default font-weight-semibold text-uppercase">
+                                        @rows["firstName"] @rows["lastName"]
+                                    </a>
+                                    @*<div class="text-muted font-size-sm"><span class="badge badge-mark border-danger mr-1"></span>Teléfono - rows["phoneMobile"]</div>*@
+                                </div>
+                            </div>
+                        </td>
+                        <td>@rows["phoneNumber"]</td>
+                        <td>@rows["nameCampaign"]</td>
+                        @*<td>@rows["nameStatus"]</td>
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-outline-dark mt-1 mb-1 editClient curpointer disabled"
+                                    data-href="@Url.Action("Edit", new { @id = rows["idClient"]})" title="Editar cliente">
+                                    <i class="icon-database-edit2"></i>
+                                </a>
+                                @if (Convert.ToInt32(@rows["idStatus"]) == 1)
+                                {
+                                    <a class="btn btn-sm btn-outline-warning mt-1 mb-1 curpointer delactClient disabled"
+                                        data-href="@Url.Action("deActivateClient", new { @id = rows["idClient"] })"
+                                        data-text="De desactivar este cliente"
+                                        title="Desactivar">
+                                        <i class="icon-close2"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-outline-success mt-1 mb-1 delactClient curpointer disabled"
+                                        data-href="@Url.Action("deActivateClient", new {@id=rows["idClient"]})"
+                                        data-text="De activar este cliente"
+                                        title="Desactivar">
+                                        <i class="icon-check2"></i>
+                                    </a>
+                                    <a class=" btn btn-outline-warning bg-warning btn-sm delactClient mt-1 mb-1 curpointer"
+                                        data-href="@Url.Action("deleteClient", new {@id=rows["idClient"]})"
+                                        data-text="Eliminar este cliente y toda su información de la plataforma">
+                                        <i class="icon-trash-alt"></i>
+                                    </a>
+                                }
+                            </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="tableImportExcel" data-ids="2" data-table="tableClient" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Importar clientes desde un excel</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formFile" class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12 pb-2">
+                            <select id="idCampaign" name="idCampaign" class="form-control form-control-sm" style="width:100% !important" required>
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 pb-2">
+                            <input class="form-control" type="file" name="importFile" id="importFile" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                        </div>
+                        <div class="col-sm-12 pb-2">
+                            <input class="form-control" type="text" name="nameOptionalFile" id="nameOptionalFile" placeholder="Opcional: Nombre de la subida" />
+                        </div>
+                        <div class="col-sm-12 pb-2 text-center">
+                            <small class="text-danger text-center btn-block" id="hassj"></small>
+                        </div>
+                        <div class="col-sm-12 pb-2 text-center">
+                            <button type="button" id="btnUpload" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1"><b><i class="icon-file-upload2"></i></b> Subir archivo</button>
+                        </div>
+                        <div class="col-sm-12 pb-0 text-center">
+                            <a id="btnDownload" class="btn bg-blue btn-sm m-1 d-none"><b><i class="icon-file-download2"></i></b></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <small class="text-danger text-center btn-block">
+                                * Recuerda que hay datos básicos que deben estar llenos en el excel y deben estar escritos tal cual, los cuales son: <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>APELLIDO</b> | <b>CELULAR</b> *
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+              icon: '@Session["type"]',
+              title: '@Session["title"]',
+              html: '@Session["message"]',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        </script>
+        Session.Remove("type");
+        Session.Remove("title");
+        Session.Remove("message");
+    }
+<script type="text/javascript">
+        $(".table").DataTable({
+            destroy: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+            }
+        });
+        $(document).ready(function () {
+            $(document).on("change", "#idCampaign", function () {
+                var vidCampaign = $(this).val();
+                $.get("@Url.Action("getCatalogbyCampaign")/" + vidCampaign, function (data) {
+                    $("#hassj").html('* Estructura del excel de clientes de la campaña, previamente cargada:</br> <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>APELLIDO</b> | <b>CELULAR</b> | <span id="strucTable"></span> *');
+                    data = $.parseJSON(data)
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i]);
+                        if (data[i].type === 1) {
+                            var html = '<b>' + data[i].name + '</b>';
+                            if (data[i + 1] != undefined) {
+                                if (data[i + 1].type === 1)
+                                    html += ' | ';
+                            }
+                            $("#strucTable").append(html);
+                        }
+                    }
+                })
+            });
+            $("#modelCreateExcel").click(function () {
+                $("#hassj").html("");
+                $("#btnDownload").addClass("d-none").removeAttr("download").removeAttr("target").removeAttr("href");
+                $("#idCampaign").select2().select2("destroy").val(null);
+                $("#importFile").val("");
+                $.get("@Url.Action("getCampaign")", function (data) {
+                    $("#idCampaign").html("<option></option>");
+                    data = $.parseJSON(data)
+                    $.each(data, function (index, item) {
+                        var html = '<option value="' + item.idCampaigns + '">' + item.name + '</option>';
+                        $("#idCampaign").append(html);
+                    })
+                    $("#idCampaign").select2({
+                        placeholder: "Seleccione la campaña a asociar",
+                        allowClear: true
+                    })
+                })
+                $("#tableImportExcel").modal("show");
+            });
+            $(document).on("click", "#btnUpload", function () {
+                var fileName = 'ClientesNoInsertados.html'; // You can use the .txt extension if you want
+                if ($("#importFile").val() != "") {
+                    var obj = $(this).children("b").children("i");
+                    var form = $('#formFile')[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        url: '@Url.Action("ImportClientExcel")',
+                        type: 'post',
+                        timeout: 0,
+                        enctype: 'multipart/form-data',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        beforeSend: function (data) {
+                            obj.addClass("spinner");
+                        },
+                        success: function (data) {
+                            obj.removeClass("spinner");
+                            if (data.Result == 1) {
+                                toastr.success("Clientes importados con éxito", "Bien", { timeOut: 3000 })
+                                location.reload()
+                            }
+                            if (data.Result == 0 && data.clients != "") {
+                                toastr.warning("Hubieron algunos clientes que no se insertaron porque no tienen los datos obligatorios sin llenar", "Error", { timeOut: 3000 });
+                                var link = $("#btnDownload");
+                                var mimeType = 'text/plain';
+                                link.removeClass("d-none")
+                                link.attr('download', fileName);
+                                link.attr("target", "_blank");
+                                link.attr('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(data.clients));
+                            }
+                            if (data.Result == 0 && data.clients == "") {
+                                console.warn(data.message);
+                                toastr.warning(data.message, "Información", { timeOut: 3000 })
+                                $("#tableImportExcel").modal("hide");
+                            }
+                        },
+                        error: function (data) {
+                            obj.removeClass("spinner");
+                            toastr.warning("Problemas subiendo el archivo, " + data.message, "Error", { timeOut: 3000 })
+                        }
+                    });
+                }
+                else
+                    toastr.warning("No hay archivo que subir", "Error", { timeOut: 3000 })
+            });
+            $(".delactUser").click(function () {
+                var hrefs = $(this).data("href")
+                var text = $(this).data("text")
+                var obj = $(this);
+                Swal.fire({
+                    title: "¿Esta Seguro?",
+                    html: text,
+                    type: 'question',
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#21618C',
+                    cancelButtonColor: '#666666',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: 'get',
+                            url: hrefs,
+                            timeout: 0,
+                            beforeSend: function () {
+                                obj.addClass("fa-spin")
+                            },
+                            success: function (data) {
+                                obj.removeClass("fa-spin");
+                                data = $.parseJSON(data)[0]
+                                if (data.respuesta == 1) {
+                                    Swal.fire({
+                                        type: 'success',
+                                        title: "Cambio exitosamente",
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                    location.reload();
+                                }
+                            }
+                        });
+                    }
+                });
+            })
+            $(".editUser").click(function () {
+                var hrefs = $(this).data("href")
+                var obj = $(this);
+                Swal.fire({
+                    title: "¿Esta Seguro?",
+                    html: "de editar este usuario",
+                    type: 'question',
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#21618C',
+                    cancelButtonColor: '#666666',
+                }).then((result) => {
+                    if (result.value) {
+                        location.replace(hrefs)
+                    }
+                })
+            })
+        });
+</script>
+}

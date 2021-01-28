@@ -1,0 +1,109 @@
+﻿
+@{ Layout = "~/Views/Shared/_LayoutLimitPrint.cshtml"; }
+
+@section css{
+    <style type="text/css">
+        .media{
+            margin-top: 0px !important;
+        }
+    </style>
+}
+@foreach (dynamic rowChat in ViewBag.rowChatList)
+{
+
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Conversación con el cliente @rowChat["firstNAme"] @rowChat["LastName"] en la campaña @ViewBag.rowCampaign["name"]</h6>
+    </div>
+    <div class="card-body">
+        <ul class="media-list media-chat mb-3" id="chatlist_@rowChat["idClient"]">
+        </ul>
+    </div>
+</div> <!-- /registration form -->
+                <hr />}
+
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <a class="btn btn-sm btn-secondary btnPrinterAll text-white" style="background-color:#666666;color:white" href="javascript:window.print()"><i class="icon-printer4"></i> Imprimir</a>
+    </div>
+</div>
+
+@section scriptsButtom{
+    <script type="text/javascript">
+        function getMessages(pidCampaign, pidClient, pContainer) {
+            $.ajax({
+                type: 'get',
+                timeout: 0,
+                url: '@Url.Action("getMessagesByCampaingByClient")/' + pidCampaign,
+                data: { idClient:pidClient },
+                beforeSend: function (resp) {
+                },
+                success: function (response) {
+                    pLMEssages = JSON.parse(response);
+                    $.each(pLMEssages, function (index, item) {
+                        var sks = "";
+                        if (item.fromMe == "true") {
+                            sks = '<li class="media media-chat-item-reverse pt-1 pb-1">';
+                            sks += '<div class="media-body ' + item.type + '_hola">';
+                            var mediainfo = item.body;
+                            if (item.type == "vcard")
+                                mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                            if (item.type == "document")
+                                mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                            if (item.type == "ptt" || item.type == "audio")
+                                mediainfo = '<audio controls="controls" class=""><source src="' + item.body + '" /></audio>';
+                            if (item.type == "image")
+                                mediainfo = '<img class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="' + item.type + '" src="' + item.body + '" width="240" heigth="240" />';
+                            if (item.type == "video")
+                                mediainfo = '<video class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="' + item.type + '" width="320" height="200"><source src="' + item.body + '" /></video>';
+
+                            sks += '<div class="media-chat-item">' + mediainfo + '</div>';
+                            sks += '<div class="font-size-sm text-muted">' + item.time.split(' ')[0] + ' - ' + item.time.split(' ')[1] + ' ' + item.time.split(' ')[2] + item.time.split(' ')[3] + ' </div>';
+                            sks += '</div>';
+                            sks += '<div class="ml-3">';
+                            sks += '<a href="' + item.employeeSrcImage + '" target="_blank">';
+                            sks += '<img src="' + item.employeeSrcImage + '" class="rounded-circle" width="40" height="40" alt="">';
+                            sks += '</a>';
+                            sks += '</div>';
+                            sks += '</li>';
+                        } else {
+                            sks = '<li class="media pt-1 pb-1">';
+                            sks += '<div class="mr-3">';
+                            sks += '<a href="' + item.clientSrcImage + '" target="_blank">';
+                            sks += '<img src="' + item.clientSrcImage + '" class="rounded-circle" width="40" height="40" alt="">';
+                            sks += '</a>';
+                            sks += '</div>';
+                            sks += '<div class="media-body ' + item.type + '_hola">';
+                            var mediainfo = item.body;
+                            if (item.type == "vcard")
+                                mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                            if (item.type == "document")
+                                mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                            if (item.type == "ptt" || item.type == "audio")
+                                mediainfo = '<audio controls="controls" class=""><source src="' + item.body + '" /></audio>';
+                            if (item.type == "image")
+                                mediainfo = '<img class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="' + item.type + '" src="' + item.body + '" width="240" heigth="240" />';
+                            if (item.type == "video")
+                                mediainfo = '<video class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="' + item.type + '" width="320" height="200"><source src="' + item.body + '" /></video>';
+
+                            sks += '<div class="media-chat-item">' + mediainfo + '</div>';
+                            sks += '<div class="font-size-sm text-muted">' + item.time.split(' ')[0] + ' - ' + item.time.split(' ')[1] + ' ' + item.time.split(' ')[2] + item.time.split(' ')[3] + ' </div>';
+                            sks += '</div>';
+                            sks += '</li>';
+                        }
+                        $('#'+pContainer).append(sks)//*/
+                    });
+                }
+            });
+        }
+    </script>
+    @foreach (dynamic rowa in ViewBag.rowChatList)
+    {
+        <script type="text/javascript">
+                    //$(document).ready(function () {
+                        getMessages(@rowa["idCampaign"], @rowa["idClient"], 'chatlist_@rowa["idClient"]');
+                    //})
+        </script>
+     }
+}
+

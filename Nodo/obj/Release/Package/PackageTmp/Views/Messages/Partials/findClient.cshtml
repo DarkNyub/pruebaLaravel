@@ -1,0 +1,37 @@
+﻿
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title"><span id="spinerIconListClientFind" class="d-none"><i class="spinner-border"></i></span> Buscador de clientes por celular</h6>
+        <div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item rotate-180" data-action="collapse"></a>
+                @*<a class="list-icons-item" data-action="reload"></a>
+                <a class="list-icons-item" data-action="remove"></a>*@
+            </div>
+        </div>
+    </div>
+    <div class="card-body" style="display:none">
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="formFindNumber" class="row">
+                    <input type="hidden" name="idCampaing" id="inputidCampaign" value="@Session["idCampaign"]" />
+                    <div class="col-sm-10">
+                        <input type="text" name="phonenumber" id="inputFindNumber" placeholder="Ingrese número" class="form-control">
+                    </div>
+                    <div class="col-sm-2 p-0 text-center">
+                        <button type="button" class="btn btn-light btn-sm btnSearchNumber"><i class="icon-search4"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-sm tabs small tableFn d-none" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Resultado de busqueda</th>
+                </tr>
+            </thead>
+            <tbody id="tableClientsFind">
+            </tbody>
+        </table>
+    </div>
+</div>

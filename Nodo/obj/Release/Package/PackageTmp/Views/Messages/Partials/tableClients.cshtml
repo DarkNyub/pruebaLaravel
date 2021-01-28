@@ -1,0 +1,64 @@
+﻿
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title"><span id="spinerIconListClient" class=""><i class="spinner-border"></i></span> Clientes</h6>
+        <div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item cursor-pointer" id="freeAll" data-toggle="tooltip" data-placement="top" title="Liberar mis atenciones"><i class="icon-unlocked2"></i></a>
+                <a class="list-icons-item cursor-pointer" id="reloadChatList"><i class="icon-reload-alt"></i></a>
+                <!--<a class="list-icons-item" data-action="remove"></a>-->
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm tabss small" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Clientes</th>
+                </tr>
+            </thead>
+            <tbody id="tableClients">
+                @*@foreach (var row in ViewBag.rowClients)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="mr-2">
+                                    <a href="@row["srcImage"]" target="_blank">
+                                        <img src="@row["srcImage"]" class="rounded-circle" width="32" height="32" alt="">
+                                    </a>
+                                </div>
+                                @{
+                                    ViewBag.clases = "cursor-default";
+                                    if (Convert.ToInt32(row["idStatus"]) == 1)
+                                    {
+                                        ViewBag.clases = "cursor-pointer btnselected";
+                                    }
+                                }
+                                <div class="@ViewBag.clases"
+                                       data-id="@row["idClient"]"
+                                       data-phone="(@row["codePhone"])@row["phoneNumber"]"
+                                       data-name="@row["firstName"]">
+                                    <a class="text-default font-weight-semibold">
+                                        @row["firstName"]
+                                        <div class="text-muted font-size-sm">
+                                            @if (Convert.ToInt32(row["idStatus"]) == 1)
+                                            {
+                                                <span class="badge badge-mark border-blue mr-1" data-popup="tooltip" data-container="body" title="" data-original-title="@row["nameStatus"]"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-mark border-danger mr-1" data-popup="tooltip" data-container="body" title="" data-original-title="@row["nameStatus"]"></span>
+                                            }
+                                            @row["phoneNumber"]
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }*@
+            </tbody>
+        </table>
+    </div>
+</div>

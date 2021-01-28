@@ -1,0 +1,463 @@
+﻿@{ ViewBag.Title = "Usuarios";
+                Layout = "~/Views/Shared/_LayoutLimit.cshtml"; }
+@section css{
+    <style type="text/css">
+        .select2-search__field {
+            padding-left: 15px !important;
+        }
+    </style>
+}
+@if (Convert.ToInt32(Session["idProfile"]) == 1)
+{
+    <div class="mb-3">
+        <a href="@Url.Action("Create")" class="mb-0 btn-sm btn bg-blue font-weight-semibold" style="background-color:#666666;color:white">
+            <i class="icon-plus2"></i> Nueva campaña
+        </a>
+    </div>
+}
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Lista de campañas</h6>
+        @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+    </div>
+    <div class="card-body">
+        <div class="">
+            <table id="tableCampaign" class="table table-sm table-responsive-sm w-100">
+                <thead style="background-color:#21618C;color:white">
+                    <tr>
+                        <th class="">Nombre</th>
+                        <th class="">Teléfono</th>
+                        <th class="">N° clientes</th>
+                        <th class="">Finalización</th>
+                        <th class="text-center">Codición</th>
+                        @*<th class="text-center">Estado</th>*@
+                        <th class="text-center">Operación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var rows in ViewBag.row)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @*<div class="mr-3">
+                                            <a href="@rows["SrcImage"]" target="_blank">
+                                                <img src="@rows["srcImage"]" class="rounded-circle" width="32" height="32" alt="">
+                                            </a>
+                                        </div>*@
+                                    <div>
+                                        <a class="text-default font-weight-semibold text-uppercase">
+                                            @rows["name"]
+                                        </a>
+                                        @*<div class="text-muted font-size-sm"><span class="badge badge-mark border-danger mr-1"></span>Teléfono - rows["phoneMobile"]</div>*@
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">@rows["phoneNumber"]</td>
+                            <td class="text-center">@rows["cantClients"]</td>
+                            <td class="text-center">
+                                @if (rows["dateEnd"].ToString() != "")
+                                {
+                                    ViewBag.name = DateTime.Parse(rows["dateEnd"].ToString()).ToString("dd-MM-yyyy");
+                                    <span>@ViewBag.name</span>
+                                }
+                                else
+                                {
+                                    <span>No tiene</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @{ 
+                                    ViewBag.name = "disabled";
+                                    if (Convert.ToInt32(Session["idProfile"]) == 1)
+                                    {
+                                        ViewBag.name = "";
+                                    }
+                                }
+                                <select name="jnjn" @ViewBag.name class="form-control form-control-sm changeActivityCampaign "
+                                        data-idactivity="@Convert.ToInt32(rows["idActivityCampaign"])"
+                                        data-href="@Url.Action("ChangeActivityCampaign",new {id =rows["idCampaigns"] })"
+                                        style="width:100px">
+                                    @foreach (dynamic rowAc in ViewBag.rowActivityCampa)
+                                    {
+                                        if (Convert.ToInt32(rows["idActivityCampaign"]) == Convert.ToInt32(rowAc["idActivityCampaign"]))
+                                        {
+                                            <option selected value="@rowAc["idActivityCampaign"]">@rowAc["name"]</option> 
+                                        }
+                                        else
+                                        {
+                                            <option value="@rowAc["idActivityCampaign"]">@rowAc["name"]</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            @*<td class="text-center">@rows["nameStatus"]</td>*@
+                            <td class="text-center">
+                                @if (Convert.ToInt32(rows["cantClients"]) > 0)
+                                {
+                                    <a class="btn btn-sm  mt-1 mb-1 cursor-pointer editCampNewWindow"
+                                       data-href="@Url.Action("ReportCampaign",new {id =rows["idCampaigns"] })"
+                                       data-text="De ver el reporte de esta campaña"
+                                       title="Ver Reporte" style="border-color:#5472d3;">
+                                        <i class="icon-stats-bars"></i>
+                                    </a>
+                                }
+                                @if (Convert.ToInt32(rows["idActivityCampaign"]) == 4 && Convert.ToInt32(rows["cantClients"]) > 0)
+                                {
+                                    <a class="btn btn-sm  mt-1 mb-1 cursor-pointer editCampNewWindow"
+                                       data-href="@Url.Action("Backup",new {id =rows["idCampaigns"] })"
+                                       data-text="De ver el backup de esta campaña"
+                                       title="Ver Backup" style="border-color:#5472d3;">
+                                        <i class="icon-database-export"></i>
+                                    </a>
+                                }
+                            
+                                @if (Convert.ToInt32(Session["idProfile"]) == 1)
+                                {
+                                    <a class="btn btn-sm  mt-1 mb-1 cursor-pointer editCamp"
+                                       data-href="@Url.Action("Edit",new {id =rows["idCampaigns"] })"
+                                       data-text="De editar esta campaña"
+                                       title="Editar campaña" style="border-color:#5472d3;">
+                                        <i class="icon-pencil5"></i>
+                                    </a>
+                                    <a class="btn btn-sm  mt-1 mb-1 cursor-pointer modalshowTable"
+                                       data-href="@Url.Action("getEmployeeCampaign",new {id =rows["idCampaigns"] })"
+                                       data-idmodal="tableUsersAso"
+                                       data-namecampaign="@rows["name"]"
+                                       data-idcampaign="@rows["idCampaigns"]"
+                                       title="Mostrar tabla de usuarios" style="border-color:#5472d3;">
+                                        <i class="icon-users4"></i>
+                                    </a>
+                                    <a class="btn btn-sm  mt-1 mb-1 cursor-pointer modalshowTable"
+                                       data-href="@Url.Action("getClientsCampaign",new {id =rows["idCampaigns"] })"
+                                       data-idmodal="tableClientAso"
+                                       data-namecampaign="@rows["name"]"
+                                       data-idcampaign="@rows["idCampaigns"]"
+                                       title="Mostrar tabla de clientes" style="border-color:#5472d3;">
+                                        <i class="icon-user-plus"></i>
+                                    </a>
+                                
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="tableUsersAso" data-ids="1" data-table="tableEmploy" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Usuarios asociados a la campaña <span class="nameCampaignTable">x</span></h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table id="tableEmploy" class="table table-sm table-hover table-responsive-sm w-100">
+                    <thead style="background-color:#21618C;color:white">
+                        <tr>
+                            <th>Empleado</th>
+                            <th>Perfil</th>
+                            <th>Asignar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*<tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3">
+                                            <a href="#" target="_blank">
+                                                <img src="#" class="rounded-circle" width="32" height="32" alt="">
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <a class="text-default font-weight-semibold text-uppercase">
+                                                hola
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>holaa</td>
+                                <td><input type="checkbox" name="" id="" value="" style="width:25px !important;height:25px !important" /></td>
+                            </tr>*@
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal" style="color:#5472d3">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="tableClientAso" data-ids="2" data-table="tableClient" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Clientes asociados a la campaña <span class="nameCampaignTable">x</span></h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table id="tableClient" class="table table-sm table-hover table-responsive-sm w-100">
+                    <thead style="background-color:#21618C;color:white">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Número</th>
+                            <th>Asignar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal" style="color:#5472d3">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+<script type="text/javascript">
+            Swal.fire({
+              icon: '@Session["type"]',
+              title: '@Session["title"]',
+              html: '@Session["message"]',
+                showConfirmButton: false,
+                timer: 2000
+            })
+</script>Session.Remove("type");
+                    Session.Remove("title");
+                    Session.Remove("message");
+                }
+    <script type="text/javascript">
+        var eventon = true;
+    $(document).ready(function () {
+        $("#tableCampaign").DataTable({
+            destroy: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+            }
+        });
+        $(".changeActivityCampaign").select2({
+            placeholder: "Seleccione",
+            minimumResultsForSearch: -1
+        });
+        $(document).on("change", ".changeActivityCampaign", function () {
+            var obj = $(this);
+            var idActiAnte = $(this).data("idactivity")
+            var href = $(this).data("href");
+            var vidval = $(this).val();
+            if (eventon) {
+
+                Swal.fire({
+                    title: "¿Esta Seguro?",
+                    html: "De querer cambiar la condicion de esta campaña",
+                    icon: 'question',
+                    showCancelButton: true,
+                    reverseButtons: false,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#21618C',
+                    cancelButtonColor: '#666666',
+                    allowOutsideClick: false,
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: 'post',
+                            url: href,
+                            timeout: 0,
+                            data: { value: vidval },
+                            beforeSend: function (resp) {
+                            },
+                            success: function (data) {
+                                data = JSON.parse(data)[0];
+                                if (data.idActivityCampaign == vidval) {
+                                    toastr.success('Información modificada con éxito', 'Bien');
+                                    obj.data("idactivity", vidval);
+                                    //if (vidval == 4)
+                                        location.reload();
+                                }
+                                else {
+                                    eventon = false;
+                                    obj.val(idActiAnte).trigger("change");
+                                    eventon = true;
+                                    toastr.warning("No se pudo cambiar la opción, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                }
+                            },
+                            error: function (data) {
+                                eventon = false;
+                                obj.val(idActiAnte).trigger("change");
+                                eventon = true;
+                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                            }
+                        });
+                    }
+                    else {
+                        eventon = false;
+                        obj.val(idActiAnte).trigger("change");
+                        eventon = true;
+                    }
+                });
+            }
+        });
+        $(document).on("click", ".modalshowTable", function () {
+            var href = $(this).data("href");
+            var vmodal = $(this).data("idmodal");
+            var namCamp = $(this).data("namecampaign");
+            var vidcampa = $(this).data("idcampaign");
+            $("#" + $("#" + vmodal).data("table")).DataTable().destroy();
+            $("#" + $("#" + vmodal).data("table")).children("tbody").html("");
+            $(".nameCampaignTable").html(namCamp);
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    data = $.parseJSON(data)
+                    console.log(data);
+                    if (data != undefined) {
+                        $.each(data, function (index, item) {
+                            var vms = "";
+                            var vname = "";
+                            var vimage = "";
+                            var vnumprof = "";
+                            var vidrow = "";
+                            var vhref = "";
+                            var vcheck = "";
+                            if ($("#" + vmodal).data("ids") == 1) {
+                                vname = item.firstName + ' ' + item.lastName;
+                                vimage = item.srcImage;
+                                vnumprof = item.nameprofile;
+                                vidrow = item.idEmployee;
+                                vhref = '@Url.Action("storeCampaignEmployee")';
+                                if (item.idEmployeeCampaign != null)
+                                    vcheck = "checked";
+                            }
+                            else {
+                                vname = item.name;
+                                vimage = item.srcImage;
+                                vnumprof = '(' + item.codePhone + ') ' + item.phoneNumber;
+                                vidrow = item.idClient;
+                                vhref = '@Url.Action("storeCampaignClient")';
+                                if (item.idClientCampaign != null)
+                                    vcheck = "checked";
+                            }
+                            vms += '<tr>';
+                            vms += '<td>';
+                            vms += '<div class="d-flex align-items-center">';
+                            vms += '<div class="mr-3">';
+                            vms += '<a href="' + vimage + '" target="_blank">';
+                            vms += '<img src="' + vimage + '" class="rounded-circle" width="32" height="32" alt="' + vname + '">';
+                            vms += '</a>';
+                            vms += '</div>';
+                            vms += '<div>';
+                            vms += '<a class="text-default font-weight-semibold text-uppercase">' + vname + '</a>';
+                            vms += '</div>';
+                            vms += '</div>';
+                            vms += '</td>';
+                            vms += '<td>' + vnumprof + '</td>';
+                            vms += '<td><input type="checkbox" ' + vcheck + ' data-idcampaign="' + vidcampa+'" value="' + vidrow + '" data-href="' + vhref + '" class="selectedrow" style="width:25px !important;height:25px !important" /></td>';
+                            vms += '</tr>';
+                            $("#" + $("#" + vmodal).data("table")).children("tbody").append(vms)
+                        })
+                    }
+                    $("#" + $("#" + vmodal).data("table")).DataTable({
+                        destroy: true,
+                        language: {
+                            url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+                        }
+                    });
+                }
+            });
+            $("#" + vmodal).modal("show");
+        });
+        $(document).on("click", ".selectedrow", function () {
+            var vidrow = $(this).val();
+            var vidcampaign = $(this).data("idcampaign");
+            var href = $(this).data("href");
+            var obj = $(this);
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                data: { idcampaign:vidcampaign, idrow : vidrow},
+                beforeSend: function () {
+                    obj.addClass("spinner");
+                },
+                success: function (data) {
+                    obj.removeClass("spinner");
+                    data = $.parseJSON(data)[0]
+                    if (data.respuesta == 1)
+                        toastr.success('Operación realizada con éxito', { timeOut: 1000 });
+                    else {
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                        obj.prop("checked", false);
+                    }
+                },
+                error: function () {
+                    obj.removeClass("spinner");
+                    obj.prop("checked", false);
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            });
+        });
+        $(".editCamp").click(function () {
+            var hrefs = $(this).data("href")
+            var text = $(this).data("text")
+            var obj = $(this);
+            Swal.fire({
+                title: "¿Esta Seguro?",
+                html: text,
+                icon: 'question',
+                showCancelButton: true,
+                reverseButtons: false,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#21618C',
+                cancelButtonColor: '#666666',
+            }).then((result) => {
+                if (result.value) {
+                    location.replace(hrefs)
+                }
+            });
+        })
+        $(".editCampNewWindow").click(function () {
+            var hrefs = $(this).data("href")
+            var text = $(this).data("text")
+            var obj = $(this);
+            Swal.fire({
+                title: "¿Esta Seguro?",
+                html: text,
+                icon: 'question',
+                showCancelButton: true,
+                reverseButtons: false,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#21618C',
+                cancelButtonColor: '#666666',
+            }).then((result) => {
+                if (result.value)
+                    window.open(hrefs, "_blank");
+            });
+        })
+        
+    })
+
+    </script>
+}

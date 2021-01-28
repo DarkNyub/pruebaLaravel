@@ -1,0 +1,257 @@
+﻿@model  Nodo.Models.employee
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+<!-- Registration form -->
+    <div class="card flex-fill">
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Nuevo usuario</h6>
+            @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+        </div>
+        <div class="card-body">
+            <form class="" action="@Url.Action("StoreUser")" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="col-sm-12 text-center mb-2">
+                            <label class="d-block">Imágen de perfil</label>
+                            <img src="~/Content/global_assets/images/placeholders/user.png" id="imgProfile" alt="" width="100" height="100" class="img-center img-responsive rounded-circle">
+                            <div class="input-group input-group-lg mt-2">
+                                <input type="file" name="ImageFile" class="form-control-file form-control" id="customFile"
+                                       onchange="document.getElementById('imgProfile').src = window.URL.createObjectURL(this.files[0])">
+                            </div>
+                        </div><!-- end media -->
+                        <div class="col-sm-12 text-center mb-2">
+                            <label class="d-block">Imágen de fondo</label>
+                            <img src="~/Content/global_assets/images/backgrounds/user_bg3.jpg" id="imgBack" alt="" width="100" height="100" class="img-center img-responsive">
+                            <div class="input-group input-group-lg mt-2">
+                                <input type="file" name="ImageFileBack" class="form-control-file form-control" id="customFile"
+                                       onchange="document.getElementById('imgBack').src = window.URL.createObjectURL(this.files[0])">
+                            </div>
+                        </div><!-- end media -->
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-feedback form-group-feedback-right">
+                                <input type="text" name="firstName" class="form-control" placeholder="Nombre">
+                                <div class="form-control-feedback">
+                                    <i class="icon-user-check text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-feedback form-group-feedback-right">
+                                <input type="text" name="lastName" class="form-control" placeholder="Apellido">
+                                <div class="form-control-feedback">
+                                    <i class="icon-user-check text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-feedback form-group-feedback-right">
+                                <input type="email" name="email" class="form-control" placeholder="Correo electrónico">
+                                <div class="form-control-feedback">
+                                    <i class="icon-mention text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-feedback form-group-feedback-right">
+                                <input type="text" name="phoneMobile" class="form-control" placeholder="Número móvil">
+                                <div class="form-control-feedback">
+                                    <i class="icon-phone2 text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-feedback form-group-feedback-right">
+                                <select name="idprofile" id="idProfile" class="form-control form-control-sm">
+                                    <option></option>
+                                    @foreach (dynamic row in ViewBag.rowProfiles)
+                                    {
+                                        <option value="@row["idPerfil"]">@row["Perfil"]</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-1">
+                    <div class="col-sm-6 text-center">
+                        <button type="submit" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1"><b><i class="icon-plus3"></i></b> Crear</button>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <a href="@Url.Action("Index")" class="btn btn-secondary btn-sm btn-labeled btn-labeled-right m-1"><b><i class="icon-cancel-circle2"></i></b> Cancelar</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+<!-- /registration form -->
+
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            /*$(".datepicker").flatpickr({
+                dateFormat: "d-m-Y",
+                "locale": "es",
+                //enableTime: false,
+                //minDate:new Date()
+            });*/
+            $("#idProfile").select2({
+                placeholder: "Perfil"
+            });
+
+            $("#actupass").click(function () {
+                var entre = false;
+                var koas = "";
+                if ($("#confimnewpass").val().length > 0) {
+                    if ($("#newpass").val() === $("#confimnewpass").val())
+                        entre = false;
+                    else {
+                        koas ='The Passwords Do Not Match, Please Verify';
+                        entre = true;
+                    }
+                }
+                else {
+                    koas ='The Passwords Do Not Match, Please Verify';
+                    entre = true;
+                }
+                if (entre)
+                    toastr.error(koas);
+                else {
+                    Swal.fire({
+                        title: "¿Esta Seguro?",
+                        html: "De Actualizar La Contraseña",
+                        type: 'question',
+                        showCancelButton: true,
+                        reverseButtons: true,
+                        confirmButtonText: 'Aceptar',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#2d3c80',
+                        cancelButtonColor: '#606060',
+                        backdrop: false,
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajax({
+                                type: 'post',
+                                url: '@Url.Action("actualizarPassword")',
+                                timeout: 0,
+                                data: $("#formActuProfile").append($("#holas")).serialize(),
+                                success: function (response) {
+                                    response = JSON.parse(response)[0];
+                                    if (response.respuesta == 1) {
+                                        Swal.fire({
+                                            type: 'success',
+                                            html: "Contraseña Actualizada Con Éxito.",
+                                            title: "Muy Bien.",
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    }
+                                    else
+                                        toastr.error("No Se Pudo Actualizar La Contraseña, Intentelo Mas Tarde", "Error", { timeOut: 2000 })
+                                    $("#newpass").val("")
+                                    $("#confimnewpass").val("")
+                                },
+                                error: function (response) {
+                                        toastr.error("Proximamente.", "Info.", { timeOut: 2000 })
+                                }
+                            });
+                        }
+                    });
+                }
+            })
+            $('.areamask').mask('(000) 000 0000');
+            $('.ceduls').mask('#');
+            $('.datepickers').mask('00-00-0000');
+            $(".datepickers").blur(function () {
+                if (moment($(this).val(), 'DD-MM-YYYY', true).isValid()) {
+                    if (moment($(this).val().split("-")[2] + "-" + $(this).val().split("-")[1] + "-" + $(this).val().split("-")[0]).isAfter(moment().subtract(17, 'years').format("YYYY-MM-DD"), 'day')) {
+                        toastr.error("Fecha de nacimiento superior a fecha actual, por favor verifique.", "Info.");
+                        $(this).val("");
+                    }
+                }
+                else {
+                    toastr.error("Fecha de nacimiento no valida, por favor verifique.", "Info.");
+                    $(this).val("");
+                }
+
+            })
+            var dateToday = new Date();
+            $(".datepickers").datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                endDate: dateToday,
+            });
+            $(".emailVeri").blur(function () {
+                var ss = $(this);
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("verifyEmail")',
+                    timeout: 0,
+                    data: {id:ss.val()},
+                    success: function (response) {
+                        response = JSON.parse(response)[0];
+                        if (response.respuesta > 0) {
+                            toastr.error("Email ya no esta disponible para nuestro sistema, intente con otro.", "Info.")
+                            $(".btnsave").addClass("disabled")
+                        }
+                        else {
+                            $(".btnsave").removeClass("disabled")
+                        }
+                    },
+                    error: function (response) {
+                            toastr.error("Error en la consulta, intentelo nuevamente.", "Info.")
+                    }
+                });
+            })
+            $(".phoneVerif").blur(function () {
+                var ss = $(this);
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("verifyPhone")',
+                    timeout: 0,
+                    data: {id:ss.val()},
+                    success: function (response) {
+                        response = JSON.parse(response)[0];
+                        if (response.respuesta > 0) {
+                            toastr.error("Número Telefónico ya no esta disponible para nuestro sistema, intente con otro.", "Info.")
+                            $(".btnsave").addClass("disabled")
+                        }
+                        else {
+                            $(".btnsave").removeClass("disabled")
+                        }
+                    },
+                    error: function (response) {
+                            toastr.error("Error en la consulta, intentelo nuevamente.", "Info.")
+                    }
+                });
+            })
+
+        })
+    </script>
+}

@@ -1,0 +1,74 @@
+﻿
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Clientes</h6>
+        @*<div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item" data-action="collapse"></a>
+                <a class="list-icons-item" data-action="reload"></a>
+                <a class="list-icons-item" data-action="remove"></a>
+            </div>
+        </div>*@
+    </div>
+    <div class="card-body">
+        <table class="table table-sm tabss" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Clientes</th>
+                    <th class="text-center" style="width:10% !important">Todos <input type="checkbox" id="allCheck" style="width:30px !important; height:30px !important" /></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(ViewBag.rowClients != null)
+                {
+                    foreach (var row in ViewBag.rowClients)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="mr-2">
+                                        <a href="@row["srcImage"]" target="_blank">
+                                            <img src="@row["srcImage"]" class="rounded-circle" width="32" height="32" alt="">
+                                        </a>
+                                    </div>
+                                    <div>
+                                        @{ 
+                                            ViewBag.clases = "cursor-default";
+                                            if(Convert.ToInt32(row["idStatus"]) == 1)
+                                            {
+                                                ViewBag.clases = "cursor-pointer btnselected";
+                                            }
+                                        }
+                                        <a class="text-default font-weight-semibold @ViewBag.clases" 
+                                           data-id="@row["idClient"]" 
+                                           data-phone="@row["phoneNumber"]"
+                                           data-name="@row["firstName"]"
+                                           >@row["firstName"] @row["LAstName"]
+                                            <div class="text-muted font-size-sm">
+                                                @row["phoneNumber"]
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="list-icons ml-auto">
+                                    <input type="checkbox" class="numberPhoneClient" value="@row["phoneNumber"]" style="width:30px !important; height:30px !important" />
+                                    @*<div class="dropdown">
+                                        <a href="#" class="list-icons-item dropdown-toggle caret-0" data-toggle="dropdown"><i class="icon-menu7"></i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a href="#" class="dropdown-item"><i class="icon-file-stats"></i> View statement</a>
+                                            <a href="#" class="dropdown-item"><i class="icon-file-text2"></i> Edit campaign</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a href="#" class="dropdown-item"><i class="icon-file-locked"></i> Disable campaign</a>
+                                        </div>
+                                    </div>*@
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

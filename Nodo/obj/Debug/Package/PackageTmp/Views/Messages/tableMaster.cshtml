@@ -1,0 +1,1029 @@
+﻿@{
+    if (HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] != null)
+    {
+        Session["urlHttp"] = HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] + "//" + HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[2];
+    }
+    List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)Session["config"];
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+@section css{
+    <style type="text/css">
+        .kook .dataTables_filter input{
+            width:100px !important;
+        }
+        .kook #DataTables_Table_1_length, .kook #DataTables_Table_1_filter, #DataTables_Table_0_filter {
+            margin-bottom: 3px !important;
+            margin-left:3px !important;
+        }
+        .kook .tabComment thead, .tabss thead{
+            display: none !important;
+        }
+        .chatList .media-chat .media.media-chat-item-reverse{
+            margin-left:10px !important;
+            margin-top: 0px !important;
+        }
+        .chatList .media-chat .media {
+            margin-right: 10px !important;
+            margin-top: 0px !important;
+        }
+        .spinner-border {
+            height:1rem !important;
+            width:1rem !important;
+        }
+        .media-body.image_hola {
+            max-height:200px !important;
+            overflow:hidden !important;
+        }
+        .media-chat-scrollable{
+            max-height:290px !important;
+        }
+        .media .media-body .media-chat-item {
+            max-width: 479px !important;
+        }
+    </style>
+}
+<!-- Basic table -->
+<div class="row">
+    <div class="col-sm-3 pr-0">
+        <div class="row">
+            @*<div class="col-sm-12">
+                @Html.Partial("/Views/Messages/Partials/smartDataLauncher.cshtml")
+            </div>*@
+            <div class="col-sm-12">
+                @Html.Partial("/Views/Messages/Partials/findClient.cshtml")
+            </div>
+            <div class="col-sm-12">
+                @Html.Partial("/Views/Messages/Partials/tableClients.cshtml")
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 d-none chatBar">
+        @Html.Partial("/Views/Messages/Partials/send.cshtml")
+    </div>
+    <div class="col-sm-6" id="hiddenMesage">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-sm-12 text-center">
+                    <h6>Por favor selecciona un cliente para iniciar.</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3 d-none chatBar pl-0">
+        @Html.Partial("/Views/Messages/Partials/info.cshtml")
+    </div>
+</div>
+<!-- /basic table -->
+
+@section scriptsTop{
+    <script type="text/javascript">
+        var VTOKEN = '@Lconfig.Where(ee => ee.name == "token").First().value';
+        var VINSTANCE = '@Lconfig.Where(ee => ee.name == "instance").First().value';
+        var VURL = '@Lconfig.Where(ee => ee.name == "urlApi").First().value' + VINSTANCE;
+        var IMAGEURL = '@Session["image"]';
+        var VIDCLIENT = @Convert.ToInt32(Session["idClient"]);
+    </script>
+}
+@section scriptsButtom{
+    <script type="text/javascript">
+        var vidProfile = @Convert.ToInt32(Session["idProfile"]);
+    </script>
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                icon: '@Session["type"]',
+                title: '@Session["title"]',
+                html: '@Session["message"]',
+                showConfirmButton: false,
+                timer: 3000
+            })
+        </script>
+        Session.Remove("type");
+        Session.Remove("tittle");
+        Session.Remove("message");
+    }
+    @if (Session["return"] != null)
+    {
+        <script type="text/javascript">
+            var vjson = '@Session["return"].ToString()'.replace(/\&#39;/g, '"');
+            if (vjson.includes('{')) {
+                data = JSON.parse(vjson);
+                var vtext = data.message;
+                if (data.sent)
+                    toastr.success(vtext);
+                else
+                    toastr.info(vtext);
+            }
+            else 
+                toastr.info(vjson);
+        </script>
+        Session.Remove("return");
+    }
+<script type="text/javascript">
+        $("#inputFindNumber").mask("###");
+        $(document).ready(function(){
+            $(document).on("click", "#reloadChatList", function () {
+                $("#spinerIconListClient").removeClass("d-none")
+                reloadChatList()
+            });
+            $(document).on("click", "#freeAll", function () {
+                Swal.fire({
+                    title: '¿Esta seguro?',
+                    html: 'De liberar a todos los clientes que esta atendiendo',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirmar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var href = '@Url.Action("FreeAllByAgent")';
+                        $.ajax({
+                            type: 'get',
+                            url: href,
+                            timeout: 0,
+                            //data: $("#formComment").serialize(),
+                            beforeSend: function (resp) {
+
+                            },
+                            success: function (data) {
+                                data = JSON.parse(data)[0];
+                                toastr.success("Todos los clientes han sido liberados", "Información", { timeOut: 1000 })
+                                reloadChatList()
+                            },
+                            error: function (data) {
+                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                            }
+                        });
+                    }
+                })
+            });
+            $(document).on("click", ".freeClient", function () {
+                var vidClient = $(this).data("id");
+                var href = '@Url.Action("FreeClientByAgent")';
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    data: {idClient : vidClient},
+                    beforeSend: function (resp) {
+
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data)[0];
+                        toastr.success("El cliente ha sido liberado", "Información", { timeOut: 1000 })
+                        $("#free_"+vidClient).html("Liberado")
+                        //reloadChatList()
+                    },
+                    error: function (data) {
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                });
+            });
+            $(document).on("click", ".freeClientBot", function () {
+                var vidClient = $(this).data("id");
+                var href = '@Url.Action("FreeClientBotByAgent")';
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    data: {idClient : vidClient},
+                    beforeSend: function (resp) {
+
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data)[0];
+                        toastr.success("El cliente ha sido liberado", "Información", { timeOut: 1000 })
+                        $("#free_" + vidClient).html("Liberado");
+                    },
+                    error: function (data) {
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                });
+            });
+        })
+        $(document).on("keypress", "#inputFindNumber", function (event) {
+            if (event.which == 13)
+                $(".btnSearchNumber").trigger("click");
+        });
+        $(document).on("click", ".btnSearchNumber", function () {
+            if ($("#inputFindNumber").val().length > 3) {
+                $(".tableFn").addClass("d-none")
+                $("#tableClientsFind").html("");
+                var spin = $("#spinerIconListClientFind");
+                $.ajax({
+                    type: 'get',
+                    url: '@Url.Action("findClientByPhoneNumber")',
+                    timeout: 0,
+                    data: { pPhoneNumber: $("#inputFindNumber").val(), idCampaigns: $("#inputidCampaign").val() },
+                    beforeSend: function (resp) {
+                        spin.removeClass("d-none");
+                    },
+                    success: function (response) {
+                        spin.addClass("d-none");
+                        data = JSON.parse(response);
+                        $.each(data, function (index, row) {
+                            ShowIndividualClient(row, "#tableClientsFind" )
+                        });
+                        $(".tableFn").removeClass("d-none")
+                    },
+                    error: function (data) {
+                        spin.addClass("d-none");
+                        toastr.error("Hubo un problema obteniendo los datos del cliente, contacte al administrador", "Error", { timeOut: 1000 })
+                    }
+                });
+            }
+            else {
+                toastr.info("No hay número que buscar o mímino 4 números", "", { timeOut: 1000, "positionClass": "toast-top-left"});
+            }
+        });
+        $(document).on("click", ".showMedia", function () {
+            var vurl = $(this).data("href");
+            var vtype = $(this).data("type");
+            if (vtype == "video") {
+                Swal.fire({
+                    title:"Video",
+                    html: '<video controls="controls" height="650" width="400" class="w-100"><source src="' + vurl + '" /></video>',
+                    showConfirmButton: false,
+
+                })
+            }
+            if (vtype == "image") {
+                Swal.fire({
+                    title: "Imágen",
+                    html: '<a target="_blank" href="' + vurl +'"><img class=" class="w-100"" src="' + vurl + '" width="470" /></a>',
+                    showConfirmButton: false,
+                })
+            }
+        })
+
+        function getMessages(pid, vname) {
+            $('#chatList').html("");
+            @*var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlMessages").First().value';*@
+            /*var spin = $("#spinerIcon");
+            pid += decodeURIComponent('%40')+"c.us";
+            $.ajax({
+                type: 'get',
+                timeout: 0,
+                url: VURL + "/" + VURLMESSAGE,
+                data: { last: true, chatId: pid, token: VTOKEN},
+                beforeSend: function (resp) {
+                    spin.removeClass("d-none");
+                },
+                success: function (response) {
+                    spin.addClass("d-none");
+                    if(vname != null)
+                        toastr.success('Información de conversación de ' + vname + ' obtenida');
+                    if (response.messages.length > 0) {
+                        $.each(response.messages, function (index, item) {
+                            var dTime = convertDateTime(item.time);
+                            var sks = "";
+                            if (item.fromMe) {
+                                sks = '<li class="media media-chat-item-reverse pt-1 pb-1">';
+                                sks += '<div class="media-body ' + item.type+'_hola">';
+                                    var mediainfo = item.body;
+                                    if (item.type == "vcard")
+                                        mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                                    if (item.type == "document")
+                                        mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                                    if (item.type == "ptt" || item.type == "audio")
+                                        mediainfo = '<audio controls="controls" class=""><source src="' + item.body + '" /></audio>';
+                                    if (item.type == "image")
+                                        mediainfo = '<img class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="'+item.type+'" src="' + item.body + '" width="240" heigth="240" />';
+                                    if (item.type == "video")
+                                        mediainfo = '<video class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="' + item.type +'" width="320" height="200"><source src="' + item.body + '" /></video>';
+
+                                        sks += '<div class="media-chat-item">'+mediainfo+'</div>';
+                                        sks += '<div class="font-size-sm text-muted">' + dTime[3] + ':' + dTime[4]+' </div>';
+                                    sks += '</div>';
+                                    sks += '<div class="ml-3">';
+                                        sks += '<a href="' + IMAGEURL+'" target="_blank">';
+                                            sks += '<img src="'+IMAGEURL+'" class="rounded-circle" width="40" height="40" alt="">';
+                                        sks += '</a>';
+                                    sks += '</div>';
+                                sks += '</li>';
+                            } else {
+                                sks = '<li class="media pt-1 pb-1">';
+                                    sks += '<div class="mr-3">';
+                                        sks += '<a href="/Content/global_assets/images/placeholders/placeholder.jpg" target="_blank">';
+                                            sks += '<img src="/Content/global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" width="40" height="40" alt="">';
+                                        sks += '</a>';
+                                    sks += '</div>';
+                                    sks += '<div class="media-body ' + item.type+'_hola">';
+                                    var mediainfo = item.body;
+                                    if (item.type == "vcard")
+                                        mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                                    if (item.type == "document")
+                                        mediainfo = '<a href="' + item.body + '" target="_blank" >documento</a>';
+                                    if (item.type == "ptt" || item.type == "audio")
+                                        mediainfo = '<audio controls="controls" class=""><source src="' + item.body + '" /></audio>';
+                                    if (item.type == "image")
+                                        mediainfo = '<img class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="'+item.type+'" src="' + item.body + '" width="240" heigth="240" />';
+                                    if (item.type == "video")
+                                        mediainfo = '<video class="showMedia cursor-pointer " data-href="' + item.body + '" data-type="' + item.type +'" width="320" height="200"><source src="' + item.body + '" /></video>';
+
+                                        sks += '<div class="media-chat-item">'+mediainfo+'</div>';
+                                        sks += '<div class="font-size-sm text-muted">' + dTime[3] + ':' + dTime[4] + ' </div>';
+                                    sks += '</div>';
+                                sks += '</li>';
+                            }
+                            $('#chatList').append(sks)
+                        });
+                        $("#chatList").animate({ scrollTop: 80000 },1000);
+                    }
+                },
+                error: function (data) {
+                    spin.addClass("d-none");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            });//*/
+        }
+
+        function getComments(pidClient) {
+            var href = "@Url.Action("getCommentByClient")/" + pidClient;
+            var spin = $("#spinerIconComments")
+            $(".tabComment").DataTable().clear().destroy();
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                data: { },
+                beforeSend: function (resp) {
+                    spin.removeClass("d-none");
+                },
+                success: function (response) {
+                    spin.addClass("d-none");
+                    data = JSON.parse(response);
+                    if (data != undefined) {
+                        $.each(data, function (index, item) {
+                            sks = "";
+                            sks += '<tr>';
+                                sks += '<td>';
+                                    sks += '<div class="media-body">';
+                                        sks += '<div class="d-flex justify-content-between">';
+                                            sks += '<a><strong>'+item.nameEmployee+'</strong></a>';
+                                            sks += '<a class="text-muted">Fecha: <strong>'+moment(item.created_at).format("DD/MM/YYYY HH:mm")+'</strong></a>';
+                                        sks += '</div>';
+                                        sks += '<p>'+item.comment+'</p>';
+                                    sks += '</div>';
+                                sks += '</td>';
+                            sks += '</tr>';
+                            $('#tableComment').prepend(sks)
+                        });
+                        $(".tabComment").DataTable({
+                            "info": false,
+                            paging: true,
+                            destroy: true,
+                            "scrollX": false,
+                            ordering: false,
+                            language: {
+                                url: 'Content/assets/js/Spanish.json'
+                            },
+                            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+                        });
+                    }
+                    else
+                        toastr.warning("No hay comentarios que cargar", "Noticia", { timeOut: 2000 })
+
+                },
+                error: function (data) {
+                    spin.addClass("d-none");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            });
+        }
+
+        function sendMessajeFile(pobj, pfile) {
+            var VURLMESSAGE = "sendFile";//pfile.sendUrl;
+            var vbody = $("#messagebodyChat").val();
+            var vcaption = vbody;
+            var vphone = $("#numberPhoneChat").val();
+            vbody = pfile.href;
+            var datas;
+            datas = { chatId: "", phone: vphone, body: vbody, filename: pfile.filename, caption: vcaption};
+            $.ajax({
+                type: 'post',
+                url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                timeout: 0,
+                data: datas,
+                beforeSend: function (resp) {
+                    pobj.addClass("spinner");
+                },
+                success: function (data) {
+                    pobj.removeClass("spinner");
+                    if (data.sent) {
+                        toastr.success('Mensaje ha sido enviado', 'Bien', { timeOut: 500 });
+                        $("#messagebodyChat").val("");
+                        $("#addFile").trigger("click");
+                        sendMessageFromEmployee(vphone);
+                        //getMessages($("#numberPhoneChat").val());
+                    }
+                    else {
+                        toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                    }
+                },
+                error: function (data) {
+                    pobj.removeClass("spinner");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            });
+        }
+
+        function storeFile(pobj) {
+            var href = "@Url.Action("StoreFileClientAsync")";
+            var form = $('#formChat')[0];
+            var data = new FormData(form);
+            $.ajax({
+                type: 'post',
+                url: href,
+                timeout: 0,
+                async: true,
+                enctype: 'multipart/form-data',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (response) {
+                    if (response.respuesta == 1)
+                        sendMessajeFile(pobj, response);
+                    else {
+                        //obj.removeClass("spinner");
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                },
+                error: function (data) {
+                    //obj.removeClass("spinner");
+                    //spin.addClass("d-none");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            });
+        }
+
+        function getCampaignByClient(pidClient) {
+            var href = "@Url.Action("getCampaignCatalogByClient")/" + pidClient;
+            var spin = $("#spinerIconCampaign")
+            $("#rowCatalog").html("")
+            $("#containerData").html("");
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                data: { vidCampaign: $("#vIdCampaign").val()},
+                beforeSend: function (resp) {
+                    spin.removeClass("d-none");
+                },
+                success: function (response) {
+                    spin.addClass("d-none");
+                    data = JSON.parse(response);
+                    if (data.length > 0) {
+                        $("#nameCampaign").html(data[0].nameCampaign)
+                        $.each(data, function (index, rowfather) {
+                            var smk = "";
+                            var vname = "";
+                            if (vidProfile == 3)
+                                vname = "disabled";
+                            if (rowfather.type == 1) {
+                                if (rowfather.idfather == 0) {
+                                    smk += '<div class="row mt-1">';
+                                    smk += '<div class="col-sm-12 mt-2">';
+                                    smk += '<span class="d-block">' + rowfather.nameCatalog + '</span>';
+                                    smk += '<select data-idcampaignfather="' + rowfather.idCatalog + '" style="width:100%" ' + vname+' class="form-control selecCatalog hola" id="catalog_' + rowfather.idCatalog + '">';
+                                    smk += '<option></option>';
+                                    $.each(data, function (index, rowson) {
+                                        if (rowson.idfather == rowfather.idCatalog) {
+                                            if (rowfather.catalogAlone == 1) {
+                                                if (rowson.idCatalogSon != null) {
+                                                    if (rowson.idCatalogSon == rowson.idCatalog) {
+                                                        if (rowson.lastActionSon == 1)
+                                                            smk += '<option selected value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+                                                    }
+                                                }
+                                            }
+                                            else {
+                                                if (rowson.idCatalogSon != null) {
+                                                    if (rowson.idCatalogSon == rowson.idCatalog) {
+                                                        if (rowson.lastActionSon == 1)
+                                                            smk += '<option selected value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+                                                        else
+                                                            smk += '<option value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+                                                    }
+                                                }
+                                                if (rowson.idCatalogSon == null && rowson.lastActionSon == null)
+                                                    smk += '<option value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+                                            }
+                                        }
+                                    });
+
+                                }
+                                smk += '</select>';
+                                smk += '</div>';
+                                smk += '</div>';
+                                $("#containerData").append(smk);
+                            }
+                            if (rowfather.type == 2) {
+                                if (rowfather.idfather == 0) {
+                                    smk += '<div class="col-sm-12 mt-2">';
+                                    smk += '<span class="d-block">' + rowfather.nameCatalog + '</span>';
+                                    smk += '<select data-idcampaignfather="' + rowfather.idCatalog + '" style="width:100%" ' + vname+' class="form-control selecCatalog hola" id="catalog_' + rowfather.idCatalog + '">';
+                                    smk += '<option></option>';
+                                    $.each(data, function (index, rowson) {
+                                        if (rowson.idfather == rowfather.idCatalog) {
+                                            if (rowson.idCatalogSon != null) {
+                                                if (rowson.idCatalogSon == rowson.idCatalog) {
+                                                    if (rowson.lastActionSon == 1)
+                                                        smk += '<option selected value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+                                                    else
+                                                        smk += '<option value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+                                                }
+                                            }
+                                            else
+                                                smk += '<option value="' + rowson.idCatalog + '|">' + rowson.nameCatalog + '</option>';
+
+                                        }
+                                    });
+                                }
+                                smk += '</select>';
+                                smk += '</div>';
+                                $("#rowCatalog").append(smk);
+                            }
+                        })
+                        $(".selecCatalog").select2({
+                            placeholder: "Seleccione",
+                            tags: true
+                        })
+                    }
+                },
+                error: function (data) {
+                    spin.addClass("d-none");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            })
+        };
+
+        function getDataClient(pidClient) {
+            var href = "@Url.Action("getDataClient")/" + pidClient;
+            var spin = $("#spinerIconDataClient")
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                data: { },
+                beforeSend: function (resp) {
+                    spin.removeClass("d-none");
+                },
+                success: function (response) {
+                    spin.addClass("d-none");
+                    data = JSON.parse(response)[0];
+                    toastr.success("Datos del cliente obtenidos", "", { timeOut: 500 })
+                    $("#idclientLabel").html(String("00000" + pidClient).slice(-5));
+                    var lastName = "";
+                    if (data.LastName != undefined) {
+                        if (lastName != null)
+                            lastName = data.LastName;
+                    }
+                    $(".nameUserChat").html(data.firstName + ' ' + lastName);
+                    $("#spanUserChat").html(data.firstName);
+                    $("#lastNameUserChat").html(lastName);
+                    $("#phoneUserChat").html(data.phoneNumber);
+                    $("#documentUserChat").html(data.numDocument);
+
+                    $("#hdChatClient").val(data.phoneNumber);
+                    $("#hdSrcImage").val(data.srcImage);
+                    $("#panelChatList_" + VIDCLIENT).data("phonenumber", data.phoneNumber)
+                },
+                error: function (data) {
+                    spin.addClass("d-none");
+                    toastr.error("Hubo un problema obteniendo los datos del cliente, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            });
+        }
+
+        function getCatalogClientOld(pidClient) {
+            var href = "@Url.Action("getCatalogClient")/" + pidClient;
+            var spin = $("#spinerIconCampaign")
+            $("#rowCatalog").html("")
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                data: {},
+                beforeSend: function (resp) {
+                    //spin.removeClass("d-none");
+                },
+                success: function (response) {
+                    spin.addClass("d-none");
+                    data = JSON.parse(response);
+                    console.log(data)
+                    if (data != undefined) {
+                        $("#nameCampaign").html(data[0].nameCampaign)
+                        $.each(data, function (index, rowfather) {
+                            var smk = "";
+                            if (rowfather.idfather == 0) {
+                                smk += '<div class="col-sm-12 mt-1">';
+                                    smk += '<span>'+rowfather.nameCatalog+'</span>';
+                                    smk += '<select data-idcampaignfather="' + rowfather.idCatalog+'" class="form-control selecCatalog" id="catalog_' + rowfather.idCatalog+'">';
+                                        smk += '<option></option>';
+                                        $.each(data, function (index, rowson) {
+                                            if (rowson.idfather == rowfather.idCatalog) {
+                                                if (rowSon.idCatalogSon != null) {
+                                                    if (rowSon.idCatalogSon == rowSon.idCatalog)
+                                                        smk += '<option selected value="' + rowson.idCatalog + '">' + rowson.nameCatalog + '</option>';
+                                                    else
+                                                        smk += '<option value="' + rowson.idCatalog + '">' + rowson.nameCatalog + '</option>';
+                                                }
+                                                else
+                                                    smk += '<option value="' + rowson.idCatalog + '">' + rowson.nameCatalog + '</option>';
+
+                                            }
+                                        });
+                            }
+                            smk += '</select>';
+                            smk += '</div>';
+                            $("#rowCatalog").append(smk);
+                        })
+                        $(".selecCatalog").select2({
+                            placeholder: "Seleccione",
+                            tags: true
+                        })
+                    }
+                },
+                error: function (data) {
+                    spin.addClass("d-none");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            })
+        };
+
+        function verifyBotCampaign(pidClient) {
+            var href = '@Url.Action("verifyBotCampaign")'
+            $("#hasBot").html("").addClass("d-none");
+            $.ajax({
+                type: 'get',
+                url: href,
+                timeout: 0,
+                //data: { },
+                beforeSend: function (resp) {
+                    //spin.removeClass("d-none");
+                },
+                success: function (response) {
+                    //spin.addClass("d-none");
+                    data = JSON.parse(response)[0];
+                    if (data.isBot == 1) {
+                        var vhtml = "";
+                        vhtml += '<div class="col-sm-6 text-center">';
+                            vhtml += '<small id="returnBot" data-href="@Url.Action("changeClientToBot")/'+pidClient+'" class="btn btn-sm cursor-pointer d-block font-size-xs">Devolver al bot</small>';
+                        vhtml += '</div>';
+                        vhtml += '<div class="col-sm-6 text-center">';
+                            vhtml += '<small id="atendantAgent" data-href="@Url.Action("changeClientToAgent")/'+pidClient+'" class="btn btn-sm cursor-pointer d-block font-size-xs">Atender Directo</small>';
+                        vhtml += '</div>';
+                        $("#hasBot").html(vhtml);
+                        $("#hasBot").removeClass("d-none");
+                    }
+                },
+                error: function (data) {
+                    //spin.addClass("d-none");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            $(document).on("click", "#returnBot", function () {
+                Swal.fire({
+                    title: '¿Esta seguro?',
+                    html:'De devolver este cliente al ChatBot',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirmar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        var href = $(this).data('href');
+                        $.ajax({
+                            type: 'get',
+                            url: href,
+                            timeout: 0,
+                            //data: $("#formComment").serialize(),
+                            beforeSend: function (resp) {
+
+                            },
+                            success: function (data) {
+                                data = JSON.parse(data)[0];
+                                toastr.success("Cliente fue devuelto al chatBot.", "", { timeOut: 500 });
+                                var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlSendMessage").First().value';
+                                var vbody =data.response;
+                                var vphone = $("#numberPhoneChat").val();
+                                $.ajax({
+                                    type: 'post',
+                                    url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                                    timeout: 0,
+                                    data: { chatId: "", phone: vphone, body: vbody },
+                                    beforeSend: function (resp) {
+                                    },
+                                    success: function (data) {
+                                        if (data.sent) {
+                                            toastr.success('Mensaje ha sido enviado', 'Bien', { timeOut: 500 });
+                                            sendMessageFromEmployee(vphone);
+                                            location.reload();
+                                        }
+                                        else {
+                                            toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                        }
+                                    },
+                                    error: function (data) {
+                                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                                    }
+                                });
+                            },
+                            error: function (data) {
+                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                            }
+                        });
+                    }
+                })
+            })
+            $(document).on("click", "#atendantAgent", function () {
+                Swal.fire({
+                    title: '¿Esta seguro?',
+                    html:'De atender directamente a este cliente',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirmar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        var href = $(this).data('href');
+                        $.ajax({
+                            type: 'get',
+                            url: href,
+                            timeout: 0,
+                            //data: $("#formComment").serialize(),
+                            beforeSend: function (resp) {
+
+                            },
+                            success: function (data) {
+                                data = JSON.parse(data)[0];
+                            },
+                            error: function (data) {
+                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                            }
+                        });
+                    }
+                })
+            })
+            $(document).on("keypress", ".kpkp", function (e) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    return false;
+                }
+            });
+            $("#formua").select2({
+                placeholder: "seleccione"
+            });
+            $(document).on("click", ".btnEditPencil", function () {
+                var vobj = $(this);
+                var vspan = $("#" + vobj.data("span"));
+                var vinput = $("#" + vobj.data("input"));
+                if (vobj.hasClass("seleca")) {
+                    vspan.removeClass("d-none");
+                    vinput.addClass("d-none").children("form").children("input[name=data]").val(vspan.html());
+                    vobj.removeClass("seleca").children("i").addClass("icon-pencil").removeClass("icon-x");
+                }
+                else {
+                    vspan.addClass("d-none");
+                    vinput.removeClass("d-none").children("form").children("input[name=data]").val(vspan.html());
+                    vobj.addClass("seleca").children("i").removeClass("icon-pencil").addClass("icon-x");
+                }
+            });
+            $(document).on("click", ".btnCheckedForm", function () {
+                var vobj = $(this);
+                var pform = $("#" + vobj.data("form"));
+                var vspan = $("#" + vobj.data("span"));
+                var vinput = $("#" + vobj.data("input"));
+                var vbtn = $("." + vobj.data("buton"));
+                $.ajax({
+                    type: pform.attr('method'),
+                    url: pform.attr('action'),
+                    timeout: 0,
+                    data: pform.serialize(),
+                    beforeSend: function (resp) {
+                        vobj.children('i').addClass("spinner")
+                    },
+                    success: function (data) {
+                        vobj.children('i').removeClass("spinner")
+                        toastr.success("Cambio realizado con éxito", "Bien", { timeOut: 500 })
+                        if (vobj.data("gender")) {
+                            vspan.html(vinput.children("form").children("select").val().split('-')[1]);
+                        }
+                        else {
+                            vspan.html(vinput.children("form").children("input[name=data]").val());
+                        }
+                        vinput.addClass("d-none")
+                        vspan.removeClass("d-none");
+                        vbtn.removeClass("seleca").children("i").addClass("icon-pencil").removeClass("icon-x");
+                    },
+                    error: function (data) {
+                        vobj.children('i').removeClass("spinner")
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                });
+            })
+            $(document).on("click", "#letterMore", function () {
+                if ($(this).hasClass("seltec")) {
+                    $(this).removeClass("seltec").html("Mostrar más")
+                    $("#moreData").addClass("collapse")
+                }
+                else {
+                    $(this).addClass("seltec").html("Mostrar menos")
+                    $("#moreData").removeClass("collapse")
+                }
+            })
+            $(document).on("click", "#addFile", function () {
+                if ($("#bodySecondary").hasClass("d-block"))
+                    $("#bodySecondary").removeClass("d-block")
+                else {
+                    $("#bodySecondary").addClass("d-block");
+                    $("#imgCompany").prop("src", "").addClass("d-none");
+                    $("#customFile").val("");
+                }
+            })
+            $(document).on("click", "#closeupdload", function () {
+                $("#imgCompany").prop("src", "").addClass("d-none");
+                $("#customFile").val("");
+            })
+            $(document).on("click", ".btnselected", function () {
+                var vOid = $(this).data("id");
+                var vphone = $(this).data("phone");
+                var vname = $(this).data("name");
+                $(".chatBar").removeClass("d-none")
+                $("#hiddenMesage").remove();
+                setTimeout(function () { verifyBotCampaign(vOid)}, 1000);
+                setTimeout(function () { getDataClient(vOid) }, 1000);//para obtener la info del cliente
+                setTimeout(function () { getCampaignByClient(vOid) }, 1000);//para obtener los datos de la campaña
+                setTimeout(function () { getMessagesMaster('57' + vphone, vname, '@Session["image"]');/*getMessages('57' + vphone, vname)*/ }, 1000) //para obtener la conversacion
+                setTimeout(function () { getComments(vOid) }, 1000) //para obtener la conversacion
+                //setTimeout(function () { getCatalogClient(vOid) }, 1500)
+                $("#numberPhoneChat").val('57'+vphone)
+                $("#chatToken").val(VTOKEN);
+                $(".idClients").val(vOid);
+                setTimeout(function () { notifySelectedClient('@Session["name"]', vphone); }, 1000)
+
+
+            })
+            $(document).on("change", ".selecCatalog", function () {
+                var vidClient = $(".idClients").val();
+                var vidCatalogFather = $(this).data("idcampaignfather");
+                var vidCatalogSon = $(this).val();
+                var href = '@Url.Action("storeClientCatalog")'
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    data: { idClient: vidClient, idCatalogFather: vidCatalogFather, idCatalogSon: vidCatalogSon },
+                    beforeSend: function (resp) {
+                        //spin.removeClass("d-none");
+                    },
+                    success: function (response) {
+                        //spin.addClass("d-none");
+                        data = JSON.parse(response)[0];
+                        if (data.respuesta == 1)
+                            toastr.success("Cambio realizado con éxito", "Bien", { timeOut: 500 })
+                        else
+                            toastr.warning("No hay conexión con la base de datos, contacte al administrador", "Error", { timeOut: 2000 })
+                    },
+                    error: function (data) {
+                        //spin.addClass("d-none");
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                })
+            })
+            $(document).on("click", ".sendMessageChat", function () {
+                var obj = $(this).children("b").children("i");
+                if ($("#customFile").val() != "") {
+                    storeFile(obj);
+                }
+                else {
+                    if ($("#messagebodyChat").val() != "") {
+                        var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlSendMessage").First().value';
+                        var vbody = $("#messagebodyChat").val();
+                        var vphone = $("#numberPhoneChat").val();
+                        $.ajax({
+                            type: 'post',
+                            url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                            timeout: 0,
+                            data: { chatId: "", phone: vphone, body: vbody },
+                            beforeSend: function (resp) {
+                                obj.addClass("spinner")
+                            },
+                            success: function (data) {
+                                obj.removeClass("spinner")
+                                if (data.sent) {
+                                    toastr.success('Mensaje ha sido enviado', 'Bien', { timeOut: 500 });
+                                    $("#messagebodyChat").val("");
+                                    //getMessages(vphone);
+                                    sendMessageFromEmployee(vphone);
+                                }
+                                else {
+                                    toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                }
+                            },
+                            error: function (data) {
+                                obj.removeClass("spinner")
+                                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                            }
+                        });
+                    }
+                    else {
+                        toastr.warning("No puede estar el mensaje vacío, intentelo nuevamente.", { timeOut: 2000 });
+                        obj.removeClass("spinner")
+                    }
+                }
+            });
+            $(document).on("click", "#btnComment", function () {
+                var href = "@Url.Action("storeComment")";
+                if ($("#newComment").val().length > 0) {
+
+                    $.ajax({
+                        type: 'post',
+                        url: href,
+                        timeout: 0,
+                        data: $("#formComment").serialize(),
+                        beforeSend: function (resp) {
+
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data)[0];
+                            if (data.respuesta == 1) {
+                                getComments(data.idClient);
+                                toastr.success("Comentario guardado con éxito.", "", { timeOut: 500 });
+                                $("#newComment").val("");
+                            }
+                            else
+                                toastr.error("Error al guardar el comentario, intentelo nuevamente.");
+                        },
+                        error: function (data) {
+                            toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                        }
+                    });
+                }
+                else
+                    toastr.warning("No puede estar el comentario vacío, intentelo nuevamente.");
+
+            });
+            $("#customFile").on('change', function () {
+                var countFiles = $(this)[0].files.length;
+                var __this = this;
+                var imgPath = $(this)[0].value;
+                var image_holder = $("#imgCompany");
+                var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+                //por si lo necesitas para preguntar que una imagen sea mayor del peso limite
+                var isOk = false;
+                var isOkss = false;
+                $(__this).each(function () {
+                    var size = 0;
+                    if (this.files.length > 0) {
+                        size = this.files[0].size;
+                    }
+                    var limit = 10000000;
+                    isOk = limit > size;
+                    if (!isOk) {
+                        return false;
+                    }
+                });
+                if ( extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg"
+                    || extn == "webp" || extn == "mp4" || extn == "mp3" || extn == "ogg"
+                    || extn == "doc" || extn == "docx" || extn == "txt" || extn == "xls"
+                    || extn == "xlsx" || extn == "pdf" || extn == "zip" /*|| extn == "rar"*/) {
+                    if (isOk) {
+                        if (typeof (FileReader) != "undefined") {
+                            for (var i = 0; i < countFiles; i++) {
+                                var reader = new FileReader();
+                                reader.onload = function (e) {
+                                    image_holder.prop("src", returnSRCIMG(extn, e.target.result));
+                                }
+                                image_holder.removeClass("d-none");
+                                reader.readAsDataURL($(this)[0].files[i]);
+                            }
+                        } else {
+                            toastr.warning("Este navegador no soporta FileReader", "Atención", { timeOut: 3000 });
+                        }
+                    } else {
+                        $("#closeupdload").trigger("click")
+                        toastr.warning("El archivo debe pesar menos de 10 Mb", "Atención", { timeOut: 3000 });
+                    }
+                }
+                else {
+                    $("#closeupdload").trigger("click")
+                    toastr.warning("Tipo de archivo no soportado", "Atención", { timeOut: 3000 });
+                }
+                //--------------------------------------------------------------------------
+            });
+        });
+</script>
+}

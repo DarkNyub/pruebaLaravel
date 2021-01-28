@@ -1,0 +1,299 @@
+﻿@{
+    if (HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] != null)
+    {
+        Session["urlHttp"] = HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] + "//" + HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[2];
+    }
+    List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)Session["config"];
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+@section css{
+    <style type="text/css">
+        .dataTables_length {
+            margin: 0 0 1.25rem 0 !important;
+        }
+        .kook .dataTables_filter input{
+            width:100px !important;
+        }
+        .kook #DataTables_Table_1_length, .kook #DataTables_Table_1_filter, #DataTables_Table_0_filter {
+            margin-bottom: 3px !important
+        }
+        /*.kook .tabComment thead, .tabss thead{
+            display: none !important;
+        }*/
+        .chatList .media-chat .media.media-chat-item-reverse{
+            margin-left:10px !important;
+        }
+        .chatList .media-chat .media {
+            margin-right: 10px !important
+        }
+    </style>
+}
+<!-- Basic table -->
+<div class="row">
+    <div class="col-sm-6">
+        @Html.Partial("/Views/BroadcastM/Partials/tableClients.cshtml")
+    </div>
+    <div class="col-sm-6">
+        @Html.Partial("/Views/BroadcastM/Partials/send.cshtml")
+    </div>
+</div>
+<!-- /basic table -->
+
+@section scriptsTop{
+    <script type="text/javascript">
+        var VTOKEN = '@Lconfig.Where(ee => ee.name == "token").First().value';
+        var VINSTANCE = '@Lconfig.Where(ee => ee.name == "instance").First().value';
+        var VURL = '@Lconfig.Where(ee => ee.name == "urlApi").First().value' + VINSTANCE;
+    </script>
+}
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                icon: '@Session["type"]',
+                title: '@Session["title"]',
+                html: '@Session["message"]'.replace(/\&lt;br&gt;/g, '<br>'),
+                showConfirmButton: false,
+                timer: 4000
+            })
+        </script>
+        Session.Remove("type");
+        Session.Remove("tittle");
+        Session.Remove("message");
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".tabss").DataTable({
+                "info": false,
+                paging: false,
+                destroy: true,
+                "scrollX": false,
+                ordering: false,
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+                }
+            });
+        })
+    </script>
+    @if (Session["return"] != null)
+    {
+        <script type="text/javascript">
+            var vjson = '@Session["return"].ToString()'.replace(/\&#39;/g, '"');
+            if (vjson.includes('{')) {
+                data = JSON.parse(vjson);
+                var vtext = data.message;
+                if (data.sent)
+                    toastr.success(vtext);
+                else
+                    toastr.info(vtext);
+            }
+            else 
+                toastr.info(vjson);
+        </script>
+        Session.Remove("return");
+    }
+<script type="text/javascript">
+
+    function sendMessaje(pobj, pfile) {
+
+        var VURLMESSAGE = "sendFile";
+        var vbody = $("#messagebodyChat").val();
+        var vcaption = vbody;
+        vbody = pfile.href;
+        var datas;
+
+        var codephone = new Array();
+        $.each($(".numberPhoneClient"), function (index, item) {
+            if ($(this).prop("checked")) {
+                item = $(this).val();
+                setTimeout(function () {
+                    //var vchatid = codephone.join('-') + decodeURIComponent('%40') + "g.us";
+                    var vphone = '57'+item;
+                    datas = { chatId: "", phone: vphone, body: vbody, filename: pfile.filename, caption: vcaption };
+                    $.ajax({
+                        type: 'post',
+                        url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                        timeout: 0,
+                        data: datas,
+                        beforeSend: function (resp) {
+                            pobj.addClass("spinner");
+                        },
+                        success: function (data) {
+                            pobj.removeClass("spinner");
+                            if (data.sent) {
+                                toastr.success('Mensaje ha sido enviado', 'Bien', { timeOut: 500 });
+                                $("#messagebodyChat").val("");
+                                $("#addFile").trigger("click")
+                            }
+                            else {
+                                console.log(data)
+                                toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data)
+                            pobj.removeClass("spinner");
+                            toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                        }
+                    });
+                }, 1000)
+            }
+        })
+    }
+    function storeFile(pobj) {
+        var href = "@Url.Action("StoreFileClientAsync")";
+        var form = $('#formChat')[0];
+        var data = new FormData(form);
+        $.ajax({
+            type: 'post',
+            url: href,
+            timeout: 0,
+            async: true,
+            enctype: 'multipart/form-data',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (response) {
+                if (response.respuesta == 1)
+                    sendMessaje(pobj, response);
+                else {
+                    obj.removeClass("spinner");
+                    toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                }
+            },
+            error: function (data) {
+                obj.removeClass("spinner");
+                //spin.addClass("d-none");
+                toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+            }
+        });
+    }
+    $(document).ready(function () {
+        $(document).on("change", "#allCheck", function () {
+            var ias = $(this)
+            $.each($(".numberPhoneClient"), function (index, item) {
+                item = $(this)
+                if (ias.prop("checked"))
+                    item.prop("checked", true);
+                else
+                    item.prop("checked", false);
+            })
+        })
+        $(document).on("click", "#addFile", function () {
+            if ($("#bodySecondary").hasClass("d-block"))
+                $("#bodySecondary").removeClass("d-block")
+            else {
+                $("#bodySecondary").addClass("d-block");
+                $("#imgCompany").prop("src", "").addClass("d-none");
+                $("#customFile").val("");
+            }
+        })
+        $(document).on("click", "#closeupdload", function () {
+            $("#imgCompany").prop("src", "").addClass("d-none");
+            $("#customFile").val("");
+        })
+        $(document).on("click", ".sendMessageChat", function () {
+            var obj = $(this).children("b").children("i");
+            if ($("#customFile").val() != "") {
+                storeFile(obj);
+            }
+            else {
+                if ($("#messagebodyChat").val() != "") {
+                    var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlSendMessage").First().value';
+                    //pid += decodeURIComponent('%40') + "c.us";
+                    var vbody = $("#messagebodyChat").val();
+                    var codephone = new Array();
+                    $.each($(".numberPhoneClient"), function (index, item) {
+                        if ($(this).prop("checked")) {
+                            item = $(this).val();
+                            setTimeout(function () {
+                                //var vchatid = codephone.join('-') + decodeURIComponent('%40') + "g.us";
+                                var vphone = '57'+item;
+                                $.ajax({
+                                    type: 'post',
+                                    url: VURL + "/" + VURLMESSAGE + '?token=' + VTOKEN,
+                                    timeout: 0,
+                                    data: { chatId: "", phone: vphone, body: vbody },
+                                    beforeSend: function (resp) {
+                                        obj.addClass("spinner")
+                                    },
+                                    success: function (data) {
+                                        obj.removeClass("spinner")
+                                        if (data.sent) {
+                                            toastr.success('Mensaje al número: ' + item + ', ha sido enviado', 'Bien', { timeOut: 500 });
+                                            $("#messagebodyChat").val("");
+                                        }
+                                        else {
+                                            console.log(data)
+                                            toastr.warning("No se pudo enviar el mensaje, intentelo nuevamente en un momento, si persiste, contacte al administrador", "Problema", { timeOut: 2000 })
+                                        }
+                                    },
+                                    error: function (data) {
+                                        obj.removeClass("spinner")
+                                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                                    }
+                                });
+                            }, 1000)
+                        }
+                    })
+                }
+                else {
+                    toastr.warning("No puede estar el mensaje vacío, intentelo nuevamente.", { timeOut: 2000 });
+                    obj.removeClass("spinner")
+                }
+            }
+        });
+        $("#customFile").on('change', function () {
+            var countFiles = $(this)[0].files.length;
+            var __this = this;
+            var imgPath = $(this)[0].value;
+            var image_holder = $("#imgCompany");
+            var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+            //por si lo necesitas para preguntar que una imagen sea mayor del peso limite
+            var isOk = false;
+            var isOkss = false;
+            $(__this).each(function () {
+                var size = 0;
+                if (this.files.length > 0) {
+                    size = this.files[0].size;
+                }
+                var limit = 10000000;
+                isOk = limit > size;
+                if (!isOk) {
+                    return false;
+                }
+            });
+            if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg"
+                || extn == "webp" || extn == "mp4" || extn == "mp3" || extn == "ogg"
+                || extn == "doc" || extn == "docx" || extn == "txt" || extn == "xls"
+                || extn == "xlsx" || extn == "pdf" || extn == "zip" /*|| extn == "rar"*/) {
+                if (isOk) {
+                    if (typeof (FileReader) != "undefined") {
+                        for (var i = 0; i < countFiles; i++) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                image_holder.prop("src", returnSRCIMG(extn, e.target.result));
+                            }
+                            image_holder.removeClass("d-none");
+                            reader.readAsDataURL($(this)[0].files[i]);
+                        }
+                    } else {
+                        toastr.warning("Este navegador no soporta FileReader", "Atención", { timeOut: 3000 });
+                    }
+                } else {
+                    $("#closeupdload").trigger("click")
+                    toastr.warning("El archivo debe pesar menos de 10 Mb", "Atención", { timeOut: 3000 });
+                }
+            }
+            else {
+                $("#closeupdload").trigger("click")
+                toastr.warning("Tipo de archivo no soportado", "Atención", { timeOut: 3000 });
+            }
+            //--------------------------------------------------------------------------
+        });
+    });
+</script>
+}

@@ -1,0 +1,138 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+<div class="mb-3">
+    <a href="@Url.Action("Index")" class="mb-0 btn-sm btn btn-secondary font-weight-semibold">
+        <i class="icon-backward2"></i> Atras
+    </a>
+</div>
+<!-- Registration form -->
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Reporte de campaña</h6>
+        @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+    </div>
+    <div class="card-body">
+
+        <div class="table-responsive">
+            <table id="tableCampaign" class="table table-sm table-responsive-sm w-100 table-hover">
+                <thead style="background-color:#21618C;color:white">
+                    <tr>
+                        <th class="">Fecha contacto</th>
+                        <th class="">Documento</th>
+                        <th class="">Nombre</th>
+                        <th class="">Apellido</th>
+                        <th class="">Celular</th>
+                        @foreach (dynamic rowCatalog in ViewBag.rowCatalog)
+                        {
+                            <th class="">@rowCatalog["nameCatalog"]</th>
+                        }
+                        <th>Comentarios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (dynamic rowClient in ViewBag.clientsCampaign)
+                    {
+                        ViewBag.entre = 0;
+                    <tr>
+                        <td class="">@rowClient["firstDateMessage"].ToString("yyyy-MM-dd")</td>
+                        <td class="">@rowClient["numDocument"]</td>
+                        <td class="">@rowClient["firstName"]</td>
+                        <td class="">@rowClient["LastName"]</td>
+                        <td class="">@rowClient["phoneNumber"]</td>
+                        @foreach (dynamic rowCatalog in ViewBag.rowCatalog)
+                        {
+                            foreach (dynamic rowClienCatalog in ViewBag.rowClientCatalog)
+                            {
+                                if (Convert.ToInt32(rowClient["idClient"]) == Convert.ToInt32(rowClienCatalog["idClient"]) && Convert.ToInt32(rowCatalog["idCatalog"]) == Convert.ToInt32(rowClienCatalog["idCatalogFather"]))
+                                {
+                                    ViewBag.entre = 1;
+                                    <td class="">@rowClienCatalog["nameCatalogSon"]</td>
+                                }
+                            }
+                            if (ViewBag.entre == 0)
+                            {
+                                <td class=""></td>
+                            }
+                            ViewBag.entre = 0;
+                        }
+                        <td style="width:100px !important">
+                            @foreach (dynamic rowCome in ViewBag.rowCommentsByCampaign)
+                            {
+                                if (Convert.ToInt32(rowClient["idClient"]) == Convert.ToInt32(rowCome["idClient"]))
+                                {
+                                    <span><!--<b>(rowCome["firstNameEmployee"] rowCome["lastNameEmployee"])</b>--> - @rowCome["comment"]</span><br />
+                                }
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /registration form -->
+
+
+@section scriptsButtom{
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#tableCampaign").DataTable({
+                "paging": true,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]], 
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'EXCEL <i class="icon-file-excel ml-2"></i>',
+                        className: 'btn btn-sm bg-blue'
+                    }
+                    /*//'copyHtml5',
+                    'excelHtml5',
+                    //'csvHtml5',
+                    //'pdfHtml5'*/
+                ],
+                destroy: true,
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
+                }
+            });
+            $(".buttons-excel.buttons-html5.dt-button").addClass("btn").addClass("btn-outline-primary").addClass("btn-sm")
+            $(".flaterpicker").flatpickr({
+                dateFormat: "Y-m-d",
+                "locale": "es",
+                enableTime: false,
+                minDate: new Date()
+            });
+
+        })
+    </script>
+}

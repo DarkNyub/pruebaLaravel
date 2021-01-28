@@ -1,0 +1,250 @@
+﻿@model  UniversidadDeVoluntarios.Models.Perfil
+@{
+    Session["imagen"] = ViewBag.row["imagen"];
+    ViewBag.Title = "Companies";
+    Layout = "~/Views/Shared/Administracion.cshtml";
+}
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="">
+                            <h4>Perfil </h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form action="@Url.Action("updateProfile")" id="formActuProfile" method="post" enctype="multipart/form-data" class="">
+                                    <input name="idClient" type="hidden" value="@ViewBag.row["idCliente"]" />
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="border-bottom col-sm-12 mb-3 mt-1 text-center">
+                                                <h6 class="h6 text-uppercase">Informacion Básica</h6>
+                                            </div>
+                                            <div class="border-light border-right col-sm-5">
+                                                <div class="col-sm-12 text-center">
+                                                    <h4 class="h4">Imagen de Perfil</h4>
+                                                    <img src="@ViewBag.row["imagen"]" alt="" width="200" height="200" class="img-center img-responsive rounded-circle imgprofi">
+                                                </div><!-- end media -->
+                                                <div class="input-group input-group-lg">
+                                                    <input type="file" name="ImageFile" class="form-control-file" id="customFile"
+                                                           onchange="document.getElementsByClassName('imgprofi')[0].src = window.URL.createObjectURL(this.files[0])">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Nombre</label>
+                                                            <input name="firstName" type="text" class="form-control form-control-sm" placeholder="Nombre" required value="@ViewBag.row["nombre"]">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Apellido</label>
+                                                            <input name="lastName" type="text" class="form-control form-control-sm" placeholder="Apellido" required value="@ViewBag.row["apellidoPaterno"]">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>E-mail</label>
+                                                            <input name="email" type="email" class="form-control form-control-sm" placeholder="example@example.com" required value="@ViewBag.row["email"]">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            @{ ViewBag.gender = "selected"; }
+                                                            <label>Género</label>
+                                                            <select name="gender" class="form-control-sm form-control" required>
+                                                                <option></option>
+                                                                <option @if (Convert.ToInt32(ViewBag.row["idGenero"]) == 1) { @ViewBag.gender } value="1">Masculino</option>
+                                                                <option @if (Convert.ToInt32(ViewBag.row["idGenero"]) == 2) { @ViewBag.gender } value="2">Femenino</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Celular</label>
+                                                            <input name="mobilePhone" type="text" placeholder="(000) 000 0000" class="form-control form-control-sm areamask" required value="@ViewBag.row["numeroCelular"]">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Fecha de Nacimiento</label>
+                                                            <input name="birthdate" type="text" class="form-control form-control-sm datepicker" readonly required value="@ViewBag.row["fechaNacimiento"].ToString("dd-MM-yyyy")">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Cédula</label>
+                                                            <input name="identification" type="text" class="form-control form-control-sm ceduls" required value="@ViewBag.row["cedula"]">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Eps</label>
+                                                            <select name="ideps" class="form-control selectcount1" required style="width:100%">
+                                                                <option></option>
+                                                                @foreach (var eps in ViewBag.ListaEps)
+                                                                {
+                                                                    if (Convert.ToInt32(ViewBag.row["idEps"]) == @eps["idEps"])
+                                                                    {
+                                                                        <option selected value="@eps["idEps"]">@eps["Eps"]</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@eps["idEps"]">@eps["Eps"]</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group">
+                                                                <label>Mi Propósito: <span style="font-style: italic;">¿Por qué y cómo quieres cambiar el mundo a través del voluntariado?</span></label>
+                                                                <input name="phrase" placeholder="Ej.: Lo que hago, lo hago bien hecho" type="text" class="form-control form-control-sm" required value="@ViewBag.row["phase"]">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <div class="col-sm-12 text-center mt-3">
+                                                <input class="btn btn-sm btn-dark" value="Actualizar Perfil" type="submit" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="">
+                            <h4>Password</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row" id="holas">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Password Nuevo</label>
+                                            <input name="password" type="password" id="newpass" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Confirmacion Password Nuevo</label>
+                                            <input name="passwordtwo" type="password" id="confimnewpass" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 text-center mt-3">
+                                    <input class="btn btn-sm btn-dark" value="Actualizar Password" id="actupass" type="button" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@section scripts{
+    <script type="text/javascript" src="https://underscorejs.org/underscore-min.js"></script>
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#actupass").click(function () {
+                var entre = false;
+                var koas = "";
+                if ($("#confimnewpass").val().length > 0) {
+                    if ($("#newpass").val() === $("#confimnewpass").val())
+                        entre = false;
+                    else {
+                        koas ='The Passwords Do Not Match, Please Verify';
+                        entre = true;
+                    }
+                }
+                else {
+                    koas ='The Passwords Do Not Match, Please Verify';
+                    entre = true;
+                }
+                if (entre)
+                    toastr.error(koas);
+                else {
+                    Swal.fire({
+                        title: "¿Esta Seguro?",
+                        html: "De Actualizar La Contraseña",
+                        type: 'question',
+                        showCancelButton: true,
+                        reverseButtons: true,
+                        confirmButtonText: 'Aceptar',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#2d3c80',
+                        cancelButtonColor: '#606060',
+                        backdrop: false,
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajax({
+                                type: 'post',
+                                url: '@Url.Action("actualizarPassword")',
+                                timeout: 0,
+                                data: $("#formActuProfile").append($("#holas")).serialize(),
+                                success: function (response) {
+                                    response = JSON.parse(response)[0];
+                                    if (response.respuesta == 1) {
+                                        Swal.fire({
+                                            type: 'success',
+                                            html: "Contraseña Actualizada Con Éxito.",
+                                            title: "Muy Bien.",
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    }
+                                    else
+                                        toastr.error("No Se Pudo Actualizar La Contraseña, Intentelo Mas Tarde", "Error", { timeOut: 2000 })
+                                    $("#newpass").val("")
+                                    $("#confimnewpass").val("")
+                                },
+                                error: function (response) {
+                                        toastr.error("Proximamente.", "Info.", { timeOut: 2000 })
+                                }
+                            });
+                        }
+                    });
+                }
+            })
+            $("select.form-control").select2({
+                placeholder: "Seleccione",
+            })
+            $('.areamask').mask('(000) 000 0000');
+            $('.ceduls').mask('#');
+            var dateToday = new Date();
+            $(".datepicker").datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                endDate: dateToday,
+            });
+        })
+    </script>
+}

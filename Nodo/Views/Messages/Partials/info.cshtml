@@ -1,0 +1,429 @@
+﻿
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title"><span id="spinerIconDataClient" class="d-none"><i class="spinner-border"></i></span> Información del cliente</h6>
+        <div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item" data-action="collapse"></a>
+                @*<a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>*@
+            </div>
+        </div>
+    </div>
+    <div class="card-body small">
+        <div class="row mt-1 d-none" id="hasBot">
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-4 align-self-center">
+                <span>Id del cliente</span>
+            </div>
+            <div class="col-sm-7 align-self-center p-0">
+                <span id="idclientLabel">
+                </span>
+            </div>
+            <div class="align-self-center col-sm-2 p-0 d-none">
+                <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil"><i class="icon-pencil"></i></span>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-4 align-self-center">
+                <span>Nombres</span>
+            </div>
+            <div class="col-sm-6 align-self-center p-0">
+                <span id="spanUserChat"></span>
+                <div class="input-group d-none" id="inputNameChats">
+                    <form id="formnameChats" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                        <input class="idClients" name="idClient" value="" type="hidden" />
+                        <input class="" name="type" value="0" type="hidden" />
+                        <input type="text" name="data" class="form-control form-control-sm kpkp" value="" placeholder="Nombres">
+                        <span class="input-group-append ml-0">
+                            <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                    data-span="spanUserChat"
+                                    data-input="inputNameChats"
+                                    data-buton="btnname"
+                                    data-form="formnameChats" type="button">
+                                <i class="icon-check"></i>
+                            </button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+            @if (Convert.ToInt32(Session["idProfile"]) == 3)
+            {
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnname"
+                          data-span="spanUserChat"
+                          data-input="inputNameChats" title="Usted no tiene acceso a esta función"><i class="icon-pencil"></i></span>
+                </div>
+            }
+            else
+            {
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnname"
+                          data-span="spanUserChat"
+                          data-input="inputNameChats"><i class="icon-pencil"></i></span>
+                </div>
+            }
+
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-4 align-self-center">
+                <span>Apellidos</span>
+            </div>
+            <div class="col-sm-6 align-self-center p-0">
+                <span id="lastNameUserChat"></span>
+                <div class="input-group d-none" id="inputLastNameChats">
+                    <form id="formlastnameChats" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                        <input class="idClients" name="idClient" value="" type="hidden" />
+                        <input class="" name="type" value="2" type="hidden" />
+                        <input type="text" name="data" class="form-control form-control-sm kpkp" value="" placeholder="Apellidos">
+                        <span class="input-group-append ml-0">
+                            <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                    data-span="lastNameUserChat"
+                                    data-input="inputLastNameChats"
+                                    data-buton="btnlastname"
+                                    data-form="formlastnameChats" type="button">
+                                <i class="icon-check"></i>
+                            </button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+            @if (Convert.ToInt32(Session["idProfile"]) == 3)
+            {
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnlastname"
+                          data-span="lastNameUserChat"
+                          data-input="inputLastNameChats"><i class="icon-pencil" title="Usted no tiene acceso a esta función"></i></span>
+                </div>
+            }
+            else
+            {
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnlastname"
+                          data-span="lastNameUserChat"
+                          data-input="inputLastNameChats"><i class="icon-pencil"></i></span>
+                </div>
+            }
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-4 align-self-center">
+                <span>Celular principal</span>
+            </div>
+            <div class="col-sm-6 align-self-center p-0">
+                <span id="phoneUserChat"></span>
+                <div class="input-group d-none" id="inputPhoneChats">
+                    <form id="formphoneChats" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                        <input class="idClients" name="idClient" value="" type="hidden" />
+                        <input class="" name="type" value="4" type="hidden" />
+                        <input type="text" name="data" class="form-control form-control-sm kpkp" value="" placeholder="Celular principal">
+                        <span class="input-group-append ml-0">
+                            <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                    data-span="phoneUserChat"
+                                    data-input="inputPhoneChats"
+                                    data-buton="btnphoneNumber"
+                                    data-form="formphoneChats" type="button">
+                                <i class="icon-check"></i>
+                            </button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+            @if (Convert.ToInt32(Session["idProfile"]) == 3)
+            {
+                <div class="align-self-center col-sm-2 text-center p-0 d-none">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer  btnphoneNumber"
+                          data-span="phoneUserChat"
+                          data-input="inputPhoneChats" title="Usted no tiene acceso a esta función"><i class="icon-pencil"></i></span>
+                </div>
+            }
+            else
+            {
+                <div class="align-self-center col-sm-2 text-center p-0 d-none">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnphoneNumber"
+                          data-span="phoneUserChat"
+                          data-input="inputPhoneChats"><i class="icon-pencil"></i></span>
+                </div>
+            }
+        </div>
+        <div id="moreData" class="collapse">
+            <div class="row mt-1">
+                <div class="col-sm-4 align-self-center">
+                    <span>Documento</span>
+                </div>
+                <div class="col-sm-6 align-self-center p-0">
+                    <span id="documentUserChat"></span>
+                    <div class="input-group d-none" id="inputDocumentChats">
+                        <form id="formdocumentChats" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                            <input class="idClients" name="idClient" value="" type="hidden" />
+                            <input class="" name="type" value="5" type="hidden" />
+                            <input type="text" name="data" class="form-control form-control-sm kpkp" value="" placeholder="Documento">
+                            <span class="input-group-append ml-0">
+                                <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                        data-span="documentUserChat"
+                                        data-input="inputDocumentChats"
+                                        data-buton="btnnmdocu"
+                                        data-form="formdocumentChats" type="button">
+                                    <i class="icon-check"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                @if (Convert.ToInt32(Session["idProfile"]) == 3)
+                {
+                    <div class="align-self-center col-sm-2 text-center p-0">
+                        <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnnmdocu"
+                              data-span="documentUserChat"
+                              data-input="inputDocumentChats" title="Usted no tiene acceso a esta función"><i class="icon-pencil"></i></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="align-self-center col-sm-2 text-center p-0">
+                        <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnnmdocu"
+                              data-span="documentUserChat"
+                              data-input="inputDocumentChats"><i class="icon-pencil"></i></span>
+                    </div>
+                }
+            </div>
+            <div id="containerData">
+
+            </div>
+            @*<div class="row mt-1">
+                <div class="col-sm-4 align-self-center">
+                    <span>Género</span>
+                </div>
+                <div class="col-sm-6 align-self-center p-0">
+                    <span id="genderUserChat"></span>
+                    <div class="input-group d-none" id="inputGenderChats">
+                        <form id="formgenderChats" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                            <input class="idClients" name="idClient" value="" type="hidden" />
+                            <input class="" name="type" value="6" type="hidden" />
+                            <select class="form-control form-control-sm" name="data" id="formua" style="width:80% !important">
+                                <option></option>
+                                @foreach (dynamic row in ViewBag.rowGender)
+                                {
+                                    <option value="@row["idGender"]-@row["name"]">@row["name"]</option>
+                                }
+                            </select>
+                            <input type="text" class="form-control form-control-sm" value="" placeholder="Nombres">
+                            <span class="input-group-append ml-0">
+                                <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                        data-span="genderUserChat"
+                                        data-input="inputGenderChats"
+                                        data-form="formgenderChats"
+                                        data-buton="btngendsa"
+                                        data-gender="true"
+                                        type="button">
+                                    <i class="icon-check"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btngendsa"
+                          data-span="genderUserChat"
+                          data-input="inputGenderChats"><i class="icon-pencil"></i></span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-4 align-self-center">
+                    <span>Otro número</span>
+                </div>
+                <div class="col-sm-6 align-self-center p-0">
+                    <span id="phoneUserChat2"></span>
+                    <div class="input-group d-none" id="inputPhoneChats2">
+                        <form id="formphoneChats2" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                            <input class="idClients" name="idClient" value="" type="hidden" />
+                            <input class="" name="type" value="7" type="hidden" />
+                            <input type="text" name="data" class="form-control form-control-sm" value="" placeholder="Otro número">
+                            <span class="input-group-append ml-0">
+                                <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                        data-span="phoneUserChat2"
+                                        data-input="inputPhoneChats2"
+                                        data-buton="btnothernumber"
+                                        data-form="formphoneChats2" type="button">
+                                    <i class="icon-check"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnothernumber"
+                          data-span="phoneUserChat2"
+                          data-input="inputPhoneChats2"><i class="icon-pencil"></i></span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-4 align-self-center">
+                    <span>Email</span>
+                </div>
+                <div class="col-sm-6 align-self-center p-0">
+                    <span id="emailUserChat"></span>
+                    <div class="input-group d-none" id="inputEmailChats">
+                        <form id="formemailChats" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                            <input class="idClients" name="idClient" value="" type="hidden" />
+                            <input class="" name="type" value="8" type="hidden" />
+                            <input type="text" name="data" class="form-control form-control-sm" value="" placeholder="Email">
+                            <span class="input-group-append ml-0">
+                                <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                        data-span="emailUserChat"
+                                        data-input="inputEmailChats"
+                                        data-buton="btnemails"
+                                        data-form="formemailChats" type="button">
+                                    <i class="icon-check"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnemails"
+                          data-span="emailUserChat"
+                          data-input="inputEmailChats"><i class="icon-pencil"></i></span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-4 align-self-center">
+                    <span>Otro email</span>
+                </div>
+                <div class="col-sm-6 align-self-center p-0">
+                    <span id="emailUserChat2"></span>
+                    <div class="input-group d-none" id="inputemailChats2">
+                        <form id="formemailChats2" action="@Url.Action("updateDataClient")" class="input-group" method="post">
+                            <input class="idClients" name="idClient" value="" type="hidden" />
+                            <input class="" name="type" value="9" type="hidden" />
+                            <input type="text" name="data" class="form-control form-control-sm" value="" placeholder="Otro email">
+                            <span class="input-group-append ml-0">
+                                <button class="btn btn-sm cursor-pointer pl-1 pr-1 btnCheckedForm"
+                                        data-span="emailUserChat2"
+                                        data-input="inputemailChats2"
+                                        data-buton="btnemails2"
+                                        data-form="formemailChats2" type="button">
+                                    <i class="icon-check"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                <div class="align-self-center col-sm-2 text-center p-0">
+                    <span class="btn btn-sm legitRipple pl-1 pr-1 cursor-pointer btnEditPencil btnemails2"
+                          data-span="emailUserChat2"
+                          data-input="inputemailChats2"><i class="icon-pencil"></i></span>
+                </div>
+            </div>*@
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <small id="letterMore" class="btn btn-sm cursor-pointer d-block font-size-xs">Mostrar más</small>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-collapsed">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title"><span id="spinerIconCampaign" class="d-none"><i class="spinner-border"></i></span> Información de campaña</h6>
+        <div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item rotate-180" data-action="collapse"></a>
+                @*<a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>*@
+            </div>
+        </div>
+    </div>
+    <div class="card-body small" style="display:none">
+        <div class="row">
+            <div class="col-sm-4 align-self-center">
+                <span>Nombre</span>
+            </div>
+            <div class="col-sm-6 align-self-center">
+                <span id="nameCampaign"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <hr class="m-0 mt-1 mb-1 p-0" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <span class="d-block">Catálogos</span>
+            </div>
+        </div>
+        <div class="row" id="rowCatalog">
+            @*<div class="col-sm-12">
+                <span>Nombre</span>
+                <select class="form-control selecCatalog">
+                    <option></option>
+                </select>
+            </div>*@
+        </div>
+    </div>
+</div>
+<div class="card card-collapsed">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title"><span id="spinerIconComments" class="d-none"><i class="spinner-border"></i></span> Resúmen de comentarios</h6>
+        <div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item rotate-180" data-action="collapse"></a>
+                @*<a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>*@
+            </div>
+        </div>
+    </div>
+    <div class="card-body kook small" style="display:none">
+        <table class="table table-sm tabComment w-100" >
+            <thead>
+                <tr>
+                    <th>Lista de comentarios</th>
+                </tr>
+            </thead>
+            <tbody id="tableComment">
+                @*<tr>
+                    <td>
+                        <div class="media-body">
+                            <div class="d-flex justify-content-between">
+                                <a><strong>Margo Baker</strong></a>
+                                <a class="text-muted">Fecha: <strong>12:16</strong></a>
+                            </div>
+                            <p>Pinched a well more moral chose goodness...</p>
+                        </div>
+                    </td>
+                </tr>*@
+            </tbody>
+        </table>
+        <div class="border-top-1">
+            <form class="" action="" id="formComment">
+                <input name="idCampaign" id="vidCampaign" type="hidden" value="" />
+                <input name="idClient" class="idClients" type="hidden" value="" />
+                @if (Convert.ToInt32(Session["idProfile"]) == 3)
+                { 
+                    <textarea name="newCommnet" id="newComment" class="form-control mb-3 " rows="2" cols="1" placeholder="Agregar comentario" readonly></textarea>
+                }
+                else
+                {
+                    <textarea name="newCommnet" id="newComment" class="form-control mb-3 " rows="2" cols="1" placeholder="Agregar comentario"></textarea>
+                }
+
+                <div class="d-flex align-items-center">
+                    @*<div class="list-icons list-icons-extended">
+                <a href="#" class="list-icons-item"><i class="icon-mic2"></i></a>
+                <a href="#" class="list-icons-item"><i class="icon-file-picture"></i></a>
+                <a href="#" class="list-icons-item"><i class="icon-file-plus"></i></a>
+            </div>*@
+                    @if (Convert.ToInt32(Session["idProfile"]) == 3)
+                    {
+                        <button type="button" class="btn btn-sm bg-blue btn-labeled btn-labeled-right ml-auto" id="" style="background-color:#949494;color:white" disabled title="Usted no tiene acceso a esta función"><b><i class="icon-paperplane"></i></b> Guardar comentario</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-sm bg-blue btn-labeled btn-labeled-right ml-auto" id="btnComment" style="background-color:#666666;color:white"><b><i class="icon-paperplane"></i></b> Guardar comentario</button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model  Nodo.Models.employee
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+<!-- Registration form -->
+    <div class="card flex-fill">
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Nuevos usuarios por excel</h6>
+            @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+        </div>
+        <div class="card-body">
+        </div>
+    </div>
+<!-- /registration form -->
+
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+<script type="text/javascript">
+        $(document).ready(function () {
+        });
+</script>
+}

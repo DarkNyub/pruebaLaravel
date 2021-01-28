@@ -1,0 +1,68 @@
+﻿@model Nodo.Models.Login
+@{
+    Session["urlHttp"] = HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] + "//" + HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[2];
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutLimitLogin.cshtml";
+}
+@section css{
+}<!-- Content area -->
+<div class="content d-flex justify-content-center align-items-center">
+    <!-- Login form -->
+    <form class="login-form" action="@Url.Action("SingIn")" method="post">
+        <div class="card mb-0">
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    @*<i class="icon-reading icon-2x text-slate-300 border-slate-300 border-3 rounded-round p-3 mb-3 mt-1" style="color:#002171; border-color:#002171"></i>*@
+                    <img src="~/Content/options/img/logo_nodo.png" style="width: 200px;height: 60px;">
+                    <span class="d-block m-2" style="color:#3c3c3c">Ingrese con sus credenciales a continuación</span>
+                </div>
+
+                <div class="form-group form-group-feedback form-group-feedback-left">
+                    <input type="text" class="form-control" name="usuario" placeholder="Usuario">
+                    <div class="form-control-feedback">
+                        <i class="icon-user text-muted"></i>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-feedback form-group-feedback-left">
+                    <input type="password" class="form-control" name="contrasena" placeholder="Contraseña">
+                    <div class="form-control-feedback">
+                        <i class="icon-lock2 text-muted"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block btn-sm" style="background-color:#21618C">Ingresar <i class="icon-circle-right2 ml-2"></i></button>
+                </div>
+
+                <div class="text-center">
+                    <a href="@Url.Action("ForgotPassword")" style="color:#5472d3">¿Olvidastes tu password?</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- /login form -->
+</div>
+<!-- /content area -->
+
+@section scriptsTop{
+    <script type="text/javascript">
+
+    </script>
+}
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                icon: '@Session["type"]',
+                //title: 'Session["title"]',
+                html: '@Session["message"]',
+                showConfirmButton: false,
+                timer: 3000
+            })
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+    }
+}

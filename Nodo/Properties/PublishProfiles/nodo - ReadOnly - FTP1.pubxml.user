@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Este archivo se usa en el proceso de publicación y empaquetado del proyecto web. Para personalizar el comportamiento de este proceso,
+edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 para obtener más información. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAi/WUYJ9Wj0qH/kj/ZnEM3AAAAAACAAAAAAAQZgAAAAEAACAAAACOB85BogV7WHv+vWHnUyTs6JNNpYFQYAzM/NJ0gA75bQAAAAAOgAAAAAIAACAAAAASLxbeyeFlhBqpAb7+RFcXBhQaqk70H6bDTpG2CmO7b4AAAAAhNA2rm8cBX0UVny0xnXNSdy8mPaQlXz/yyNuDII7K9rB4oV5Xcg8nmW7rICKKTOvQYoAvB7TyKHH/42g++ozcHvWj1DjU80FeIEtfv0uX66BiXD2+FMEl+BjjzPovlvQhAwpzTVJU9eJY7/T8G/Im5jqP7W6albiTZJiuWzxYY0AAAAC0QRslXI3iCDvpXgs4liE9NoEVZaOkPYMwT8lt57ZTt1FB0RQJlXiHAR3x7q3PIV0B+4eDEg+T8dyyLsYlJzn1</EncryptedPassword>
+    <_PublishTargetUrl>ftp://waws-prod-dm1-109dr.ftp.azurewebsites.windows.net/site/wwwroot</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="Content/options/img/logo_nodo.ico">
+      <publishTime>05/27/2020 10:50:22</publishTime>
+    </File>
+    <File Include="Content/options/img/logo_nodo.jpg">
+      <publishTime>05/27/2020 10:50:22</publishTime>
+    </File>
+    <File Include="Views/Home/Index.cshtml">
+      <publishTime>05/27/2020 10:36:08</publishTime>
+    </File>
+    <File Include="Views/Home/login.cshtml">
+      <publishTime>05/27/2020 10:36:09</publishTime>
+    </File>
+    <File Include="Views/Home/passwordRecovery.cshtml">
+      <publishTime>05/27/2020 10:36:09</publishTime>
+    </File>
+    <File Include="Views/Home/updatePassword.cshtml">
+      <publishTime>05/27/2020 10:36:11</publishTime>
+    </File>
+    <File Include="Views/Messages/send.cshtml">
+      <publishTime>05/27/2020 10:36:14</publishTime>
+    </File>
+    <File Include="Views/Messages/table.cshtml">
+      <publishTime>05/27/2020 10:36:15</publishTime>
+    </File>
+    <File Include="Views/Shared/Error.cshtml">
+      <publishTime>05/27/2020 10:36:20</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>05/27/2020 10:36:18</publishTime>
+    </File>
+    <File Include="Views/Shared/_LayoutLimit.cshtml">
+      <publishTime>05/27/2020 10:36:19</publishTime>
+    </File>
+    <File Include="Views/Shared/_LayoutLimitLogin.cshtml">
+      <publishTime>05/27/2020 10:36:19</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>05/27/2020 10:36:24</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>05/27/2020 10:36:23</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

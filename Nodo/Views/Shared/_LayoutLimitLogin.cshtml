@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nodo WS</title>
+    <link rel="apple-touch-icon" href="~/Content/options/img/logo_nodo.ico" />
+    <link rel="shortcut icon" href="~/Content/options/img/logo_nodo.ico" />
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="~/Content/global_assets/css/icons/icomoon/styles.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/assets/css/layout.min.css" rel="stylesheet" type="text/css">
+    <!--Por alguna razon desconocida, este css de abajo daña algunos componentes externos-->
+    <link href="~/Content/assets/css/components.min.css" rel="stylesheet" type="text/css">
+    <!--Por alguna razon desconocida, este css de arriba daña algunos componentes externos-->
+    <link href="~/Content/assets/css/colors.min.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .sidebar-user-material .sidebar-user-material-body {
+            background: url(../Content/global_assets/images/backgrounds/user_bg3.jpg) center center no-repeat !important;
+        }
+    </style>
+    @RenderSection("css", required: false)
+    <!-- /global stylesheets -->
+    <!-- Core JS files -->
+    <script src="~/Content/global_assets/js/main/jquery.min.js"></script>
+    <script src="~/Content/global_assets/js/main/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/loaders/blockui.min.js"></script>
+    <script src="~/Content/global_assets/js/plugins/ui/ripple.min.js"></script>
+    <!-- /core JS files -->
+    <!-- Theme JS files -->
+    <script src="~/Content/assets/js/app.js"></script>
+    <script src="~/Content/assets/js/sweetalert2_9.js"></script>
+    <!-- /theme JS files -->
+    @RenderSection("scriptsTop", required: false)
+
+</head>
+<body>
+
+    <!-- Main navbar -->
+    @*<div class="navbar navbar-expand-md navbar-dark navbar-static" style="background-color:#002171">
+        <div class="navbar-brand p-1">
+            <a href="@Url.Action("Index")" class="d-inline-block">
+                <img src="~/Content/options/img/nodo blanco.png" style="width: 160px;height: 35px;">
+            </a>
+        </div>
+    </div>*@
+    <!-- /main navbar -->
+    <div class="page-content">
+
+        <!-- Main content -->
+        <div class="content-wrapper">
+            @RenderBody()
+
+            
+            <!-- Footer -->
+            <div class="navbar navbar-expand-lg navbar-light">
+                <div class="text-center d-lg-none w-100">
+                    <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse" data-target="#navbar-footer">
+                        <i class="icon-unfold mr-2"></i>
+                        Footer
+                    </button>
+                </div>
+
+                <div class="navbar-collapse collapse" id="navbar-footer">
+                    <span class="navbar-text">
+                        &copy; @DateTime.Now.Year <a href="@Url.Action("Index", "Home")" target="_blank">Nodo WS</a>
+                    </span>
+
+                    <!--<ul class="navbar-nav ml-lg-auto">
+                <li class="nav-item"><a href="https://kopyov.ticksy.com/" class="navbar-nav-link" target="_blank"><i class="icon-lifebuoy mr-2"></i> Support</a></li>
+                <li class="nav-item"><a href="http://demo.interface.club/limitless/docs/" class="navbar-nav-link" target="_blank"><i class="icon-file-text2 mr-2"></i> Docs</a></li>
+                <li class="nav-item"><a href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400"><i class="icon-cart2 mr-2"></i> Purchase</span></a></li>
+            </ul>-->
+                </div>
+            </div>
+            <!-- /footer -->
+
+        </div>
+        <!-- /main content -->
+
+    </div>
+
+    @RenderSection("scriptsButtom", required: false)
+</body>
+</html>

@@ -1,0 +1,386 @@
+﻿@{
+    if (HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] != null)
+    {
+        Session["urlHttp"] = HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] + "//" + HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[2];
+    }
+    List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)Session["config"];
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header header-elements-inline">
+                        <h6 class="card-title">Verificar registro de cliente en SmartData</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="formFile" class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <span>Tipo de documento <span class="text-danger">*</span></span>
+                                        <select id="typeDocuments" class="form-control typeDocument">
+                                            <option></option>
+                                            <option value="1">Cédula de ciudadania</option>
+                                            <option value="2">Cédula de extranjeria</option>
+                                            <option value="3">Pasaporte</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <span>Documento <span class="text-danger">*</span></span>
+                                        <input class="form-control" type="text" name="numDocument" value="" id="numDocument" />
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <span class="d-block">&nbsp;</span>
+                                        <button type="button" id="btnfind" class=" btn-block btn bg-blue btn-sm"><i class="icon-search4"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 mt-2">
+                                <h6 id="resultado"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header header-elements-inline">
+                        <h6 class="card-title">Verificar ciudad de cliente</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-12 form-group">
+                                        <span>Escribe el nombre de la ciudad y espera resultados</span>
+                                        <select id="selectCity" class="form-control typeDocument">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8 d-none descass" id="ClientNotFound">
+        <div class="card">
+            <div class="card-header header-elements-inline">
+                <h6 class="card-title">Inscribir cliente en SmartData</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <span>Número de celular para buscar información</span>
+                                <input class="form-control" type="text" placeholder="Ej: 3211234455" value="" name="phoneClient" id="phoneClient" />
+                            </div>
+                            <div class="col-sm-4">
+                                <span class="d-block">Buscar datos</span>
+                                <button type="button" id="btnfindDataClient" class=" btn-block btn bg-blue btn-sm"><i class="icon-search4"></i></button>
+                            </div>
+                            <div class="col-sm-12 mt-1" id="">
+                                <label>Si hay datos registrados en nuestra base de datos los campos se llenaran automaticamente y uds completaran los que hagan falta</label>
+                            </div>
+                            <div class="col-sm-12 mt-1" id="resultadobusqueda">
+                            </div>
+                        </div>
+                    </div>
+                    <form id="formClientSmart" class="col-sm-12">
+                        <div class="row mt-2 d-none descass" id="dataClientInputs">
+                            <input name="idClient" value="" id="vIdClient" type="hidden" />
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Tipo de documento <span class="text-danger">*</span></span>
+                                <select id="typeDocument2" name="idTypeDocument" class="form-control typeDocument">
+                                    <option></option>
+                                    <option value="1">Cédula de ciudadania</option>
+                                    <option value="2">Cédula de extranjeria</option>
+                                    <option value="3">Pasaporte</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Documento <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="numDocument" id="numDocument2" />
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Nombre <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="nameClient" id="nameClient" />
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Apellido <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="lastnameClient" id="lastnameClient" />
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Celular <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="phoneNumber" id="phoneNumber" />
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Ciudad <span class="text-danger">*</span></span>
+                                <select id="selectCityCreate" name="idClientCity" class="form-control typeDocument ">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Dirección <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="address" id="address" />
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Email <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="email" id="email" />
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <span class="d-block">Fecha de nacimiento <span class="text-danger">*</span></span>
+                                <input class="form-control" type="text" name="birthdate" id="birthdate" />
+                            </div>
+                            <div class="col-sm-12">
+                                <span class="d-block">&nbsp;</span>
+                                <button type="button" id="btnSave" class=" btn-block btn bg-blue btn-sm">Crear Cliente <i class="icon-upload"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-12 mt-2">
+                        <h6 id="resultadosCrear"></h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /registration form -->
+
+@section scriptsTop{
+    <script type="text/javascript">
+        var VTOKEN = '@Lconfig.Where(ee => ee.name == "token").First().value';
+        var VINSTANCE = '@Lconfig.Where(ee => ee.name == "instance").First().value';
+        var VURL = '@Lconfig.Where(ee => ee.name == "urlApi").First().value' + VINSTANCE;
+        var IMAGEURL = '@Session["image"]';
+        var VIDCLIENT = @Convert.ToInt32(Session["idClient"]);
+    </script>
+}
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#birthdate").mask("##-##-####")
+            var vCities = "";
+            getcities();
+            function getcities() {
+                $.ajax({
+                    type: 'get',
+                    url: '@Url.Action("FindCitySmartData")',
+                    timeout: 0,
+                    //data: { typedocu: vTypeDocu, document: vDocument },
+                    dataType: "json",
+                    beforeSend: function (resp) {
+                        //obj.addClass("spinner")
+                    },
+                    success: function (response) {
+                        //obj.removeClass("spinner")
+                        $("#selectCity, #selectCityCreate").select2({
+                            placeholder:"Seleccione",
+                            data: response
+                        });
+                        vCities = response;
+                    },
+                    error: function (data) {
+                        //obj.removeClass("spinner")
+                    }
+                });
+            }
+            $("#numDocument, #phoneClient").mask("##")
+            $(".typeDocument").select2({
+                minimumResultsForSearch: Infinity,
+                placeholder: "Seleccione",
+                allowClear: true
+            });
+            $(document).on("keypress", "#numDocument", function (event) {
+                if (event.which == 13)
+                    $("#btnfind").trigger("click");
+            });
+            $(document).on("click", "#btnfind", function () {
+                $("#ClientNotFound").addClass("d-none");
+                $("#resultado").html("");
+                var vTypeDocu = $("#typeDocuments").val();
+                var vDocument = $("#numDocument").val();
+                var obj = $(this).children("i");
+                if (vTypeDocu > 0 && vDocument.length > 3) {
+                    $.ajax({
+                        type: 'get',
+                        url: '@Url.Action("VerifyClientSmartDataAsync")',
+                        timeout: 0,
+                        data: { typedocu: vTypeDocu, document: vDocument },
+                        dataType: "json",
+                        beforeSend: function (resp) {
+                            obj.addClass("spinner")
+                        },
+                        success: function (response) {
+                            obj.removeClass("spinner")
+                            if (response.result) {
+                                $("#resultado").html('<span class="text-danger">Este cliente no se encuentra registrado en SmartData.</span>');
+                                $("#ClientNotFound").removeClass("d-none");
+
+                                $(".typeDocument").select2({
+                                    minimumResultsForSearch: Infinity,
+                                    placeholder: "Seleccione",
+                                    allowClear: true
+                                });
+                            }
+                            else if (response.id)
+                                $("#resultado").html('<span class="text-info">Este cliente ya se encuentra registrado en SmartData.</span>');
+                        },
+                        error: function (data) {
+                            obj.removeClass("spinner")
+                            toastr.error("Hubo un problema obteniendo los datos, contacte al administrador", "Error", { timeOut: 1000 })
+                        }
+                    });
+                }
+                else
+                    toastr.info("Falta llenar los campos con asteriscos o el documento tiene que tener minimo 4 digitos", "Información", {timeOut:1000});
+            });
+            $(document).on("keypress", "#phoneClient", function (event) {
+                if (event.which == 13)
+                    $("#btnfindDataClient").trigger("click");
+            });
+            $(document).on("click", "#btnfindDataClient", function () {
+                $("#resultadobusqueda").html("")
+                $("#dataClientInputs").addClass("d-none");
+                $("#formClientSmart .form-control").val("")
+                var vPhoneClient = $("#phoneClient").val();
+                var obj = $(this).children("i");
+                if (vPhoneClient.length > 4) {
+                    $(".typeDocument").select2({
+                        minimumResultsForSearch: Infinity,
+                        placeholder: "Seleccione",
+                        allowClear: true
+                    });
+                    $.ajax({
+                        type: 'get',
+                        url: '@Url.Action("VerifyClientDataBase")',
+                        timeout: 0,
+                        data: { phonenumber: vPhoneClient },
+                        dataType: "json",
+                        beforeSend: function (resp) {
+                            obj.addClass("spinner")
+                        },
+                        success: function (response) {
+                            obj.removeClass("spinner")
+                            data = JSON.parse(response)[0];
+                            if (data != undefined) {
+                                console.log(data);
+                                var entre = 0;
+                                if (data.clientCiudad == null)
+                                    entre = 1;
+                                if (data.clientDireccion == null)
+                                    entre = 1;
+                                if (data.clientEmail == null)
+                                    entre = 1;
+                                if (data.clientFechaNacimiento == null)
+                                    entre = 1;
+                                if (data.clientTipoDocumento == null)
+                                    entre = 1;
+                                if (entre == 1)
+                                    $("#resultadobusqueda").html('<h6 class="text-warning">Este número tiene que completar el registro por el bot</h6>')
+                                else {
+                                    $("#vIdClient").val(data.idClient);
+                                    $("#resultadobusqueda").html('<h6 class="text-info">Estos son los datos que encontramos de este cliente</h6>')
+                                    if (parseInt(data.clientCiudad) > 0) {
+                                        $("#selectCityCreate").val(data.clientCiudad).trigger("change");
+                                    }
+                                    $("#typeDocument2").val($("#typeDocuments").val()).trigger("change");
+                                    $("#numDocument2").val($("#numDocument").val());
+                                    $("#phoneNumber").val($("#phoneClient").val());
+                                    $("#address").val(data.clientDireccion)
+                                    $("#email").val(data.clientEmail)
+                                    $("#birthdate").val(data.clientFechaNacimiento)
+                                    $("#nameClient").val(data.firstName)
+                                    $("#lastnameClient").val(data.LastName)
+                                    $("#dataClientInputs").removeClass("d-none")
+                                    $("#selectCityCreate").select2({
+                                        placeholder: "Seleccione",
+                                        data: vCities,
+                                        allowClear: true
+                                    });
+                                }
+                            }
+                            else
+                                $("#resultadobusqueda").html('<h6 class="text-warning">Este número no esta en la base de datos</h6>')
+                            //$("#dataClientInputs").removeClass("d-none")
+                        },
+                        error: function (data) {
+                            obj.removeClass("spinner")
+                            toastr.error("Hubo un problema obteniendo los datos, contacte al administrador", "Error", { timeOut: 1000 })
+                        }
+                    });
+                }
+                else
+                    toastr.info("El telefono tiene que tener minimo 4 digitos", "Información", {timeOut:1000});
+            });
+            $(document).on("click", "#btnSave", function () {
+                $("#resultadosCrear").html("")
+                var obj = $(this).children("i");
+                var entre = 0;
+                $.each($("#dataClientInputs .form-control"), function (index, row) {
+                    if ($(row).val().length > 0) { }
+                    else
+                        entre = 1;
+                })
+                if (entre == 0) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("SaveClientToSmartData")',
+                        timeout: 0,
+                        data: $("#formClientSmart").serialize(),
+                        dataType: "json",
+                        beforeSend: function (resp) {
+                            obj.addClass("spinner")
+                        },
+                        success: function (response) {
+                            obj.removeClass("spinner")
+                            if (parseInt(response.resultado) == 0) {
+                                $("#resultadosCrear").html("El cliente se ha registrado con éxito en SmartData");
+                                setTimeout(function () {
+                                    $("#resultadosCrear").html("");
+                                    $("#formClientSmart .form-control").val("");
+                                    $("#resultadobusqueda").html("");
+                                    $("#ClientNotFound, #dataClientInputs").addClass("d-none");
+                                    $("#resultado").html("");
+                                }, 5000);
+                            }
+                            else {
+                                data = JSON.stringify( JSON.parse(response).errors);
+                                $("#resultadosCrear").html("Ocurrio un error, aquí esta el detalle: "+data);
+                            }
+                        },
+                        error: function (data) {
+                            obj.removeClass("spinner")
+                            toastr.info("Hay algún campo que necesita ser llenado", "Información", { timeOut: 1000 });
+                        }
+                    });
+                }
+                else
+                    toastr.info("Hay algún campo que necesita ser llenado", "Información", { timeOut: 1000 });
+            })
+        });
+</script>
+}

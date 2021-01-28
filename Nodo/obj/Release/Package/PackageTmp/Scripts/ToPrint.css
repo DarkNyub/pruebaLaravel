@@ -1,0 +1,6 @@
+﻿
+@media print {
+    .btnPrinterAll {
+        display: none !important;
+    }
+}
