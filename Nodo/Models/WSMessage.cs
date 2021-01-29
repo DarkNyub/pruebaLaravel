@@ -95,6 +95,42 @@ namespace Nodo.Models
         [JsonProperty("smartdata")]
         public Message[] smartdata { get; set; }
 
+        [JsonProperty("id")]
+        public string id { get; set; }
+        [JsonProperty("body")]
+        public string body { get; set; }
+        [JsonProperty("type")]
+        public string type { get; set; }
+        [JsonProperty("senderName")]
+        public string senderName { get; set; }
+        [JsonProperty("fromMe")]
+        public bool fromMe { get; set; }
+        [JsonProperty("author")]
+        public string author { get; set; }
+        [JsonProperty("time")]
+        public dynamic time { get; set; }
+        public dynamic timeUnix { get; set; }
+        [JsonProperty("chatId")]
+        public string chatId { get; set; }
+        [JsonProperty("messageNumber")]
+        public long messageNumber { get; set; }
+        [JsonProperty("self")]
+        public string self { get; set; }
+        [JsonProperty("isForwarded")]
+        public string isForwarded { get; set; }
+        [JsonProperty("quotedMsgBody")]
+        public string quotedMsgBody { get; set; }
+        [JsonProperty("quotedMsgId")]
+        public string quotedMsgId { get; set; }
+        [JsonProperty("chatName")]
+        public string chatName { get; set; }
+        [JsonProperty("caption")]
+        public string caption { get; set; }
+        [JsonProperty("filename")]
+        public string filename { get; set; }
+        [JsonProperty("phone")]
+        public string phone { get; set; }
+
     }
     public class ListMessages
     {

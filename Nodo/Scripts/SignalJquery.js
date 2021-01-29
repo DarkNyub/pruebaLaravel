@@ -48,6 +48,7 @@ chatHub.client.onUserDisconnected = function (id, userName) {
 chatHub.client.reciveNewMessage = function (param, numphone) {
     //Esta funcion viene del controlador de que ha llegado un nuevo mensaje y se va al hub
     chatHub.server.reciveNewMessage($("#hdId").val(), param, $("#hdChatClient").val());
+    chatHub.server.reciveNewMessageDifussion($("#hdId").val(), param, $("#hdChatClient").val());
 };
 chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient) {
 
@@ -165,7 +166,7 @@ chatHub.client.DisplayAllMessages = function (pLMEssages, bolda, lastMessageNumb
             console.log("Voy a verificar en BD los mensajes");
             chatHub.server.storeMessages($("#hdId").val(), pLMEssages);
         }
-        $('#panelChatList_' + UserID).animate({ scrollTop: 80000 }, 1000);
+        $('#panelChatList_' + UserID).animate({ scrollTop: 60000 }, 1000);
     }
     else {
         console.log("Hay un problema interno mostrando todos los mensajes, mensaje: <br>" + pLMEssages);
@@ -207,7 +208,7 @@ chatHub.client.DisplayLastMessages = function (pLMEssages, bolda, lastMessageNum
             console.log("Voy a verificar en BD los mensajes");
             chatHub.server.storeMessages(pLMEssages);
         }
-        $('#panelChatList_' + UserID).animate({ scrollTop: 80000 }, 1000);
+        $('#panelChatList_' + UserID).animate({ scrollTop: 60000 }, 1000);
     }
     else {
         console.log("Hay un problema interno mostrando el ultimo mensaje, mensaje: <br>" + pLMEssages);

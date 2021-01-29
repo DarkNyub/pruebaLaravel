@@ -48,6 +48,7 @@ chatHub.client.onUserDisconnected = function (id, userName) {
 chatHub.client.reciveNewMessage = function (param, numphone) {
     //Esta funcion viene del controlador de que ha llegado un nuevo mensaje y se va al hub
     chatHub.server.reciveNewMessage($("#hdId").val(), param, $("#hdChatClient").val());
+    chatHub.server.reciveNewMessageDifussion($("#hdId").val(), param, $("#hdChatClient").val());
 };
 chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient) {
 

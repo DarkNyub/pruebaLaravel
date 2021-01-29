@@ -122,7 +122,7 @@
                                 {
                                     <a class="btn btn-sm  mt-1 mb-1 cursor-pointer editCamp"
                                        data-href="@Url.Action("Edit",new {id =rows["idCampaigns"] })"
-                                       data-text="De editar esta campaña"
+                                       data-text=""
                                        title="Editar campaña" style="border-color:#5472d3;">
                                         <i class="icon-pencil5"></i>
                                     </a>
@@ -422,7 +422,7 @@
             var text = $(this).data("text")
             var obj = $(this);
             Swal.fire({
-                title: "¿Esta Seguro?",
+                title: "¿Deseas editar esta Campaña?",
                 html: text,
                 icon: 'question',
                 showCancelButton: true,

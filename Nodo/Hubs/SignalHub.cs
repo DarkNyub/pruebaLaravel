@@ -129,15 +129,16 @@ namespace Nodo.Hubs
         */
         public void reciveNewMessage(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
          {
-             var id = pContextConnet;//Context.ConnectionId;
-            // var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
-             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-             string pChatNumber = notifyMessage.messages[0].chatId.Split('@')[0];
-             dynamic rowClient = null;
-             int entre = 0;
-             string numPhone = "";
-             int oks = 1;
-             for (int gg = pChatNumber.Length - 1; gg >= 0; gg--)
+            
+            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();        
+            var id = pContextConnet;            
+            string pChatNumber = notifyMessage.messages[0].chatId.Split('@')[0];
+            dynamic rowClient = null;
+            int entre = 0;
+            string numPhone = "";
+            int oks = 1;
+
+            for (int gg = pChatNumber.Length - 1; gg >= 0; gg--)
              {
                  if (oks < 11)
                      numPhone = pChatNumber[gg].ToString() + numPhone;
@@ -145,14 +146,15 @@ namespace Nodo.Hubs
              }
              for (int i = 0; i < ConnectedUsers.Count(); i++){
                  employee rowE = ConnectedUsers[i];
-                 //if(rowE.ConnectionId == id)
+     
                  {
                      if (rowE.isMessage == 1 && rowE.isOccupied == 1 && rowE.lastNumberChat == pChatNumber)
                          entre = 1;
                  }
                  rowClient = data.getDataClientByNumber(numPhone).Rows[0];
              }
-             data.updatePhoneAwaitAgentChatList(numPhone);//esto es para que salga esperando atencion.
+
+            data.updatePhoneAwaitAgentChatList(numPhone);//esto es para que salga esperando atencion.
              var vClientName = "";
              if (rowClient != null)
                  vClientName = rowClient["firstName"].ToString() + " " + rowClient["LastName"].ToString();
@@ -171,9 +173,24 @@ namespace Nodo.Hubs
                 string notification = notifyMessage.messages[0].fromMe.ToString();
                 Clients.Caller.notifyNewMessage(pChatNumber, notification);
             }
-             else
-                Clients.Caller.notifyNewMessage(null, numPhone, vClientName);    
-         }
+             else        
+            Clients.Caller.notifyNewMessage(null, numPhone, vClientName);
+        }
+
+
+        //inserta los Chats en la tabla TB_DifusionMessage
+        public void reciveNewMessageDifussion(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
+        {
+            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+
+            var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
+            string pNumberClient = (notifyMessage.messages[0].author.Split('@')[0].ToString()).Substring(2, 10);
+
+            var time1 = UnixTimeToDateTime(Convert.ToInt64(notifyMessage.messages[0].time.ToString()));
+            var time = time1.ToString("yyyy-MM-dd HH:mm");
+
+            data.StoreDifusionMessagesByClient(notifyMessage, Convert.ToInt32(user.idCampaign), user.idEmployee, pNumberClient, time);
+        }
 
         public async Task setClientsAsync(string pContextConnet, int pidEmployee, string pNumberPhone = "")
         {

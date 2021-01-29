@@ -890,6 +890,40 @@ public class ConnectionDataBase : Controller
                 throw;
             }
         }
+        public DataTable StoreDifusionMessagesByClient(Nodo.Models.NotifyMessage model = null, int pidCampaign = 0, int pidEmployee = 0, string pNumberClient = "", string time = "")
+
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_StoreDifusionMessagesByClient", con);
+                if (model.messages[0].id != "") da.SelectCommand.Parameters.Add("@pid", SqlDbType.VarChar).Value = model.messages[0].id;
+                if (model.messages[0].body.ToString() != "") da.SelectCommand.Parameters.Add("@pbody", SqlDbType.VarChar).Value = model.messages[0].body.ToString();
+                if (model.messages[0].type.ToString() != "") da.SelectCommand.Parameters.Add("@ptype", SqlDbType.VarChar).Value = model.messages[0].type.ToString();
+                if (model.messages[0].senderName != "") da.SelectCommand.Parameters.Add("@psenderName", SqlDbType.VarChar).Value = model.messages[0].senderName;
+                if (model.messages[0].fromMe.ToString() != "") da.SelectCommand.Parameters.Add("@pfromMe", SqlDbType.VarChar).Value = model.messages[0].fromMe.ToString();
+                if (model.messages[0].author!= "") da.SelectCommand.Parameters.Add("@pauthor", SqlDbType.VarChar).Value = model.messages[0].author;
+                if (model.messages[0].chatId.ToString() != "") da.SelectCommand.Parameters.Add("@pchatId", SqlDbType.VarChar).Value = model.messages[0].chatId.ToString();
+                if (model.messages[0].messageNumber != 0) da.SelectCommand.Parameters.Add("@pmessageNumber", SqlDbType.Int).Value = model.messages[0].messageNumber;
+                if (model.messages[0].self != "") da.SelectCommand.Parameters.Add("@pself", SqlDbType.VarChar).Value = model.messages[0].self;
+                if (model.messages[0].isForwarded.ToString() != "") da.SelectCommand.Parameters.Add("@pisForwarded", SqlDbType.VarChar).Value = model.messages[0].isForwarded.ToString();
+                if (model.messages[0].quotedMsgBody != "") da.SelectCommand.Parameters.Add("@pquotedMsgBody", SqlDbType.VarChar).Value = model.messages[0].quotedMsgBody;
+                if (model.messages[0].quotedMsgId != "") da.SelectCommand.Parameters.Add("@pquotedMsgId", SqlDbType.VarChar).Value = model.messages[0].quotedMsgId;
+                if (model.messages[0].chatName.ToString() != "") da.SelectCommand.Parameters.Add("@pchatName", SqlDbType.VarChar).Value = model.messages[0].chatName.ToString();
+                da.SelectCommand.Parameters.Add("@ptime", SqlDbType.VarChar).Value = time;
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                if (pNumberClient != "") da.SelectCommand.Parameters.Add("@pNumberClient", SqlDbType.VarChar).Value = pNumberClient;
+                if (pidEmployee != 0) da.SelectCommand.Parameters.Add("@pidEmployee", SqlDbType.Int).Value = pidEmployee;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public DataTable getAllMessageChatsByClientByCampagin(int pidCampaign = 0, int pidClient = 0)
         {
             try
