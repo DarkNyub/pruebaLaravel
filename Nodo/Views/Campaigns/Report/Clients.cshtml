@@ -47,7 +47,9 @@
                         <td class="">@rowClient["firstName"]</td>
                         <td class="">@rowClient["LastName"]</td>
                         <td class="">@rowClient["phoneNumber"]</td>
-                            @foreach (dynamic rowClienCatalog in ViewBag.rowClientCatalog)
+                        @foreach (dynamic rowCatalog in ViewBag.rowCatalog)
+                        {
+                            foreach (dynamic rowClienCatalog in ViewBag.rowClientCatalog)
                             {
                                 if (Convert.ToInt32(rowClient["idClient"]) == Convert.ToInt32(rowClienCatalog["idClient"]) && Convert.ToInt32(rowCatalog["idCatalog"]) == Convert.ToInt32(rowClienCatalog["idCatalogFather"]))
                                 {
@@ -55,6 +57,12 @@
                                     <td class="">@rowClienCatalog["nameCatalogSon"]</td>
                                 }
                             }
+                            if (ViewBag.entre == 0)
+                            {
+                                <td class=""></td>
+                            }
+                            ViewBag.entre = 0;
+                        }
                         <td style="width:100px !important">
                             @foreach (dynamic rowCome in ViewBag.rowCommentsByCampaign)
                             {
