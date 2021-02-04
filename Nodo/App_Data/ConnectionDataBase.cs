@@ -260,6 +260,29 @@ public class ConnectionDataBase : Controller
                 throw;
             }
         }
+
+
+        public DataTable storeClientCatalogFormulario(int pidClient = 0, int pidCatalogFather = 0, string pidCatalogSon = "")
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_storeClientCatalogformulario", con);
+                if (pidClient != 0) da.SelectCommand.Parameters.Add("@pidClient", SqlDbType.Int).Value = pidClient;
+                if (pidCatalogFather != 0) da.SelectCommand.Parameters.Add("@pidCatalogFather", SqlDbType.Int).Value = pidCatalogFather;
+                if (pidCatalogSon != "") da.SelectCommand.Parameters.Add("@pidCatalogSon", SqlDbType.VarChar).Value = pidCatalogSon;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
         public DataTable storeClientCatalogExcel(int pidClient = 0, int pidCampaign = 0, string pidCatalogFather = "", string pidCatalogSon = "")
         {
             try

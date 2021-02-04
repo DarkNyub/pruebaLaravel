@@ -434,6 +434,8 @@ namespace Nodo.Controllers
             }
             DataTable dd = data.storeClientCatalog(vidClient, vidCatalogFather, vidCatalogSon);
             ViewBag.result = datatabletojson(dd);
+            DataTable dm = data.storeClientCatalogFormulario(vidClient, vidCatalogFather, vidCatalogSon);
+            ViewBag.resultform = datatabletojson(dm);
             return Json(ViewBag.result, JsonRequestBehavior.AllowGet);
         }
         /********* End de cmapañas y catálogos *******/

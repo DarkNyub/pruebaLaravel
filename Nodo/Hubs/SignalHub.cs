@@ -196,7 +196,7 @@ namespace Nodo.Hubs
         {
             try
             {
-                int COUNT_CHAT_LIST = 500;
+                int COUNT_CHAT_LIST = 50;
                 string notPhones = "";
                 //int countAgent = 0;
                 var id = Context.ConnectionId;
