@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewBag.Title = "editConfiguration";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+}
+
+<div class="card flex-fill">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Configuracion de chat api</h6>
+        <br />
+        @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+    </div>
+    <br />
+    <br />
+    <div class="card-body">
+        <form action="" method="post" id="formsaveLicencia" class="col-sm-12 row" enctype="multipart/form-data">
+            <input name="idContenido" value="" type="hidden" />
+            <div class="col-sm-12">
+                <div class="row">
+
+
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>instance<i class="text-danger">*</i></label>
+                            <input name="Nit" @* si"*@ type="text" class="form-control form-control-sm areamask " required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>token<i class="text-danger">*</i></label>
+                            <input name="Nit" @*si"*@ type="text" class="form-control form-control-sm areamask " required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>urlWork<i class="text-danger">*</i></label>
+                            <input name="" value="https://livend.azurewebsites.net/" type="url" class="form-control form-control-sm areamask " required readonly>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-3">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>urlSendMessage<i class="text-danger">*</i></label>
+                                <input name="Nit" type="url" value="sendMessage" class="form-control form-control-sm areamask " readonly required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+                <br />
+                <br />
+                <br />
+
+                <div class="row">
+
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>urlSendFile<i class="text-danger">*</i></label>
+                            <input name="Nit" value="sendFile" type="text" class="form-control form-control-sm areamask " required readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>urlSendPTT<i class="text-danger">*</i></label>
+                            <input name="Nit" value="sendPTT" type="text" class="form-control form-control-sm areamask " required readonly>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>urlApi<i class="text-danger">*</i></label>
+                            <input name="Numero_Contacto" type="number" placeholder="000000000" class="form-control form-control-sm areamask phoneVerif" required>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-3">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>urlMessages<i class="text-danger">*</i></label>
+                                <input name="Nit" value="messages" type="url" class="form-control form-control-sm areamask " required readonly>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+
+                <div class="row">
+
+
+                    <div class="col-sm-6">
+
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="col-sm-3 text-center">
+                            <a href="@Url.Action("Index", "Campaigns")" class="btn btn-secondary btn-sm btn-labeled btn-labeled-right m-1" style="background-color:#666666"><b><i class="icon-cancel-circle2"></i></b> Cancelar</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1" style="background-color:#002171"><b><i class="icon-plus3"></i></b> Guardar</button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
