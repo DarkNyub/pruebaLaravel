@@ -53,7 +53,7 @@ namespace Nodo.Hubs
                 });
             }
             employee current = ConnectedUsers.FirstOrDefault(e => e.idEmployee == UserID);
-            if (vcount == 1)
+            if (vcount >= 1)
             {
                 dynamic holas = data.getConfigurationByCampaign(icaps).Rows;
                 try
@@ -62,9 +62,9 @@ namespace Nodo.Hubs
                     {
                         LConfig.Add(new Configuration { idConfig = rows["idConfig"], idCampaign = rows["idCampaign"], name = rows["name"], value = rows["value"] });
                     }
-                    VTOKEN = LConfig.Where(ee => ee.name == "token").First().value;
-                    VINSTANCE = LConfig.Where(ee => ee.name == "instance").First().value;
-                    VURL = LConfig.Where(ee => ee.name == "urlApi").First().value;
+                    VTOKEN = LConfig.Where(ee => ee.name == "token").Where(ee => ee.idCampaign == icaps).First().value;
+                    VINSTANCE = LConfig.Where(ee => ee.name == "instance").Where(ee => ee.idCampaign == icaps).First().value;
+                    VURL = LConfig.Where(ee => ee.name == "urlApi").Where(ee => ee.idCampaign == icaps).First().value;
                 }
                 catch (Exception ex)
                 {

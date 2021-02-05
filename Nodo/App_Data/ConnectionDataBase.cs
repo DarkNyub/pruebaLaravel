@@ -1179,13 +1179,15 @@ public class ConnectionDataBase : Controller
             }
         }
         
-        public DataTable updatePhoneAwaitAgentChatList(string pPhoneNumber = "")
+        public DataTable updatePhoneAwaitAgentChatList(string pPhoneNumber = "", int pStatus = 0, int pidCampaign = 0)
         {
             try
             {
                 SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
                 SqlDataAdapter da = new SqlDataAdapter("SP_updatePhoneAwaitAgentChatList", con);
                 if (pPhoneNumber != "") da.SelectCommand.Parameters.Add("@pPhoneNumber", SqlDbType.VarChar).Value = pPhoneNumber;
+                if (pStatus != 0) da.SelectCommand.Parameters.Add("@pStatus", SqlDbType.Int).Value = pStatus;
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
                 DataTable dt = new DataTable();
                 da.Fill(dt);

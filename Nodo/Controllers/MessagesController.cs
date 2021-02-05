@@ -270,8 +270,7 @@ namespace Nodo.Controllers
         }
 
         /********************** Fin SmartData ******************/
-
-        public async Task<JsonResult> SendMessageText()
+            public async Task<JsonResult> SendMessageText()
         {
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
             string BASEURL = "https://api.api4bot.com/instance126372/";
@@ -464,7 +463,9 @@ namespace Nodo.Controllers
             ViewBag.result = datatabletojson(dd);
             return Json(ViewBag.result, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult FreeClientByAgent()
+
+        
+            public JsonResult FreeClientByAgent()
         {
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
             int vidEmployee = Convert.ToInt32(Session["idClient"]);//este es el agente
@@ -546,7 +547,20 @@ namespace Nodo.Controllers
             ViewBag.result = datatabletojson(dd);
             return Json(ViewBag.result, JsonRequestBehavior.AllowGet);
         }
-        
+        public JsonResult FinalizeChatClient()
+        {
+            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+            int vidCampaing = Convert.ToInt32(Request["idCampaign"]);
+            string phonenumber = Request["phoneNumber"].ToString();
+
+            string vNumberPhoneChat = phonenumber.Substring(phonenumber.Length - 10);
+
+            DataTable dd = data.updatePhoneAwaitAgentChatList(vNumberPhoneChat,-3, vidCampaing);
+
+            ViewBag.result = datatabletojson(dd);
+            return Json(ViewBag.result, JsonRequestBehavior.AllowGet);
+        }
+
 
         /********** end data cliente ********/
         public string datatabletojson(DataTable table)

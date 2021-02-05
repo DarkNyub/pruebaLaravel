@@ -29,6 +29,9 @@ function Reconnect() {
         }, 1000); // Restart connection after 5 seconds.
     });
 }
+
+
+
 // On New User Connected
 chatHub.client.onConnected = function (param, pidconex, pidCampaing,  ConextedUsers) {
     $("#hdId").val(pidconex)
@@ -70,7 +73,7 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
             toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
             console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName)
             if (vTypeUrl == "mes") {
-                reloadChatList();
+                chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
             }
             if ($("#hdChatClient").val() == pPhoneNumber)
                 sendMessageFromEmployee("57" + pPhoneNumber);
@@ -83,7 +86,6 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
 };
 function reloadChatList() {
     newConection()
-    chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
 }
 function notifySelectedClient(pNameAsesor, pNumberPhone) {
     var stringCol = 'El asesor ' + pNameAsesor + ' atendera al ' + pNumberPhone + '';
@@ -92,7 +94,7 @@ function notifySelectedClient(pNameAsesor, pNumberPhone) {
     //toastr.warning('El asesor ' + pNameAsesor + ' atendera al ' + pNumberPhone+'', "Notificación", { timeOut: 1000, newestOnTop: true });
 }
 chatHub.client.notifySelectedClientServer = function (pNotification) {
-    //setTimeout(function () { chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val()); }, 1000);
+    setTimeout(function () { chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val()); }, 1000);
     toastr.warning(pNotification, "Notificación", { timeOut: 3000, newestOnTop: true, positionClass: "toast-top-left" });
     console.log("Estado de la conexión notifySelectedClientServer: " + $.connection.hub.state)
 }
@@ -288,6 +290,9 @@ function showIndividualMessage(item) {
     }
     return sks;
 }
+
+
+
 function ShowIndividualClient(prowClient, pContainer) {
     var row = prowClient;
     var lastIdEmployee = '<b class="text-blue"> en el CHATBOT</b>';
@@ -335,6 +340,8 @@ function ShowIndividualClient(prowClient, pContainer) {
         lastIdEmployee = '<b class="text-pink-800"> esperando atención</b>';
     else if (row.lastIdEmployee > 0)
         lastIdEmployee = '<br><b class="text-warning" id="free_' + row.idClient + '"> Atendido por ' + row.nameEmployee + '</b>';
+    else if (row.lastIdEmployee == -3)
+        lastIdEmployee = '<br><b class="text-success" id="free_' + row.idClient + '"> Chat finalizado</b>';
     vhtml += 'data-name="' + row.firstName + " " + lastName + '">';
     vhtml += '<a class="text-default font-weight-semibold">' + row.firstName + ' ' + lastName + ' - ' + lastIdEmployee;
     //if (row.lastUsedUnix > lastUsedUnix)
@@ -350,3 +357,29 @@ function ShowIndividualClient(prowClient, pContainer) {
     vhtml += '</tr>';
     $(pContainer).append(vhtml);
 }
+
+/*
+function _enconversion() {
+    $('#formChat').on("submit", function (e) {
+
+        var data = {
+
+            objEndConversion: {
+                pstatus: -2,
+                numberphone: $("numberPhoneChat").val(),
+                idclient: $("idclient").val(),
+            }
+        }
+
+        $.ajax({
+            method: "POST",
+            url: "MessagesController.cs/reciveNewMessage",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (info) {
+
+            console.log(info);
+        })
+    })
+}*/

@@ -98,6 +98,7 @@ namespace Nodo.Controllers
             ViewBag.rowCompany = data.ObtenerData("SP_getCompany").Rows;
             return View("/Views/Campaigns/create.cshtml");
         }
+
         // GET: Campaigns/Details/5
         public ActionResult StoreCampaign(Models.campaigns model)
         {

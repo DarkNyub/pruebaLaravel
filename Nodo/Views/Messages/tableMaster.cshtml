@@ -945,6 +945,29 @@
                     }
                 }
             });
+
+            $(document).on("click", "._enconversion", function () {
+                var vNumberPhoneChat = $("#numberPhoneChat").val();;
+                var vIdCampaign = $("#inputidCampaign").val()
+                var href = '@Url.Action("FinalizeChatClient")'
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    data: { idCampaign : vIdCampaign, phoneNumber : vNumberPhoneChat},
+                    beforeSend: function (resp) {
+
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data)[0];
+                        toast.success("Modificación realizada con éxito...", "Información", { timeOut: 500 } )
+                    },
+                    error: function (data) {
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                });
+            });
+
             $(document).on("click", "#btnComment", function () {
                 var href = "@Url.Action("storeComment")";
                 if ($("#newComment").val().length > 0) {

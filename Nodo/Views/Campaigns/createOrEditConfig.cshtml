@@ -1,0 +1,156 @@
+﻿@model  Nodo.Models.campaigns
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml";
+    List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)ViewBag.rowConfiguration;
+}
+<!-- Registration form -->
+    <div class="card flex-fill">
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Información de Configuración de CHAT API</h6>
+            @*<div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>*@
+        </div>
+        <div class="card-body">
+            <form class="" action="@Url.Action("storeOrUpdateConfigByCampaign", new { id=ViewBag.idCampaign})" method="post" enctype="multipart/form-data">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <input type="number" name="instance" value="@Lconfig.Where(ee => ee.name == "instance").FirstOrDefault().value" class="form-control form-control-sm" required placeholder="Intancia">
+                            <div class="form-control-feedback">
+                                <i class="icon-flag4 text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <input type="text" name="token" class="form-control form-control-sm" value="@Lconfig.Where(ee => ee.name == "token").FirstOrDefault().value" required placeholder="Token">
+                            <div class="form-control-feedback">
+                                <i class="icon-flag4 text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group form-group-feedback form-group-feedback-right">
+                            <input type="text" name="urlApi" class="form-control form-control-sm" value="@Lconfig.Where(ee => ee.name == "urlApi").FirstOrDefault().value" required placeholder="Url Chat API">
+                            <div class="form-control-feedback">
+                                <i class="icon-flag4 text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="urlWork" value="https://livend.azurewebsites.net/" />
+                <input type="hidden" name="urlSendMessage" value="sendMessage" />
+                <input type="hidden" name="urlSendFile" value="sendFile" />
+                <input type="hidden" name="urlSendPTT" value="sendPTT" />
+                <input type="hidden" name="urlMessages" value="messages" />
+                <div class="row p-1">
+                    <div class="col-sm-6 text-center">
+                        <button type="submit" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1" style="    background-color: #002171"><b><i class="icon-plus3"></i></b> Crear</button>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <a href="@Url.Action("Index", "Campaigns")" class="btn btn-secondary btn-sm btn-labeled btn-labeled-right m-1" style="background-color:#666666"><b><i class="icon-cancel-circle2"></i></b> Cancelar</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+<!-- /registration form -->
+
+
+@section scriptsButtom{
+    @if (Session["message"] != null)
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                type: '@Session["type"]',
+                html: "@Session["message"]",
+                title: "@Session["title"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+        Session.Remove("type");
+        Session.Remove("message");
+        Session.Remove("title");
+    }
+    <script type="text/javascript">
+        function randomIntFromInterval(min, max) { // min and max included 
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+        $(document).ready(function () {
+            $(".flaterpicker").flatpickr({
+                dateFormat: "d-m-Y",
+                "locale": "es",
+                enableTime: false,
+                minDate:new Date()
+            });
+            $("#idCompany").select2({
+                placeholder: "Seleccione o ingrese nombre de empresa",
+                allowClear: true,
+                tags: true
+            });
+            $(document).on("click", ".addDatas", function () {
+                var vms = "";
+                var nums = randomIntFromInterval(0, 9999);
+                var vobj = $(this);
+                var vcontainer = $("#" + vobj.data("container"))
+                var vinput = $("." + vobj.data("input"));
+                $.each(vinput, function (i, item) {
+                    if ($(item).prop("checked")) {
+                        var ieng = "#";
+                        if ($(item).val() == 1) {//select 
+                            vms += '<div class="col-md-4">';
+                                vms += '<div class="row">';
+                                    vms += '<div class="col-sm-11">';
+                                        vms += '<div class="form-group form-group-feedback form-group-feedback-right border-bottom">';
+                                            vms += '<input type="hidden" name="catalog'+$(item).attr("name")+'[]" value="'+ieng+'" />';
+                                            vms += '<select name="catalog'+$(item).attr("name")+'[]" id="idcatalog_'+nums+'" required multiple class="form-control form-control-sm selecrr">';
+                                            vms += '</select>';
+                                        vms += '</div>';
+                                    vms += '</div>';
+                                    vms += '<div class="align-self-center col-sm-1 text-center p-0">';
+                                        vms += '<a class="btn btn-sm icon-cancel-circle2 cursor-pointer p-1 delCatalog"></a>';
+                                    vms += '</div>';
+                                vms += '</div>';
+                            vms += '</div>';
+                        }
+                        else {//archivo
+                            vms += '<div class="col-md-4">';
+                                vms += '<div class="row">';
+                                    vms += '<div class="col-sm-11">';
+                                        vms += '<div class="form-group form-group-feedback form-group-feedback-right border-bottom">';
+                                            vms += '<input type="file" name="catalogExcel'+$(item).attr("name")+'[]" class="form-control form-control-sm" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required />';
+                                        vms += '</div>';
+                                    vms += '</div>';
+                                    vms += '<div class="align-self-center col-sm-1 text-center p-0">';
+                                        vms += '<a class="btn btn-sm icon-cancel-circle2 cursor-pointer p-1 delCatalog"></a>';
+                                    vms += '</div>';
+                                vms += '</div>';
+                            vms += '</div>';
+                        }
+                        vcontainer.append(vms);
+                        $("#idcatalog_" + nums).select2({
+                            placeholder: "Ingrese nombre del cátalogo",
+                            allowClear: true,
+                            tags: true
+                        })
+                        $("#idcatalog_" + nums).focus();
+                    }
+                })
+
+            });
+            $(document).on("click", ".delCatalog", function () {
+                $(this).parent().parent().parent().remove();
+            })
+
+        })
+    </script>
+}
