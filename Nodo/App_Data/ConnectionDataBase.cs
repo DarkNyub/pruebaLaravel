@@ -643,6 +643,23 @@ public class ConnectionDataBase : Controller
                 throw;
             }
         }
+        public DataTable getAllCatalogByCampaign(int pidCampaign = 0)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_getAllCatalogByCampaign", con);
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public DataTable getCampaigns(int pidCampaign = 0)
         {
             try

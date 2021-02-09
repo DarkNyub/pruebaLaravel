@@ -49,19 +49,17 @@
                         <td class="">@rowClient["phoneNumber"]</td>
                         @foreach (dynamic rowCatalog in ViewBag.rowCatalog)
                         {
+                            ViewBag.namescat = "";
                             foreach (dynamic rowClienCatalog in ViewBag.rowClientCatalog)
                             {
                                 if (Convert.ToInt32(rowClient["idClient"]) == Convert.ToInt32(rowClienCatalog["idClient"]) && Convert.ToInt32(rowCatalog["idCatalog"]) == Convert.ToInt32(rowClienCatalog["idCatalogFather"]))
                                 {
                                     ViewBag.entre = 1;
-                                    <td class="">@rowClienCatalog["nameCatalogSon"]</td>
+                                    ViewBag.namescat += "- " + rowClienCatalog["nameCatalogSon"] + "\n";
                                 }
                             }
-                            if (ViewBag.entre == 0)
-                            {
-                                <td class=""></td>
-                            }
                             ViewBag.entre = 0;
+                            <td class="">@ViewBag.namescat</td>
                         }
                         <td style="width:100px !important">
                             @foreach (dynamic rowCome in ViewBag.rowCommentsByCampaign)

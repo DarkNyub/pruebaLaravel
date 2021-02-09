@@ -339,7 +339,7 @@ namespace Nodo.Controllers
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
             ViewBag.rowCompany = data.ObtenerData("SP_getCompany").Rows;
             ViewBag.rowCampaign = data.getCampaigns(id).Rows[0];
-            ViewBag.rowcatalogs = data.getCatalogsByCampaign(id).Rows;
+            ViewBag.rowcatalogs = data.getAllCatalogByCampaign(id).Rows;
             return View("/Views/Campaigns/edit.cshtml");
         }
         public ActionResult UpdateCampaign(Models.campaigns model)
