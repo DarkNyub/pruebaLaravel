@@ -71,21 +71,21 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
             sendMessageFromEmployee(pChatNumber);
         } else {
             toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
-            console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName)
-            if (vTypeUrl == "mes") {
-                chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
-            }
+            console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName)                
             if ($("#hdChatClient").val() == pPhoneNumber)
                 sendMessageFromEmployee("57" + pPhoneNumber);
+               reloadChatList();
         }     
     }
     else {
         if ($("#hdChatClient").val() == pChatNumber)
             sendMessageFromEmployee(pChatNumber);
+            reloadChatList();
     }
 };
 function reloadChatList() {
-    newConection()
+    newConection();
+    chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
 }
 function notifySelectedClient(pNameAsesor, pNumberPhone) {
     var stringCol = 'El asesor ' + pNameAsesor + ' atendera al ' + pNumberPhone + '';
@@ -357,29 +357,3 @@ function ShowIndividualClient(prowClient, pContainer) {
     vhtml += '</tr>';
     $(pContainer).append(vhtml);
 }
-
-/*
-function _enconversion() {
-    $('#formChat').on("submit", function (e) {
-
-        var data = {
-
-            objEndConversion: {
-                pstatus: -2,
-                numberphone: $("numberPhoneChat").val(),
-                idclient: $("idclient").val(),
-            }
-        }
-
-        $.ajax({
-            method: "POST",
-            url: "MessagesController.cs/reciveNewMessage",
-            data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json"
-        }).done(function (info) {
-
-            console.log(info);
-        })
-    })
-}*/

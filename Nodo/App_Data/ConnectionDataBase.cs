@@ -94,6 +94,27 @@ public class ConnectionDataBase : Controller
                 throw;
             }
         }
+
+        public DataTable GetClientsCampaign(int idCampaign)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_getClientsCampaignAll", con);
+                if (idCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.VarChar).Value = idCampaign;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public DataTable ObtenerData(string SP)
         {
             try

@@ -489,7 +489,7 @@
                                     smk += '<div class="row mt-1">';
                                     smk += '<div class="col-sm-12 mt-2">';
                                     smk += '<span class="d-block">' + rowfather.nameCatalog + '</span>';
-                                    smk += '<select data-idcampaignfather="' + rowfather.idCatalog + '" style="width:100%" ' + vname+' class="form-control selecCatalog hola" id="catalog_' + rowfather.idCatalog + '">';
+                                    smk += '<select data-idcampaignfather="' + rowfather.idCatalog + '" style="width:100%" ' + vname +' class="form-control selecCatalog selecCatalog1 hola" id="catalog_' + rowfather.idCatalog + '">';
                                     smk += '<option></option>';
                                     $.each(data, function (index, rowson) {
                                         if (rowson.idfather == rowfather.idCatalog) {
@@ -881,6 +881,33 @@
                 var vidCatalogFather = $(this).data("idcampaignfather");
                 var vidCatalogSon = $(this).val();
                 var href = '@Url.Action("storeClientCatalog")'
+                $.ajax({
+                    type: 'get',
+                    url: href,
+                    timeout: 0,
+                    data: { idClient: vidClient, idCatalogFather: vidCatalogFather, idCatalogSon: vidCatalogSon },
+                    beforeSend: function (resp) {
+                        //spin.removeClass("d-none");
+                    },
+                    success: function (response) {
+                        //spin.addClass("d-none");
+                        data = JSON.parse(response)[0];
+                        if (data.respuesta == 1)
+                            toastr.success("Cambio realizado con éxito", "Bien", { timeOut: 500 })
+                        else
+                            toastr.warning("No hay conexión con la base de datos, contacte al administrador", "Error", { timeOut: 2000 })
+                    },
+                    error: function (data) {
+                        //spin.addClass("d-none");
+                        toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
+                    }
+                })
+            })
+              $(document).on("change", ".selecCatalog1", function () {
+                var vidClient = $(".idClients").val();
+                var vidCatalogFather = $(this).data("idcampaignfather");
+                var vidCatalogSon = $(this).val();
+                var href = '@Url.Action("storeCampaignClient")'
                 $.ajax({
                     type: 'get',
                     url: href,

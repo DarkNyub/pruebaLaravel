@@ -27,7 +27,9 @@ namespace Nodo.Controllers
 
             }
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-            ViewBag.row = data.ObtenerData("SP_getClientsCampaignAll").Rows;
+            int vidCampaign = Convert.ToInt32(Session["idCampaign"]);           
+            ViewBag.row = data.GetClientsCampaign(vidCampaign).Rows;
+            //       ViewBag.row = null;
             return View("/Views/Clients/table.cshtml");
         }
 
@@ -173,6 +175,7 @@ namespace Nodo.Controllers
                     }
                     if (ahoraEntre == 0)
                     {
+
                         DataTable ff = data.StoreAllRowClientCatalog(vidCampaign, dtfinal, vNameOptional);
                         if (ff.Rows.Count > 0)
                         {
