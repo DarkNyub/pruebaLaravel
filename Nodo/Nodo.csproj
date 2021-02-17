@@ -3885,6 +3885,8 @@
     <Content Include="Views\Messages\Partials\findClient.cshtml" />
     <Content Include="Views\Messages\Partials\smartDataLauncher.cshtml" />
     <Content Include="Views\Messages\Partials\smartDataPage.cshtml" />
+    <Content Include="Views\Campaigns\.cshtml" />
+    <Content Include="Views\Campaigns\CreateEditConfigByCampaign.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

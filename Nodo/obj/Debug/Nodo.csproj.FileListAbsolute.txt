@@ -1264,3 +1264,7 @@ C:\Users\Admin\source\repos\nodoLabs\nodoLabs\Nodo\obj\Debug\Nodo.csproj.CoreCom
 C:\Users\Admin\source\repos\nodoLabs\nodoLabs\Nodo\obj\Debug\Nodo.csproj.CopyComplete
 C:\Users\Admin\source\repos\nodoLabs\nodoLabs\Nodo\obj\Debug\Nodo.dll
 C:\Users\Admin\source\repos\nodoLabs\nodoLabs\Nodo\obj\Debug\Nodo.pdb
+C:\Users\User\source\repos\nodo\nodoLabs\Nodo\obj\Debug\Nodo.csprojAssemblyReference.cache
+C:\Users\User\source\repos\nodo\nodoLabs\Nodo\obj\Debug\Nodo.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\nodo\nodoLabs\Nodo\obj\Debug\Nodo.dll
+C:\Users\User\source\repos\nodo\nodoLabs\Nodo\obj\Debug\Nodo.pdb

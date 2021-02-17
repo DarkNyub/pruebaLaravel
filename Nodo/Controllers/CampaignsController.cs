@@ -531,8 +531,98 @@ namespace Nodo.Controllers
             return View();
         }
 
+        public ActionResult CreateEditConfigByCampaign(int id)//este es el identificador de la campaña
+        {
+            Session["url"] = "campa";
+            if (Session["idClient"] == null)
+            {
+                Session["message"] = "Tiene que ingresar a la aplicación primero.";
+                Session["type"] = "error";
+                Session["title"] = "Error";
+                return RedirectToAction("Index", "Home");
+
+            }
+            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+            DataTable row = data.getConfigurationByCampaign(id);
+            List<Models.Configuration> rowConfiguration = new List<Models.Configuration>();
+            if (row.Rows.Count > 0)
+            {
+                rowConfiguration = row.AsEnumerable().Select(m => new Models.Configuration()
+                {
+                    idCampaign = m.Field<int>("idCampaign"),
+                    idConfig = m.Field<int>("idConfig"),
+                    value = m.Field<string>("value"),
+                    name = m.Field<string>("name")
+                }).ToList();
+            }
+            else
+            {
+                rowConfiguration.Add(new Models.Configuration { idCampaign = id, idConfig = -1, name = "instance", value = "" });
+                rowConfiguration.Add(new Models.Configuration { idCampaign = id, idConfig = -1, name = "token", value = "" });
+                rowConfiguration.Add(new Models.Configuration { idCampaign = id, idConfig = -1, name = "urlApi", value = "" });
+            }
+            ViewBag.idCampaign = id;
+            ViewBag.rowConfiguration = rowConfiguration;
+
+            return View("/Views/Campaigns/CreateEditConfigByCampaign.cshtml");
+
+        }
+        public ActionResult storeOrUpdateConfigByCampaign(int id)
+        {
+            Session["url"] = "campa";
+            if (Session["idClient"] == null)
+            {
+                Session["message"] = "Tiene que ingresar a la aplicación primero.";
+                Session["type"] = "error";
+                Session["title"] = "Error";
+                return RedirectToAction("Index", "Home");
+
+            }
+            try
+            {
+                ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+                //DataTable dt = null;
+                string vValue;
+
+
+                //dinamicas
+                vValue = Request["instance"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "instance", vValue);
+                vValue = Request["token"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "token", vValue);
+                vValue = Request["urlApi"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "urlApi", vValue);
+                //fin dinamicos
+                //estaticas
+                vValue = Request["urlWork"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "urlWork", vValue);
+                vValue = Request["urlSendMessage"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "urlSendMessage", vValue);
+                vValue = Request["urlSendFile"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "urlSendFile", vValue);
+                vValue = Request["urlSendPTT"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "urlSendPTT", vValue);
+                vValue = Request["urlMessages"].ToString();
+                data.storeOrUpdateConfigByCampaign(id, "urlMessages", vValue);
+                //fin estaticos
+
+
+                Session["message"] = "Todos los valores se han ingresado correctamente.";
+                Session["type"] = "success";
+                Session["title"] = "Muy Bien";
+            }
+            catch (Exception ex)
+            {
+                Session["message"] = "Hubo un problema, contacte al administrador.";
+                Session["type"] = "error";
+                Session["title"] = "Error";
+            }
+
+            return RedirectToAction("Index");
+        }
+
         // POST: Campaigns/Delete/5
-        [HttpPost]
+
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
