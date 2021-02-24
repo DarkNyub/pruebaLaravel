@@ -152,10 +152,13 @@ namespace Nodo.Controllers
                         DataTable dt = new DataTable();
                         //Loop through the Worksheet rows.
                         bool firstRow = true;
+                        int totalRows = workSheet.LastRowUsed().RowNumber();
+                        int countRows = 0;
                         vidcatalog = 0;
                         int vCatalogAlone = 1;
                         foreach (IXLRow row in workSheet.Rows())
                         {
+                            countRows++;
                             //Use the first row to add columns to DataTable.
                             if (firstRow)
                             {
@@ -172,12 +175,14 @@ namespace Nodo.Controllers
                                 //Add rows to DataTable.
                                 dt.Rows.Add();
                                 int j = 0;
-                                foreach (IXLCell cell in row.Cells())
+                                foreach (IXLCell cell in row.Cells(row.FirstCellUsed().Address.ColumnNumber, row.LastCellUsed().Address.ColumnNumber))
                                 {
                                     dynamic catalogFat = data.storeCatalog(cell.Value.ToString(), vidcatalog).Rows[0];
                                     j++;
                                 }
                             }
+                            if (countRows == totalRows)
+                                break;
                         }
                         data.storeCatalogCampaign(vidcatalog, vrowCampaig["idCampaigns"], 1, vCatalogAlone);
                     }
@@ -222,10 +227,13 @@ namespace Nodo.Controllers
                         DataTable dt = new DataTable();
                         //Loop through the Worksheet rows.
                         bool firstRow = true;
+                        int totalRows = workSheet.LastRowUsed().RowNumber();
+                        int countRows = 0;
                         vidcatalog = 0;
                         int vCatalogAlone = 1;
                         foreach (IXLRow row in workSheet.Rows())
                         {
+                            countRows++;
                             //Use the first row to add columns to DataTable.
                             if (firstRow)
                             {
@@ -242,12 +250,14 @@ namespace Nodo.Controllers
                                 //Add rows to DataTable.
                                 dt.Rows.Add();
                                 int j = 0;
-                                foreach (IXLCell cell in row.Cells())
+                                foreach (IXLCell cell in row.Cells(row.FirstCellUsed().Address.ColumnNumber, row.LastCellUsed().Address.ColumnNumber))
                                 {
                                     dynamic catalogFat = data.storeCatalog(cell.Value.ToString(), vidcatalog).Rows[0];
                                     j++;
                                 }
                             }
+                            if (countRows == totalRows)
+                                break;
                         }
                         data.storeCatalogCampaign(vidcatalog, vrowCampaig["idCampaigns"],2, vCatalogAlone);
                     }
@@ -525,12 +535,6 @@ namespace Nodo.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Campaigns/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
         public ActionResult CreateEditConfigByCampaign(int id)//este es el identificador de la campaña
         {
             Session["url"] = "campa";
@@ -621,21 +625,6 @@ namespace Nodo.Controllers
             return RedirectToAction("Index");
         }
 
-        // POST: Campaigns/Delete/5
-
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
         public string datatabletojson(DataTable table)
         {
             string JSONString = string.Empty;

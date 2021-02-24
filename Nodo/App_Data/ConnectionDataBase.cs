@@ -74,6 +74,28 @@ public class ConnectionDataBase : Controller
                 throw;
             }
         }
+
+        public DataTable storeOrUpdateConfigByCampaign(int pidCampaign, string pName, string pValue)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_StoreOrUpdateConfigByCampaign", con);
+                da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                if (pName != "") da.SelectCommand.Parameters.Add("@pName", SqlDbType.VarChar).Value = pName;
+                if (pValue != "") da.SelectCommand.Parameters.Add("@pValue", SqlDbType.VarChar).Value = pValue;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public DataTable ValidarIngresoUsuario(string usuario, string macAddress)
         {
             try
@@ -102,6 +124,25 @@ public class ConnectionDataBase : Controller
                 SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
                 SqlDataAdapter da = new SqlDataAdapter("SP_getClientsCampaignAll", con);
                 if (idCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.VarChar).Value = idCampaign;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public DataTable GetCampaign()
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_getCampaignsSelect", con);
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -844,6 +885,85 @@ public class ConnectionDataBase : Controller
                 throw;
             }
         }
+
+        public DataTable StoreDataChatListSelect(int pidCampaign = 0)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_StoreDataChatListSelect", con);
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public DataTable UpdateCampingLine(string pPhoneNumber= "", int pidCampaign = 0)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_UpdateCampingLine", con);
+                da.SelectCommand.Parameters.Add("@pPhoneNumber", SqlDbType.VarChar).Value = pPhoneNumber;
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public DataTable StoreDataChatListClient(DataTable chatList, int pidCampaign = 0, string pNotPhoneNumbers = "")
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_StoreDataChatListClient", con);
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                da.SelectCommand.Parameters.Add("@TablaCargar", SqlDbType.Structured).Value = chatList;
+                da.SelectCommand.Parameters.Add("@pNotPhoneNumbers", SqlDbType.VarChar).Value = pNotPhoneNumbers;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public DataTable StoreDataChatList_TBChatList(DataTable chatList, int pidCampaign = 0, string pNotPhoneNumbers = "", int pcampana2= 0)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_StoreDataTB_ChatList", con);
+                if (pidCampaign != 0) da.SelectCommand.Parameters.Add("@pidCampaign", SqlDbType.Int).Value = pidCampaign;
+                if (pcampana2 != 0) da.SelectCommand.Parameters.Add("@pidcampana2", SqlDbType.Int).Value = pcampana2;
+                da.SelectCommand.Parameters.Add("@TablaCargar", SqlDbType.Structured).Value = chatList;
+                da.SelectCommand.Parameters.Add("@pNotPhoneNumbers", SqlDbType.VarChar).Value = pNotPhoneNumbers;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public DataTable findClientByPhoneNumber(int pidCampaign = 0, string pPhoneNumber = "")
         {
             try
@@ -1101,6 +1221,24 @@ public class ConnectionDataBase : Controller
             {
                 SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
                 SqlDataAdapter da = new SqlDataAdapter("SP_getDataCampaignByInstance", con);
+                if (pInstanceId != "") da.SelectCommand.Parameters.Add("@pInstanceId", SqlDbType.VarChar).Value = pInstanceId;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public DataTable getDataCampaignByInstanceline(string pInstanceId = "")
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["CustomerDataConnectionString"].ConnectionString);
+                SqlDataAdapter da = new SqlDataAdapter("SP_getDataCampaignByInstanceLine", con);
                 if (pInstanceId != "") da.SelectCommand.Parameters.Add("@pInstanceId", SqlDbType.VarChar).Value = pInstanceId;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
                 DataTable dt = new DataTable();

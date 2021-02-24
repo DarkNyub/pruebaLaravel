@@ -15,7 +15,7 @@ namespace Nodo.Controllers
     public class ClientsController : Controller
     {
         // GET: Clients
-        public ActionResult Index()
+        public ActionResult Index(Models.campaigns campaigns)
         {
             Session["url"] = "cli";
             if (Session["idClient"] == null)
@@ -27,9 +27,13 @@ namespace Nodo.Controllers
 
             }
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-            int vidCampaign = Convert.ToInt32(Session["idCampaign"]);           
-            ViewBag.row = data.GetClientsCampaign(vidCampaign).Rows;
-            //       ViewBag.row = null;
+            int vidCampaign = Convert.ToInt32(Session["idCampaign"]);
+            ViewBag.campana = data.GetCampaign().Rows;
+            int idcampainfilter = campaigns.idCampaigns;
+            if(idcampainfilter != 0)
+                ViewBag.row = data.GetClientsCampaign(idcampainfilter).Rows;
+            else 
+                ViewBag.row = null;
             return View("/Views/Clients/table.cshtml");
         }
 

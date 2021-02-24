@@ -53,7 +53,7 @@ chatHub.client.reciveNewMessage = function (param, numphone) {
     chatHub.server.reciveNewMessage($("#hdId").val(), param, $("#hdChatClient").val());
     chatHub.server.reciveNewMessageDifussion($("#hdId").val(), param, $("#hdChatClient").val());
 };
-chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient) {
+chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient, dt) {
 
     var stringName = "";
     if (pNameClient != undefined) {
@@ -63,7 +63,7 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
         }
     }
 
-    chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
+    //chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
     if (pChatNumber == undefined || pPhoneNumber == "False") {
 
         // Se valida que el mensaje sea entrada para actualizar el chat
@@ -71,16 +71,20 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
             sendMessageFromEmployee(pChatNumber);
         } else {
             toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
-            console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName)                
+            console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName);
+
+            chatHub.server.setClientsAsyncCampaing(pPhoneNumber, dt);
+            reloadChatList();
+
             if ($("#hdChatClient").val() == pPhoneNumber)
                 sendMessageFromEmployee("57" + pPhoneNumber);
-               reloadChatList();
         }     
     }
     else {
-        if ($("#hdChatClient").val() == pChatNumber)
+        if ($("#hdChatClient").val() == pChatNumber) {
             sendMessageFromEmployee(pChatNumber);
             reloadChatList();
+        }
     }
 };
 function reloadChatList() {
@@ -136,6 +140,10 @@ chatHub.client.GetClients = function (pLClient, bolda) {
         //toastr.warning("Hay un problema interno, mensaje: <br>" + pLClient, "Información", { timeOut: 5000 });
     }
 };
+
+chatHub.client.ReloadPage = function () {
+    window.location.reload();
+}
 
 function getMessagesMaster(pid, pname, pIMAGEURL ) {
     var spin = $("#spinerIcon");

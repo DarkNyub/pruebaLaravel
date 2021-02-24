@@ -128,10 +128,13 @@ namespace Nodo.Hubs
         }
         */
         public void reciveNewMessage(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
-         {
-            
-            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();        
-            var id = pContextConnet;            
+        {
+
+            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+            var id = pContextConnet;
+            string pInstanceId = notifyMessage.instanceId;
+            var dt1 = data.getDataCampaignByInstanceline(pInstanceId).Rows[0];
+            int dt = Convert.ToInt32(dt1.ItemArray[0]);
             string pChatNumber = notifyMessage.messages[0].chatId.Split('@')[0];
             dynamic rowClient = null;
             int entre = 0;
@@ -139,42 +142,50 @@ namespace Nodo.Hubs
             int oks = 1;
 
             for (int gg = pChatNumber.Length - 1; gg >= 0; gg--)
-             {
-                 if (oks < 11)
-                     numPhone = pChatNumber[gg].ToString() + numPhone;
-                 oks++;
-             }
-             for (int i = 0; i < ConnectedUsers.Count(); i++){
-                 employee rowE = ConnectedUsers[i];
-     
-                 {
-                     if (rowE.isMessage == 1 && rowE.isOccupied == 1 && rowE.lastNumberChat == pChatNumber)
-                         entre = 1;
-                 }
-                 rowClient = data.getDataClientByNumber(numPhone).Rows[0];
-             }
+            {
+                if (oks < 11)
+                    numPhone = pChatNumber[gg].ToString() + numPhone;
+                oks++;
+            }
+            for (int i = 0; i < ConnectedUsers.Count(); i++) {
+                employee rowE = ConnectedUsers[i];
+
+                {
+                    if (rowE.isMessage == 1 && rowE.isOccupied == 1 && rowE.lastNumberChat == pChatNumber)
+                        entre = 1;
+                }
+                rowClient = data.getDataClientByNumber(numPhone).Rows[0];
+            }
+            List<String> vlistemplid = new List<string>();
+          /*  foreach (employee roww in ConnectedUsers)
+            {
+                if (Convert.ToInt32(roww.idCampaign) == dt)
+                    vlistemplid.Add(roww.ConnectionId);
+            }*/
 
             data.updatePhoneAwaitAgentChatList(numPhone);//esto es para que salga esperando atencion.
-             var vClientName = "";
-             if (rowClient != null)
-                 vClientName = rowClient["firstName"].ToString() + " " + rowClient["LastName"].ToString();
-             if (entre == 1)
-             {
-                 for (int i = 0; i < ConnectedUsers.Count(); i++)
-                 {
-                     employee rowE = ConnectedUsers[i];
-                     if (rowE.isMessage == 1 && rowE.isOccupied == 1 && plastMessageNumber == pChatNumber)
-                     {
-                         Clients.Client(id).notifyNewMessage(pChatNumber);
-                         data.storeLog("Llegó un mensaje de este número: "+ pChatNumber +" y este agente es el que lo tiene: "+ id);
+            var vClientName = "";
+            if (rowClient != null)
+                vClientName = rowClient["firstName"].ToString() + " " + rowClient["LastName"].ToString();
+            if (entre == 1)
+            {
+                for (int i = 0; i < ConnectedUsers.Count(); i++)
+                {
+                    employee rowE = ConnectedUsers[i];
+                    if (rowE.isMessage == 1 && rowE.isOccupied == 1 && plastMessageNumber == pChatNumber)
+                    {
+                        Clients.Client(id).notifyNewMessage(pChatNumber, null, null, null, null, notifyMessage);
+                        data.storeLog("Llegó un mensaje de este número: " + pChatNumber + " y este agente es el que lo tiene: " + id);
                     }
-                    
-                 }
+
+                }
                 string notification = notifyMessage.messages[0].fromMe.ToString();
+                // Clients.Users(vlistemplid).notifyNewMessage(pChatNumber, notification);
                 Clients.Caller.notifyNewMessage(pChatNumber, notification);
             }
-             else        
-            Clients.Caller.notifyNewMessage(null, numPhone, vClientName);
+            else
+                //Clients.Users(vlistemplid).notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage);
+                Clients.Caller.notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage);
         }
 
 
@@ -182,7 +193,9 @@ namespace Nodo.Hubs
         public void reciveNewMessageDifussion(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
         {
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-
+            string pInstanceId = notifyMessage.instanceId;
+            var dt1 = data.getDataCampaignByInstanceline(pInstanceId).Rows[0];
+            var dt = Convert.ToInt32(dt1.ItemArray[0]);
             var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
             string pNumberClient = (notifyMessage.messages[0].author.Split('@')[0].ToString()).Substring(2, 10);
 
@@ -192,11 +205,25 @@ namespace Nodo.Hubs
             data.StoreDifusionMessagesByClient(notifyMessage, Convert.ToInt32(user.idCampaign), user.idEmployee, pNumberClient, time);
         }
 
+        public void setClientsAsyncCampaing(string pPhoneNumber,int dt)
+        {
+            try
+            {
+                ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+                data.UpdateCampingLine(pPhoneNumber, dt);
+            }
+            catch (Exception ex)
+            {
+                Clients.Caller.GetClients(ex.Message);
+            }
+
+        }
+
         public async Task setClientsAsync(string pContextConnet, int pidEmployee, string pNumberPhone = "")
         {
             try
             {
-                int COUNT_CHAT_LIST = 50;
+                int COUNT_CHAT_LIST = 500;
                 string notPhones = "";
                 //int countAgent = 0;
                 var id = Context.ConnectionId;
@@ -224,15 +251,7 @@ namespace Nodo.Hubs
                 if (rowCampaing > 0)
                 {
                     int vIdCampaign = rowCampaing;
-                    /*for (int i = 0; i < ConnectedUsers.Count; i++)
-                    {
-                        if (ConnectedUsers[i].isMessage == 1 && ConnectedUsers[i].idCampaign == vIdCampaign)
-                        {
-                            LEmployees.Add(ConnectedUsers[i]);
-                            countAgent++;
-
-                        }
-                    }*/
+                   
                     List<Client> LClient = new List<Client>();
                     using (var client = new HttpClient())
                     {
@@ -294,7 +313,11 @@ namespace Nodo.Hubs
                         }
                     }
                     notPhones = notPhones.Trim(',').ToString();
-                    DataTable dt = data.StoreDataChatList(dtfinal, vIdCampaign, notPhones);
+                  //  DataTable dt = data.StoreDataChatList(dtfinal, vIdCampaign, notPhones);
+                    DataTable dc = data.StoreDataChatListClient(dtfinal, vIdCampaign, notPhones);
+                    DataTable dtb = data.StoreDataChatList_TBChatList(dtfinal, vIdCampaign, notPhones);
+                    DataTable dt = data.StoreDataChatListSelect(vIdCampaign);
+
                     LChats = dt.AsEnumerable().Select(m => new ChatList()
                     {
                         firstName = m.Field<dynamic>("firstName"),

@@ -12,7 +12,7 @@
 }
 <div class="card">
     <div class="card-header header-elements-inline">
-        <h6 class="card-title">Lista de clientes</h6>
+        <h6 class="card-title">Lista de clientes</h6><br />
         @*<div class="header-elements">
                 <div class="list-icons">
                     <a class="list-icons-item" data-action="collapse"></a>
@@ -21,130 +21,152 @@
                 </div>
             </div>*@
     </div>
-    <div class="card-body">
-        <table class="table table-sm w-100">
-            <thead style="background-color:#21618C;color:white">
-                <tr>
-                    <th class="">Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Campaña actual</th>
-                    @*<th>Estado</th>
-        <th class="text-center">Operación</th>*@
-                </tr>
-            </thead>
-            <tbody>
-                @if(ViewBag.row != null)
-                {
-                    foreach (var rows in ViewBag.row)
-                    {
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="mr-3">
-                                        <a href="@rows["SrcImage"]" target="_blank">
-                                            <img src="@rows["srcImage"]" class="rounded-circle" width="32" height="32" alt="">
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <a class="text-default font-weight-semibold text-uppercase">
-                                            @rows["firstName"] @rows["lastName"]
-                                        </a>
-                                        @*<div class="text-muted font-size-sm"><span class="badge badge-mark border-danger mr-1"></span>Teléfono - rows["phoneMobile"]</div>*@
-                                    </div>
-                                </div>
-                            </td>
-                            <td>@rows["phoneNumber"]</td>
-                            <td>@rows["nameCampaign"]</td>
-                            @*<td>@rows["nameStatus"]</td>
-                                <td class="text-center">
-                                    <a class="btn btn-sm btn-outline-dark mt-1 mb-1 editClient curpointer disabled"
-                                        data-href="@Url.Action("Edit", new { @id = rows["idClient"]})" title="Editar cliente">
-                                        <i class="icon-database-edit2"></i>
-                                    </a>
-                                    @if (Convert.ToInt32(@rows["idStatus"]) == 1)
-                                    {
-                                        <a class="btn btn-sm btn-outline-warning mt-1 mb-1 curpointer delactClient disabled"
-                                            data-href="@Url.Action("deActivateClient", new { @id = rows["idClient"] })"
-                                            data-text="De desactivar este cliente"
-                                            title="Desactivar">
-                                            <i class="icon-close2"></i>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a class="btn btn-sm btn-outline-success mt-1 mb-1 delactClient curpointer disabled"
-                                            data-href="@Url.Action("deActivateClient", new {@id=rows["idClient"]})"
-                                            data-text="De activar este cliente"
-                                            title="Desactivar">
-                                            <i class="icon-check2"></i>
-                                        </a>
-                                        <a class=" btn btn-outline-warning bg-warning btn-sm delactClient mt-1 mb-1 curpointer"
-                                            data-href="@Url.Action("deleteClient", new {@id=rows["idClient"]})"
-                                            data-text="Eliminar este cliente y toda su información de la plataforma">
-                                            <i class="icon-trash-alt"></i>
-                                        </a>
-                                    }
-                                </td>*@
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div id="tableImportExcel" data-ids="2" data-table="tableClient" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Importar clientes desde un excel</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="formFile" class="col-sm-12">
+        <div>
+            <div class="card-body">
+                <form action="@Url.Action("Index")" method="post" id="idCampaigns">
                     <div class="row">
-                        <div class="col-sm-12 pb-2">
-                            <select id="idCampaign" name="idCampaign" class="form-control form-control-sm" style="width:100% !important" required>
+                        <div class="col-sm-3">
+                            <label><span class="text-danger"></span></label>
+                            <select name="idCampaigns" class="form-control selectcount" required style="width:100%">
                                 <option></option>
+                                @foreach (var campana in ViewBag.campana)
+                                {
+                                    <option value="@campana["idCampaigns"]">@campana["name"]</option>
+                                }
                             </select>
                         </div>
-                        <div class="col-sm-12 pb-2">
-                            <input class="form-control" type="file" name="importFile" id="importFile" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-                        </div>
-                        <div class="col-sm-12 pb-2">
-                            <input class="form-control" type="text" name="nameOptionalFile" id="nameOptionalFile" placeholder="Opcional: Nombre de la subida" />
-                        </div>
-                        <div class="col-sm-12 pb-2 text-center">
-                            <small class="text-danger text-center btn-block" id="hassj"></small>
-                        </div>
-                        <div class="col-sm-12 pb-2 text-center">
-                            <button type="button" id="btnUpload" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1"><b><i class="icon-file-upload2"></i></b> Subir archivo</button>
-                        </div>
-                        <div class="col-sm-12 pb-0 text-center">
-                            <a id="btnDownload" class="btn bg-blue btn-sm m-1 d-none"><b><i class="icon-file-download2"></i></b></a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <small class="text-danger text-center btn-block">
-                                * Recuerda que hay datos básicos que deben estar llenos en el excel y deben estar escritos tal cual, los cuales son: <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>APELLIDO</b> | <b>CELULAR</b> *
-                            </small>
+                        <div class="text-center">
+                            <label class="" d-block><b>&nbsp;</b></label>
+                            <input type="submit" value="Filtrar" class="btn btn-danger btn-block btn-sm" style="background-color:#01abe8;border-color:#01abe8" />
                         </div>
                     </div>
                 </form>
             </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-sm w-100">
+                <thead style="background-color:#21618C;color:white">
+                    <tr>
+                        <th class="">Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Campaña actual</th>
+                        @*<th>Estado</th>
+                            <th class="text-center">Operación</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.row != null)
+                    {
+                        foreach (var rows in ViewBag.row)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-3">
+                                            <a href="@rows["SrcImage"]" target="_blank">
+                                                <img src="@rows["srcImage"]" class="rounded-circle" width="32" height="32" alt="">
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <a class="text-default font-weight-semibold text-uppercase">
+                                                @rows["firstName"] @rows["lastName"]
+                                            </a>
+                                            @*<div class="text-muted font-size-sm"><span class="badge badge-mark border-danger mr-1"></span>Teléfono - rows["phoneMobile"]</div>*@
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@rows["phoneNumber"]</td>
+                                <td>@rows["nameCampaign"]</td>
+                                @*<td>@rows["nameStatus"]</td>
+                                    <td class="text-center">
+                                        <a class="btn btn-sm btn-outline-dark mt-1 mb-1 editClient curpointer disabled"
+                                            data-href="@Url.Action("Edit", new { @id = rows["idClient"]})" title="Editar cliente">
+                                            <i class="icon-database-edit2"></i>
+                                        </a>
+                                        @if (Convert.ToInt32(@rows["idStatus"]) == 1)
+                                        {
+                                            <a class="btn btn-sm btn-outline-warning mt-1 mb-1 curpointer delactClient disabled"
+                                                data-href="@Url.Action("deActivateClient", new { @id = rows["idClient"] })"
+                                                data-text="De desactivar este cliente"
+                                                title="Desactivar">
+                                                <i class="icon-close2"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-sm btn-outline-success mt-1 mb-1 delactClient curpointer disabled"
+                                                data-href="@Url.Action("deActivateClient", new {@id=rows["idClient"]})"
+                                                data-text="De activar este cliente"
+                                                title="Desactivar">
+                                                <i class="icon-check2"></i>
+                                            </a>
+                                            <a class=" btn btn-outline-warning bg-warning btn-sm delactClient mt-1 mb-1 curpointer"
+                                                data-href="@Url.Action("deleteClient", new {@id=rows["idClient"]})"
+                                                data-text="Eliminar este cliente y toda su información de la plataforma">
+                                                <i class="icon-trash-alt"></i>
+                                            </a>
+                                        }
+                                    </td>*@
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-link" data-dismiss="modal">Cerrar</button>
+    <div id="tableImportExcel" data-ids="2" data-table="tableClient" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Importar clientes desde un excel</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formFile" class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 pb-2">
+                                <select id="idCampaign" name="idCampaign" class="form-control form-control-sm" style="width:100% !important" required>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 pb-2">
+                                <input class="form-control" type="file" name="importFile" id="importFile" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                            </div>
+                            <div class="col-sm-12 pb-2">
+                                <input class="form-control" type="text" name="nameOptionalFile" id="nameOptionalFile" placeholder="Opcional: Nombre de la subida" />
+                            </div>
+                            <div class="col-sm-12 pb-2 text-center">
+                                <small class="text-danger text-center btn-block" id="hassj"></small>
+                            </div>
+                            <div class="col-sm-12 pb-2 text-center">
+                                <button type="button" id="btnUpload" class="btn bg-blue btn-sm btn-labeled btn-labeled-right m-1"><b><i class="icon-file-upload2"></i></b> Subir archivo</button>
+                            </div>
+                            <div class="col-sm-12 pb-0 text-center">
+                                <a id="btnDownload" class="btn bg-blue btn-sm m-1 d-none"><b><i class="icon-file-download2"></i></b></a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <small class="text-danger text-center btn-block">
+                                    * Recuerda que hay datos básicos que deben estar llenos en el excel y deben estar escritos tal cual, los cuales son: <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>APELLIDO</b> | <b>CELULAR</b> *
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@section scriptsButtom{
-    @if (Session["message"] != null)
-    {
-        <script type="text/javascript">
+    @section scriptsButtom{
+        @if (Session["message"] != null)
+        {
+            <script type="text/javascript">
             Swal.fire({
               icon: '@Session["type"]',
               title: '@Session["title"]',
@@ -152,18 +174,22 @@
                 showConfirmButton: false,
                 timer: 2000
             })
-        </script>
-        Session.Remove("type");
-        Session.Remove("title");
-        Session.Remove("message");
-    }
-<script type="text/javascript">
+            </script>
+            Session.Remove("type");
+            Session.Remove("title");
+            Session.Remove("message");
+        }
+        <script type="text/javascript">
         $(".table").DataTable({
             destroy: true,
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json'
             }
         });
+        $(".selectcount").select2({
+            placeholder: "Selecciona la Campaña",
+            allowClear: true
+        })
         $(document).ready(function () {
             $(document).on("change", "#idCampaign", function () {
                 var vidCampaign = $(this).val();
@@ -310,5 +336,5 @@
                 })
             })
         });
-</script>
-}
+        </script>
+    }

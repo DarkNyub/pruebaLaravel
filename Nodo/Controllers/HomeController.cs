@@ -90,6 +90,13 @@ namespace Nodo.Controllers
                                         }
                                         Session["config"] = LConfig;
                                     }
+                                    else
+                                    {
+                                        Session["message"] = "El usuario y No tiene campaña asignada, por favor asignele una desde el administrador.";
+                                        Session["title"] = "Error";
+                                        Session["type"] = "error";
+                                        return RedirectToAction("Index");
+                                    }
                                     holas = data.ObtenerData("SP_getActivity").Rows;
                                     List<Models.Activity> LActivity = new List<Models.Activity>();
                                     foreach (dynamic rows in holas)

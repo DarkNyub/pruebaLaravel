@@ -78,6 +78,7 @@ namespace Nodo.Models
         public string image { get; set; }
         public metadataConversation metadata { get; set; }
         public string last_time { get; set; }
+        public string senderName { get; set; }
     }
     public class metadataConversation
     {

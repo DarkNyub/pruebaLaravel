@@ -495,24 +495,10 @@ namespace Nodo.Controllers
             if (ptype == 0)//nombre
             {
                 dd = data.storeUpdateDataClient(pidClient, pdata, ptype);
-                /*string vnam = "";
-                for(int i = 1; i < pdata.Split(' ').Length; i++)
-                {
-                    vnam += pdata.Split(' ')[i].ToString()+" ";
-                }
-                vnam = vnam.TrimEnd(' ');
-                dd = data.storeUpdateDataClient(pidClient, vnam, 1);*/
             }
             if (ptype == 2)//apellido
             {
                 dd = data.storeUpdateDataClient(pidClient, pdata, ptype);
-                /*string vnam = "";
-                for (int i = 1; i < pdata.Split(' ').Length; i++)
-                {
-                    vnam += pdata.Split(' ')[i].ToString() + " ";
-                }
-                vnam = vnam.TrimEnd(' ');
-                dd = data.storeUpdateDataClient(pidClient, vnam, 3);*/
             }
             if (ptype == 6)//genero
                 dd = data.storeUpdateDataClient(pidClient, pdata.Split('-')[0].ToString(), ptype);
