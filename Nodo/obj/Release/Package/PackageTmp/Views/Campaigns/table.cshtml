@@ -1,5 +1,5 @@
 ﻿@{ ViewBag.Title = "Usuarios";
-                Layout = "~/Views/Shared/_LayoutLimit.cshtml"; }
+    Layout = "~/Views/Shared/_LayoutLimit.cshtml"; }
 @section css{
     <style type="text/css">
         .select2-search__field {
@@ -73,7 +73,7 @@
                                 }
                             </td>
                             <td class="text-center">
-                                @{ 
+                                @{
                                     ViewBag.name = "disabled";
                                     if (Convert.ToInt32(Session["idProfile"]) == 1)
                                     {
@@ -88,7 +88,8 @@
                                     {
                                         if (Convert.ToInt32(rows["idActivityCampaign"]) == Convert.ToInt32(rowAc["idActivityCampaign"]))
                                         {
-                                            <option selected value="@rowAc["idActivityCampaign"]">@rowAc["name"]</option> 
+                                            <option selected value="@rowAc["idActivityCampaign"]">@rowAc["name"]</option>
+
                                         }
                                         else
                                         {
@@ -117,12 +118,21 @@
                                         <i class="icon-database-export"></i>
                                     </a>
                                 }
-                            
+                                @if (Convert.ToInt32(rows["idActivityCampaign"]) == 1)
+                                {
+                                    <a class="btn btn-sm  mt-1 mb-1 cursor-pointer editCamp"
+                                       data-href="@Url.Action("CreateEditConfigByCampaign",new {id =rows["idCampaigns"] })"
+                                       data-text="De crear o editar la configuracion del CHAT API"
+                                       title="Crear o edita configuración" style="border-color:#5472d3;">
+                                        <i class="icon-address-book"></i>
+                                    </a>
+                                }
+
                                 @if (Convert.ToInt32(Session["idProfile"]) == 1)
                                 {
                                     <a class="btn btn-sm  mt-1 mb-1 cursor-pointer editCamp"
                                        data-href="@Url.Action("Edit",new {id =rows["idCampaigns"] })"
-                                       data-text="De editar esta campaña"
+                                       data-text=""
                                        title="Editar campaña" style="border-color:#5472d3;">
                                         <i class="icon-pencil5"></i>
                                     </a>
@@ -142,7 +152,7 @@
                                        title="Mostrar tabla de clientes" style="border-color:#5472d3;">
                                         <i class="icon-user-plus"></i>
                                     </a>
-                                
+
                                 }
                             </td>
                         </tr>
@@ -231,7 +241,7 @@
 @section scriptsButtom{
     @if (Session["message"] != null)
     {
-<script type="text/javascript">
+        <script type="text/javascript">
             Swal.fire({
               icon: '@Session["type"]',
               title: '@Session["title"]',
@@ -239,10 +249,11 @@
                 showConfirmButton: false,
                 timer: 2000
             })
-</script>Session.Remove("type");
-                    Session.Remove("title");
-                    Session.Remove("message");
-                }
+        </script>
+Session.Remove("type");
+        Session.Remove("title");
+        Session.Remove("message");
+    }
     <script type="text/javascript">
         var eventon = true;
     $(document).ready(function () {
@@ -271,7 +282,7 @@
                     reverseButtons: false,
                     confirmButtonText: 'Aceptar',
                     cancelButtonText: 'Cancelar',
-                    confirmButtonColor: '#21618C',
+                    confirmButtonColor: '#002171',
                     cancelButtonColor: '#666666',
                     allowOutsideClick: false,
                 }).then((result) => {
@@ -422,14 +433,14 @@
             var text = $(this).data("text")
             var obj = $(this);
             Swal.fire({
-                title: "¿Esta Seguro?",
+                title: "¿Deseas editar esta Campaña?",
                 html: text,
                 icon: 'question',
                 showCancelButton: true,
                 reverseButtons: false,
                 confirmButtonText: 'Aceptar',
                 cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#21618C',
+                confirmButtonColor: '#002171',
                 cancelButtonColor: '#666666',
             }).then((result) => {
                 if (result.value) {
@@ -449,14 +460,14 @@
                 reverseButtons: false,
                 confirmButtonText: 'Aceptar',
                 cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#21618C',
+                confirmButtonColor: '#002171',
                 cancelButtonColor: '#666666',
             }).then((result) => {
                 if (result.value)
                     window.open(hrefs, "_blank");
             });
         })
-        
+
     })
 
     </script>

@@ -29,6 +29,9 @@ function Reconnect() {
         }, 1000); // Restart connection after 5 seconds.
     });
 }
+
+
+
 // On New User Connected
 chatHub.client.onConnected = function (param, pidconex, pidCampaing,  ConextedUsers) {
     $("#hdId").val(pidconex)
@@ -46,13 +49,12 @@ chatHub.client.onUserDisconnected = function (id, userName) {
 };
 
 chatHub.client.reciveNewMessage = function (param, numphone) {
-    Reconnect()
     //Esta funcion viene del controlador de que ha llegado un nuevo mensaje y se va al hub
     chatHub.server.reciveNewMessage($("#hdId").val(), param, $("#hdChatClient").val());
+    chatHub.server.reciveNewMessageDifussion($("#hdId").val(), param, $("#hdChatClient").val());
 };
-chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient) {
-    Reconnect()
-    //esto es noficando que ha llegado un nuevo mensaje desde el hub
+chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient, dt, notifyMessage, vIdCampaign) {
+
     var stringName = "";
     if (pNameClient != undefined) {
         if (pNameClient != '') {
@@ -60,23 +62,34 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
                 stringName = " - " + pNameClient;
         }
     }
-    if (pChatNumber == undefined) {
-        toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
-        //console.log("Empleado conex: " + $("#hdId").val())
-        console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName)
 
-        if (vTypeUrl == "mes") {
-            //chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
-        }
+    //chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
+    if (pChatNumber == undefined || pPhoneNumber == "False") {
+
+        // Se valida que el mensaje sea entrada para actualizar el chat
+        if (pPhoneNumber == "False" && ("57" + $("#hdChatClient").val()) == pChatNumber) {
+            sendMessageFromEmployee(pChatNumber);
+        } else {
+            if (vIdCampaign == 1) {
+                toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
+                console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName);
+                reloadChatList(pPhoneNumber, dt);
+            }          
+            if ($("#hdChatClient").val() == pPhoneNumber)
+                sendMessageFromEmployee("57" + pPhoneNumber);
+        }     
     }
     else {
-        if ($("#hdChatClient").val() == pChatNumber)
+        if ($("#hdChatClient").val() == pChatNumber) {
             sendMessageFromEmployee(pChatNumber);
+            reloadChatList(pPhoneNumber, dt);
+        }
     }
 };
-function reloadChatList() {
-    newConection()
-    //chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val());
+function reloadChatList(pPhoneNumber, dt) {
+    newConection();
+    chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val(), dt);
+    chatHub.server.setClientsAsyncCampaing(pPhoneNumber, dt);
 }
 function notifySelectedClient(pNameAsesor, pNumberPhone) {
     var stringCol = 'El asesor ' + pNameAsesor + ' atendera al ' + pNumberPhone + '';
@@ -85,7 +98,7 @@ function notifySelectedClient(pNameAsesor, pNumberPhone) {
     //toastr.warning('El asesor ' + pNameAsesor + ' atendera al ' + pNumberPhone+'', "Notificación", { timeOut: 1000, newestOnTop: true });
 }
 chatHub.client.notifySelectedClientServer = function (pNotification) {
-    //setTimeout(function () { chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val()); }, 1000);
+    setTimeout(function () { chatHub.server.setClientsAsync($("#hdId").val(), parseInt(UserID), $("#hdChatClient").val()); }, 1000);
     toastr.warning(pNotification, "Notificación", { timeOut: 3000, newestOnTop: true, positionClass: "toast-top-left" });
     console.log("Estado de la conexión notifySelectedClientServer: " + $.connection.hub.state)
 }
@@ -128,6 +141,10 @@ chatHub.client.GetClients = function (pLClient, bolda) {
     }
 };
 
+chatHub.client.ReloadPage = function () {
+    window.location.reload();
+}
+
 function getMessagesMaster(pid, pname, pIMAGEURL ) {
     var spin = $("#spinerIcon");
     IMAGEURL = pIMAGEURL;
@@ -159,7 +176,7 @@ chatHub.client.DisplayAllMessages = function (pLMEssages, bolda, lastMessageNumb
             console.log("Voy a verificar en BD los mensajes");
             chatHub.server.storeMessages($("#hdId").val(), pLMEssages);
         }
-        $('#panelChatList_' + UserID).animate({ scrollTop: 80000 }, 1000);
+        $('#panelChatList_' + UserID).animate({ scrollTop: 60000 }, 1000);
     }
     else {
         console.log("Hay un problema interno mostrando todos los mensajes, mensaje: <br>" + pLMEssages);
@@ -201,7 +218,7 @@ chatHub.client.DisplayLastMessages = function (pLMEssages, bolda, lastMessageNum
             console.log("Voy a verificar en BD los mensajes");
             chatHub.server.storeMessages(pLMEssages);
         }
-        $('#panelChatList_' + UserID).animate({ scrollTop: 80000 }, 1000);
+        $('#panelChatList_' + UserID).animate({ scrollTop: 60000 }, 1000);
     }
     else {
         console.log("Hay un problema interno mostrando el ultimo mensaje, mensaje: <br>" + pLMEssages);
@@ -281,6 +298,9 @@ function showIndividualMessage(item) {
     }
     return sks;
 }
+
+
+
 function ShowIndividualClient(prowClient, pContainer) {
     var row = prowClient;
     var lastIdEmployee = '<b class="text-blue"> en el CHATBOT</b>';
@@ -328,6 +348,8 @@ function ShowIndividualClient(prowClient, pContainer) {
         lastIdEmployee = '<b class="text-pink-800"> esperando atención</b>';
     else if (row.lastIdEmployee > 0)
         lastIdEmployee = '<br><b class="text-warning" id="free_' + row.idClient + '"> Atendido por ' + row.nameEmployee + '</b>';
+    else if (row.lastIdEmployee == -3)
+        lastIdEmployee = '<br><b class="text-success" id="free_' + row.idClient + '"> Chat finalizado</b>';
     vhtml += 'data-name="' + row.firstName + " " + lastName + '">';
     vhtml += '<a class="text-default font-weight-semibold">' + row.firstName + ' ' + lastName + ' - ' + lastIdEmployee;
     //if (row.lastUsedUnix > lastUsedUnix)

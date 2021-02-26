@@ -53,7 +53,7 @@ chatHub.client.reciveNewMessage = function (param, numphone) {
     chatHub.server.reciveNewMessage($("#hdId").val(), param, $("#hdChatClient").val());
     chatHub.server.reciveNewMessageDifussion($("#hdId").val(), param, $("#hdChatClient").val());
 };
-chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient, dt) {
+chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClient, dt, notifyMessage, vIdCampaign) {
 
     var stringName = "";
     if (pNameClient != undefined) {
@@ -70,9 +70,10 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
         if (pPhoneNumber == "False" && ("57" + $("#hdChatClient").val()) == pChatNumber) {
             sendMessageFromEmployee(pChatNumber);
         } else {
-            toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
-            console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName);
-
+            if (vIdCampaign == 1) {
+                toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
+                console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName);
+            }
             chatHub.server.setClientsAsyncCampaing(pPhoneNumber, dt);
             reloadChatList();
 

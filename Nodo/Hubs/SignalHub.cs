@@ -131,10 +131,19 @@ namespace Nodo.Hubs
         {
 
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+            var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
+            dynamic rowCampaing = user.idCampaign;
+
+            int vIdCampaign = rowCampaing;
+
             var id = pContextConnet;
             string pInstanceId = notifyMessage.instanceId;
             var dt1 = data.getDataCampaignByInstanceline(pInstanceId).Rows[0];
             int dt = Convert.ToInt32(dt1.ItemArray[0]);
+            if (vIdCampaign == dt)
+                vIdCampaign = 1;
+            else
+                vIdCampaign = 0;
             string pChatNumber = notifyMessage.messages[0].chatId.Split('@')[0];
             dynamic rowClient = null;
             int entre = 0;
@@ -185,7 +194,7 @@ namespace Nodo.Hubs
             }
             else
                 //Clients.Users(vlistemplid).notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage);
-                Clients.Caller.notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage);
+                Clients.Caller.notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage, vIdCampaign);
         }
 
 
@@ -193,10 +202,11 @@ namespace Nodo.Hubs
         public void reciveNewMessageDifussion(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
         {
             ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
+            var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
             string pInstanceId = notifyMessage.instanceId;
             var dt1 = data.getDataCampaignByInstanceline(pInstanceId).Rows[0];
             var dt = Convert.ToInt32(dt1.ItemArray[0]);
-            var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
+            
             string pNumberClient = (notifyMessage.messages[0].author.Split('@')[0].ToString()).Substring(2, 10);
 
             var time1 = UnixTimeToDateTime(Convert.ToInt64(notifyMessage.messages[0].time.ToString()));

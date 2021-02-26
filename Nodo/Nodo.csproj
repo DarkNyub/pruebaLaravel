@@ -3707,6 +3707,7 @@
     <None Include="Properties\PublishProfiles\nodoPruebas - FTP5.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - FTP6.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - FTP7.pubxml" />
+    <None Include="Properties\PublishProfiles\nodopruebas - FTP8.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - ReadOnly - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - ReadOnly - FTP2.pubxml" />
@@ -3715,6 +3716,7 @@
     <None Include="Properties\PublishProfiles\nodoPruebas - ReadOnly - FTP5.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - ReadOnly - FTP6.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - ReadOnly - FTP7.pubxml" />
+    <None Include="Properties\PublishProfiles\nodopruebas - ReadOnly - FTP8.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - Web Deploy1.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -3740,6 +3742,7 @@
     <None Include="Properties\PublishProfiles\nodoPruebas - Web Deploy5.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - Web Deploy6.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - Web Deploy7.pubxml" />
+    <None Include="Properties\PublishProfiles\nodopruebas - Web Deploy8.pubxml" />
     <None Include="Scripts\jquery-3.5.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.5.1.js" />
     <Content Include="Scripts\jquery-3.5.1.min.js" />

@@ -28,7 +28,7 @@
                         <th class="">Fecha contacto</th>
                         <th class="">Documento</th>
                         <th class="">Nombre</th>
-                        <th class="">Apellido</th>
+                        <!--<th class="">Apellido</th>-->
                         <th class="">Celular</th>
                         @foreach (dynamic rowCatalog in ViewBag.rowCatalog)
                         {
@@ -45,7 +45,7 @@
                         <td class="">@rowClient["firstDateMessage"].ToString("yyyy-MM-dd")</td>
                         <td class="">@rowClient["numDocument"]</td>
                         <td class="">@rowClient["firstName"]</td>
-                        <td class="">@rowClient["LastName"]</td>
+                        @*<td class="">@rowClient["LastName"]</td>*@
                         <td class="">@rowClient["phoneNumber"]</td>
                         @foreach (dynamic rowCatalog in ViewBag.rowCatalog)
                         {
