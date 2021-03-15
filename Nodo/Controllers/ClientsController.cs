@@ -116,9 +116,11 @@ namespace Nodo.Controllers
                         {
                             foreach (IXLCell cell in row.Cells())
                             {
-                                if (i < 4)
+                                if (i < 3)
                                     dt.Columns.Add(cell.Value.ToString().ToUpper());
-                                if (i >= 4)
+                                if(i== 1)
+                                    dt.Columns.Add("APELLIDO");
+                                if (i >= 3)
                                 {
                                     dt.Columns.Add(cell.Value.ToString().ToUpper());
                                     dt.Columns.Add(cell.Value.ToString() + "_1".ToUpper());
@@ -138,8 +140,13 @@ namespace Nodo.Controllers
                             {
                                 if (i < 4)
                                     dtfinal.Rows[dtfinal.Rows.Count - 1][i] = cell.Value.ToString();
+                                if (i == 1)
+                                {
+                                    dtfinal.Rows[dtfinal.Rows.Count - 1][i + 1] = "A";
+                                    i++;
+                                }
                                 dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
-                                if (i >= 4)
+                                if (i >=4)
                                 {
 
                                     holas += dt.Columns[i].ToString() + '|';
@@ -154,7 +161,7 @@ namespace Nodo.Controllers
                             dynamic dd = "";
                             //int vidLocale = data.storeLocaleClient(asd["localidad"].ToString().ToUpper(), asd["codigo"].ToString()).Rows[0]["idLocation"];
                             //int vidGender = data.storeGenderClient(asd["genero"].ToString()).Rows[0]["idGender"];
-                            if (asd["DOCUMENTO"].ToString() != "" && asd["NOMBRE"].ToString() != "" && asd["APELLIDO"].ToString() != "" && asd["CELULAR"].ToString() != "")
+                            if (asd["DOCUMENTO"].ToString() != "" && asd["APELLIDO"].ToString() != "" && asd["CELULAR"].ToString() != "")
                             {
                                 /*dd = data.storeClientExcel(asd["NOMBRE"].ToString().ToUpper()
                                                     , asd["APELLIDO"].ToString().ToUpper()
@@ -171,7 +178,7 @@ namespace Nodo.Controllers
                             else
                             {
                                 entre = 0;
-                                ClientNotInserted += "Documento: "+ asd["DOCUMENTO"].ToString() + ", Nombre: " + asd["NOMBRE"].ToString() + ", Apellido: " + asd["APELLIDO"].ToString() + ", Celular: " + asd["CELULAR"].ToString() + "<hr>";
+                                ClientNotInserted += "Documento: "+ asd["DOCUMENTO"].ToString() + ", Nombre: " + asd["APELLIDO"].ToString() + ", Apellido: " + "A" + ", Celular: " + asd["CELULAR"].ToString() + "<hr>";
                             }
                         }
                         if(countRows == totalRows)
@@ -206,7 +213,7 @@ namespace Nodo.Controllers
                             {
                                 dynamic sdf = data.storeClientCatalogExcelCursor(vidCampaign, dtfinal_2);
                                 //[0]idlcient =1[]catalfather = 11515 [2]catalgosson = 9846468
-                                sdf = data.storeClientCatalogExcelCursor(vidCampaign, sdf, 1);
+                                //sdf = data.storeClientCatalogExcelCursor(vidCampaign, sdf, 1);
                             }
                         }
                     }

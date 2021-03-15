@@ -70,19 +70,19 @@ chatHub.client.notifyNewMessage = function (pChatNumber, pPhoneNumber, pNameClie
         if (pPhoneNumber == "False" && ("57" + $("#hdChatClient").val()) == pChatNumber) {
             sendMessageFromEmployee(pChatNumber);
         } else {
+            //Valida si el nuevo mensaje que llega pertenece a la campaña en la que esta conectado el usuario, dado el caso muestra el mensaje
             if (vIdCampaign == 1) {
                 toastr.success("Ha llegado un mensaje del número " + pPhoneNumber + stringName, "Hola!...", { timeOut: 1000 });
                 console.log("Ha llegado un mensaje del número " + pPhoneNumber + stringName);
-            }
-            chatHub.server.setClientsAsyncCampaing(pPhoneNumber, dt);
-            reloadChatList();
-
+                chatHub.server.setClientsAsyncCampaing(pPhoneNumber, dt);
+                reloadChatList();
+            }           
             if ($("#hdChatClient").val() == pPhoneNumber)
                 sendMessageFromEmployee("57" + pPhoneNumber);
         }     
     }
     else {
-        if ($("#hdChatClient").val() == pChatNumber) {
+        if (($("#hdChatClient").val() == pChatNumber) && vIdCampaign == 1) {
             sendMessageFromEmployee(pChatNumber);
             reloadChatList();
         }
