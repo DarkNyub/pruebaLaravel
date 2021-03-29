@@ -3699,6 +3699,9 @@
     <None Include="Properties\PublishProfiles\nodo - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\nodo - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\nodo - Web Deploy3.pubxml" />
+    <None Include="Properties\PublishProfiles\nodolive - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\nodolive - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\nodolive - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\nodoPruebas - FTP2.pubxml" />

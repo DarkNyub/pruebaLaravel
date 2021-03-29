@@ -47,7 +47,7 @@
             <table class="table table-sm w-100">
                 <thead style="background-color:#21618C;color:white">
                     <tr>
-                        <th class="">Nombre</th>
+                        <th>Nombre Completo</th>
                         <th>Teléfono</th>
                         <th>Campaña actual</th>
                         @*<th>Estado</th>
@@ -69,7 +69,7 @@
                                         </div>
                                         <div>
                                             <a class="text-default font-weight-semibold text-uppercase">
-                                                @rows["firstName"] @rows["lastName"]
+                                                @rows["firstName"] 
                                             </a>
                                             @*<div class="text-muted font-size-sm"><span class="badge badge-mark border-danger mr-1"></span>Teléfono - rows["phoneMobile"]</div>*@
                                         </div>
@@ -149,7 +149,8 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <small class="text-danger text-center btn-block">
-                                    * Recuerda que hay datos básicos que deben estar llenos en el excel y deben estar escritos tal cual, los cuales son: <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>APELLIDO</b> | <b>CELULAR</b> *
+                                    <b>* IMPORTANTE!!! * <br /></b>
+                                    * Recuerda que hay datos básicos que deben estar llenos en el excel y deben estar escritos tal cual, los cuales son: <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>CELULAR</b> *
                                 </small>
                             </div>
                         </div>
@@ -194,7 +195,7 @@
             $(document).on("change", "#idCampaign", function () {
                 var vidCampaign = $(this).val();
                 $.get("@Url.Action("getCatalogbyCampaign")/" + vidCampaign, function (data) {
-                    $("#hassj").html('* Estructura del excel de clientes de la campaña, previamente cargada:</br> <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>APELLIDO</b> | <b>CELULAR</b> | <span id="strucTable"></span> *');
+                    $("#hassj").html('* Estructura del excel de clientes de la campaña, previamente cargada:</br> <b>DOCUMENTO</b> | <b>NOMBRE</b> | <b>CELULAR</b> | <span id="strucTable"></span> *');
                     data = $.parseJSON(data)
                     for (var i = 0; i < data.length; i++) {
                         console.log(data[i]);
