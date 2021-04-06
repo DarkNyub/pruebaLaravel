@@ -1,0 +1,6 @@
+<div class="col-sm-12">
+    <label>Seleccione una oferta</label>
+    <select [(ngModel)]="idOfferModel" class="form-control" (ngModelChange)="getOffer()">
+        <option *ngFor="let row of fileModelOffers" [value]="row.id">{{ row.id }}</option>
+    </select>
+</div>

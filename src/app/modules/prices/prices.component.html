@@ -1,0 +1,20 @@
+<div class="">
+    <div class="row text-center">
+        <div class="col-sm-4">Caracteristicas</div>
+        <div class="col-sm-4">Nombre Precio</div>
+        <div class="col-sm-4">Monto</div>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-12" *ngFor="let row of fileModelCharacteristics.characteristics">{{ row.id }}</div>
+            </div>
+        </div>
+        <div class="col-sm-8 text-center">
+            <div clasS="row" *ngFor="let row of fileModelCharacteristics.productOfferingPrices">
+                <div class="col-sm-6">{{ row.versions[0].name }}</div>
+                <div class="col-sm-6">{{ row.versions[0].price.amount }}</div>
+            </div>
+        </div>
+    </div>
+</div>
