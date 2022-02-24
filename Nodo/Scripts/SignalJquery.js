@@ -175,7 +175,7 @@ chatHub.client.DisplayAllMessages = function (pLMEssages, bolda, lastMessageNumb
                 $('#panelChatList_' + UserID).append(showIndividualMessage(item))//*/
             });
             console.log("Voy a verificar en BD los mensajes");
-            chatHub.server.storeMessages($("#hdId").val(), pLMEssages);
+            //chatHub.server.storeMessages($("#hdId").val(), pLMEssages);
         }
         $('#panelChatList_' + UserID).animate({ scrollTop: 60000 }, 1000);
     }
@@ -217,7 +217,7 @@ chatHub.client.DisplayLastMessages = function (pLMEssages, bolda, lastMessageNum
                 $('#panelChatList_' + UserID).append(showIndividualMessage(item))//*/
             });
             console.log("Voy a verificar en BD los mensajes");
-            chatHub.server.storeMessages(pLMEssages);
+            //chatHub.server.storeMessages(pLMEssages);
         }
         $('#panelChatList_' + UserID).animate({ scrollTop: 60000 }, 1000);
     }

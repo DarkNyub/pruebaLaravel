@@ -3,7 +3,7 @@
     {
         Session["urlHttp"] = HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[0] + "//" + HttpContext.Current.Request.Url.AbsoluteUri.Split('/')[2];
     }
-    List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)Session["config"];
+    //List<Nodo.Models.Configuration> s = (List<Nodo.Models.Configuration>)Session["config"];
     ViewBag.Title = "Home Page";
     Layout = "~/Views/Shared/_LayoutLimit.cshtml";
 }
@@ -45,23 +45,23 @@
 }
 <!-- Basic table -->
 <div class="row">
-    <div class="col-sm-3 pr-0">
+    <div class="col-sm-4 pr-0">
         <div class="row">
             @*<div class="col-sm-12">
                 @Html.Partial("/Views/Messages/Partials/smartDataLauncher.cshtml")
             </div>*@
-            <div class="col-sm-12">
+            @*<div class="col-sm-12">
                 @Html.Partial("/Views/Messages/Partials/findClient.cshtml")
-            </div>
+            </div>*@
             <div class="col-sm-12">
                 @Html.Partial("/Views/Messages/Partials/tableClients.cshtml")
             </div>
         </div>
     </div>
-    <div class="col-sm-6 d-none chatBar">
+    <div class="col-sm-8 d-none chatBar">
         @Html.Partial("/Views/Messages/Partials/send.cshtml")
     </div>
-    <div class="col-sm-6" id="hiddenMesage">
+    <div class="col-sm-8" id="hiddenMesage">
         <div class="card">
             <div class="card-body">
                 <div class="col-sm-12 text-center">
@@ -70,18 +70,18 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-3 d-none chatBar pl-0">
+    @*<div class="col-sm-3 d-none chatBar pl-0">
         @Html.Partial("/Views/Messages/Partials/info.cshtml")
-    </div>
+    </div>*@
 </div>
 <!-- /basic table -->
 
 @section scriptsTop{
     <script type="text/javascript">
-        var VTOKEN = '@Lconfig.Where(ee => ee.name == "token").First().value';
-        var VINSTANCE = '@Lconfig.Where(ee => ee.name == "instance").First().value';
-        var VURL = '@Lconfig.Where(ee => ee.name == "urlApi").First().value' + VINSTANCE;
-        var IMAGEURL = '@Session["image"]';
+        var VTOKEN = 'mrdqgdmavubawwwh';
+        var VINSTANCE = 'instance408905';
+        var VURL = 'https://api.chat-api.com/' + VINSTANCE;
+        var IMAGEURL = '1';
         var VIDCLIENT = @Convert.ToInt32(Session["idClient"]);
     </script>
 }
@@ -121,9 +121,14 @@
         </script>
         Session.Remove("return");
     }
-<script type="text/javascript">
-        $("#inputFindNumber").mask("###");
-        $(document).ready(function(){
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+
+
+
             $(document).on("click", "#reloadChatList", function () {
                 $("#spinerIconListClient").removeClass("d-none")
                 reloadChatList()
@@ -426,6 +431,7 @@
                 },
                 error: function (data) {
                     pobj.removeClass("spinner");
+                    console.log(data);
                     toastr.error("Hubo un problema, contacte al administrador", "Error", { timeOut: 2000 })
                 }
             });
@@ -714,7 +720,7 @@
                             success: function (data) {
                                 data = JSON.parse(data)[0];
                                 toastr.success("Cliente fue devuelto al chatBot.", "", { timeOut: 500 });
-                                var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlSendMessage").First().value';
+                                var VURLMESSAGE = 'sendMessage';
                                 var vbody =data.response;
                                 var vphone = $("#numberPhoneChat").val();
                                 $.ajax({
@@ -863,11 +869,11 @@
                 var vname = $(this).data("name");
                 $(".chatBar").removeClass("d-none")
                 $("#hiddenMesage").remove();
-                setTimeout(function () { verifyBotCampaign(vOid)}, 1000);
-                setTimeout(function () { getDataClient(vOid) }, 1000);//para obtener la info del cliente
-                setTimeout(function () { getCampaignByClient(vOid) }, 1000);//para obtener los datos de la campaña
+                //setTimeout(function () { verifyBotCampaign(vOid)}, 1000);
+                //setTimeout(function () { getDataClient(vOid) }, 1000);//para obtener la info del cliente
+                //setTimeout(function () { getCampaignByClient(vOid) }, 1000);//para obtener los datos de la campaña
                 setTimeout(function () { getMessagesMaster('57' + vphone, vname, '@Session["image"]');/*getMessages('57' + vphone, vname)*/ }, 1000) //para obtener la conversacion
-                setTimeout(function () { getComments(vOid) }, 1000) //para obtener la conversacion
+                //setTimeout(function () { getComments(vOid) }, 1000) //para obtener la conversacion
                 //setTimeout(function () { getCatalogClient(vOid) }, 1500)
                 $("#numberPhoneChat").val('57'+vphone)
                 $("#chatToken").val(VTOKEN);
@@ -937,7 +943,7 @@
                 }
                 else {
                     if ($("#messagebodyChat").val() != "") {
-                        var VURLMESSAGE = '@Lconfig.Where(ee => ee.name == "urlSendMessage").First().value';
+                        var VURLMESSAGE = 'sendMessage';
                         var vbody = $("#messagebodyChat").val();
                         var vphone = $("#numberPhoneChat").val();
                         $.ajax({
@@ -1075,5 +1081,5 @@
                 //--------------------------------------------------------------------------
             });
         });
-</script>
+    </script>
 }

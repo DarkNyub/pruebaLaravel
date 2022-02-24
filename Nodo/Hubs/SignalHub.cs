@@ -20,74 +20,29 @@ namespace Nodo.Hubs
     public class SignalHub : Microsoft.AspNet.SignalR.Hub
     {
         static int vcount = 1;
-        static List<employee> ConnectedUsers = new List<employee>();
-        static List<Configuration> LConfig = new List<Configuration>();
+        static List<String> ConnectedUsers = new List<String>();
         static string sessionUrlHttp = "", VTOKEN = "", VINSTANCE = "", VURL = "";
 
         public void Connect( int UserID, string urlHttp)
         {
             var id = Context.ConnectionId;
             sessionUrlHttp = urlHttp;
-            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-
-            dynamic RowUser = data.getEmployee(UserID).Rows[0];
-            dynamic ow = data.getDataCampaingByUSer(UserID).Rows;
-            int icaps = 0;
-            if (ow.Count > 0)
-                icaps = Convert.ToInt32(ow[0]["idCampaigns"]);
-            if (ConnectedUsers.Count(x => x.idEmployee == UserID) == 0)
-            {
-                ConnectedUsers.Add(new employee {
-                    ConnectionId = id,
-                    idEmployee = UserID,
-                    idprofile = RowUser["idProfile"].ToString(),
-                    user_cur = RowUser["user_cur"].ToString(),
-                    firstName = RowUser["firstName"].ToString(),
-                    lastName = RowUser["lastName"].ToString(),
-                    srcImage = RowUser["srcImage"].ToString(),
-                    idActivity = RowUser["idActivity"].ToString(),
-                    nameActivity = RowUser["nameActivity"].ToString(),
-                    iconActivity = RowUser["iconActivity"].ToString(),
-                    isMessage = 0,
-                    idCampaign = icaps
-                });
-            }
-            employee current = ConnectedUsers.FirstOrDefault(e => e.idEmployee == UserID);
-            if (vcount >= 1)
-            {
-                dynamic holas = data.getConfigurationByCampaign(icaps).Rows;
-                try
-                {
-                    foreach (dynamic rows in holas)
-                    {
-                        LConfig.Add(new Configuration { idConfig = rows["idConfig"], idCampaign = rows["idCampaign"], name = rows["name"], value = rows["value"] });
-                    }
-                    VTOKEN = LConfig.Where(ee => ee.name == "token").Where(ee => ee.idCampaign == icaps).First().value;
-                    VINSTANCE = LConfig.Where(ee => ee.name == "instance").Where(ee => ee.idCampaign == icaps).First().value;
-                    VURL = LConfig.Where(ee => ee.name == "urlApi").Where(ee => ee.idCampaign == icaps).First().value;
-                }
-                catch (Exception ex)
-                {
-                    string sa = ex.Message;
-                }
-            }
-            vcount++;
-            // send to caller
-            Clients.Caller.onConnected("Empleado agregado sin problemas, con este id de conexion "+ current.ConnectionId, current.ConnectionId, icaps, ConnectedUsers);
+            
+            
+            VTOKEN = "mrdqgdmavubawwwh";
+            VINSTANCE = "408905";
+            VURL = "https://api.chat-api.com/";
+                
+            Clients.Caller.onConnected("Empleado agregado sin problemas, con este id de conexion ");
             // send to all except caller client
             //Clients.AllExcept(CurrentUser.ConnectionId).onNewUserConnected(CurrentUser.UserID.ToString(), CurrentUser.UserName, CurrentUser.UserID, CurrentUser.profileImg);
         }
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
-            var item = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
-            if (item != null)
-                ConnectedUsers.Remove(item);
             return base.OnDisconnected(stopCalled);
         }
         public void notifySelectedClient(int pidEmployee, string pNumberPhone,int pidCampaign, String pNotification)
         {
-            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-            data.StoreSelectedClientByAgent(pidEmployee, pNumberPhone, pidCampaign);
             Clients.All.notifySelectedClientServer(pNotification);
         }
 
@@ -129,21 +84,8 @@ namespace Nodo.Hubs
         */
         public void reciveNewMessage(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
         {
-
-            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-            var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
-            dynamic rowCampaing = user.idCampaign;
-
-            int vIdCampaign = rowCampaing;
-
             var id = pContextConnet;
             string pInstanceId = notifyMessage.instanceId;
-            var dt1 = data.getDataCampaignByInstanceline(pInstanceId).Rows[0];
-            int dt = Convert.ToInt32(dt1.ItemArray[0]);
-            if (vIdCampaign == dt)
-                vIdCampaign = 1;
-            else
-                vIdCampaign = 0;
             string pChatNumber = notifyMessage.messages[0].chatId.Split('@')[0];
             dynamic rowClient = null;
             int entre = 0;
@@ -156,63 +98,25 @@ namespace Nodo.Hubs
                     numPhone = pChatNumber[gg].ToString() + numPhone;
                 oks++;
             }
-            for (int i = 0; i < ConnectedUsers.Count(); i++) {
-                employee rowE = ConnectedUsers[i];
-
-                {
-                    if (rowE.isMessage == 1 && rowE.isOccupied == 1 && rowE.lastNumberChat == pChatNumber)
-                        entre = 1;
-                }
-                rowClient = data.getDataClientByNumber(numPhone).Rows[0];
-            }
             List<String> vlistemplid = new List<string>();
-          /*  foreach (employee roww in ConnectedUsers)
-            {
-                if (Convert.ToInt32(roww.idCampaign) == dt)
-                    vlistemplid.Add(roww.ConnectionId);
-            }*/
 
-            data.updatePhoneAwaitAgentChatList(numPhone);//esto es para que salga esperando atencion.
-            var vClientName = "";
-            if (rowClient != null)
-                vClientName = rowClient["firstName"].ToString() + " " + rowClient["LastName"].ToString();
-            if (entre == 1)
-            {
-                for (int i = 0; i < ConnectedUsers.Count(); i++)
-                {
-                    employee rowE = ConnectedUsers[i];
-                    if (rowE.isMessage == 1 && rowE.isOccupied == 1 && plastMessageNumber == pChatNumber)
-                    {
-                        Clients.Client(id).notifyNewMessage(pChatNumber, null, null, null, null, notifyMessage);
-                        data.storeLog("Llegó un mensaje de este número: " + pChatNumber + " y este agente es el que lo tiene: " + id);
-                    }
-
-                }
-                string notification = notifyMessage.messages[0].fromMe.ToString();
-                // Clients.Users(vlistemplid).notifyNewMessage(pChatNumber, notification);
-                Clients.Caller.notifyNewMessage(pChatNumber, notification);
-            }
-            else
-                //Clients.Users(vlistemplid).notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage);
-                Clients.Caller.notifyNewMessage(null, numPhone, vClientName, dt, notifyMessage, vIdCampaign);
+            string notification = notifyMessage.messages[0].fromMe.ToString();
+            // Clients.Users(vlistemplid).notifyNewMessage(pChatNumber, notification);
+            Clients.Caller.notifyNewMessage(pChatNumber, notification);
         }
 
 
         //inserta los Chats en la tabla TB_DifusionMessage
         public void reciveNewMessageDifussion(string pContextConnet, Models.NotifyMessage notifyMessage, string plastMessageNumber)
         {
-            ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-            var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
             string pInstanceId = notifyMessage.instanceId;
-            var dt1 = data.getDataCampaignByInstanceline(pInstanceId).Rows[0];
-            var dt = Convert.ToInt32(dt1.ItemArray[0]);
             
             string pNumberClient = (notifyMessage.messages[0].author.Split('@')[0].ToString()).Substring(2, 10);
 
             var time1 = UnixTimeToDateTime(Convert.ToInt64(notifyMessage.messages[0].time.ToString()));
             var time = time1.ToString("yyyy-MM-dd HH:mm");
 
-            data.StoreDifusionMessagesByClient(notifyMessage, Convert.ToInt32(user.idCampaign), user.idEmployee, pNumberClient, time);
+           // data.StoreDifusionMessagesByClient(notifyMessage,1, 1, pNumberClient, time);
         }
 
         public void setClientsAsyncCampaing(string pPhoneNumber,int dt)
@@ -233,35 +137,9 @@ namespace Nodo.Hubs
         {
             try
             {
-                int COUNT_CHAT_LIST = 500;
-                string notPhones = "";
-                //int countAgent = 0;
-                var id = Context.ConnectionId;
-                for (int i = 0; i < ConnectedUsers.Count; i++)
-                {
-                    if (ConnectedUsers[i].ConnectionId == pContextConnet)
-                    {
-                        ConnectedUsers[i].isMessage = 1;
-                        //i = ConnectedUsers.Count;
-                    }
-                    if(ConnectedUsers[i].isOccupied == 1)
-                    {
-                        notPhones += ConnectedUsers[i].lastNumberChat;
-                        if (i < ConnectedUsers.Count)
-                            notPhones += ",";
-                    }
-                }
-                var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
-                ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
-                dynamic rowCampaing = user.idCampaign;
                 string UrlApi = "instance" + VINSTANCE + "/dialogs";
                 listDialogs vChats = new listDialogs();
                 HttpResponseMessage result;
-                //List<employee> LEmployees = new List<employee>();
-                if (rowCampaing > 0)
-                {
-                    int vIdCampaign = rowCampaing;
-                   
                     List<Client> LClient = new List<Client>();
                     using (var client = new HttpClient())
                     {
@@ -275,7 +153,7 @@ namespace Nodo.Hubs
                         }
                     }
                     List<ChatList> LChats = new List<ChatList>();
-                    vChats.dialogs = vChats.dialogs.Where(e => !e.id.Contains('-')).OrderByDescending(e=>e.last_time).Take((COUNT_CHAT_LIST)).ToList();
+                    vChats.dialogs = vChats.dialogs.Where(e => !e.id.Contains('-')).OrderByDescending(e=>e.last_time).Take((5)).ToList();
                     DataTable dtfinal = new DataTable();
                     dtfinal.Columns.Add(new DataColumn("pidCampaign", typeof(string)));
                     dtfinal.Columns.Add(new DataColumn("pidClient", typeof(string)));
@@ -308,7 +186,7 @@ namespace Nodo.Hubs
                                     koko.image = "/Content/global_assets/images/placeholders/user_bg2.jpg";
 
                                 dtfinal.Rows.Add();
-                                dtfinal.Rows[dtfinal.Rows.Count - 1][0] = vIdCampaign;
+                                dtfinal.Rows[dtfinal.Rows.Count - 1][0] = 1;
                                 dtfinal.Rows[dtfinal.Rows.Count - 1][1] = 0;
                                 dtfinal.Rows[dtfinal.Rows.Count - 1][2] = koko.id;
                                 dtfinal.Rows[dtfinal.Rows.Count - 1][3] = koko.image;
@@ -322,30 +200,22 @@ namespace Nodo.Hubs
                             string sada = "";
                         }
                     }
-                    notPhones = notPhones.Trim(',').ToString();
-                  //  DataTable dt = data.StoreDataChatList(dtfinal, vIdCampaign, notPhones);
-                    DataTable dc = data.StoreDataChatListClient(dtfinal, vIdCampaign, notPhones);
-                    DataTable dtb = data.StoreDataChatList_TBChatList(dtfinal, vIdCampaign, notPhones);
-                    DataTable dt = data.StoreDataChatListSelect(vIdCampaign);
-
-                    LChats = dt.AsEnumerable().Select(m => new ChatList()
+                    int VAAS = 0;
+                    LChats = dtfinal.AsEnumerable().Select(m => new ChatList()
                     {
-                        firstName = m.Field<dynamic>("firstName"),
-                        LastName = m.Field<dynamic>("LastName"),
-                        oid = m.Field<dynamic>("oid"),
-                        idCampaign = m.Field<dynamic>("idCampaign"),
-                        image = m.Field<dynamic>("image"),
-                        lastUsedUnix = m.Field<dynamic>("respuesta"),
-                        lastUsed = m.Field<dynamic>("lastUsed"),
-                        phoneNumber = m.Field<dynamic>("phoneNumber"),
-                        idClient = m.Field<dynamic>("idClient"),
-                        lastIdEmployee = m.Field<dynamic>("lastIdEmployee"),
-                        nameEmployee = m.Field<dynamic>("nameEmployee")
+                        firstName = m.Field<dynamic>("pName"),
+                        LastName = "",
+                        oid = m.Field<dynamic>("pOid"),
+                        idCampaign = 1,
+                        image = m.Field<dynamic>("pimage"),
+                        lastUsedUnix = m.Field<dynamic>("pLastUsedUnix"),
+                        lastUsed = m.Field<dynamic>("pLastUsed"),
+                        phoneNumber = m.Field<dynamic>("pPhoneNumber"),
+                        idClient = m.Field<dynamic>("pidClient"),
+                        lastIdEmployee = 1,
+                        nameEmployee = "nambe"
                     }).ToList();
                     Clients.Caller.GetClients(LChats, true);
-                }
-                else
-                    Clients.Caller.GetClients(null, true);
             }
             catch (Exception ex)
             {
@@ -356,9 +226,8 @@ namespace Nodo.Hubs
         {
             try
             {
-                ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
 
-                string menssages = LConfig.Where(ee => ee.name == "urlMessages").First().value;
+                string menssages = "messages";
                 string UrlApi = "instance" + VINSTANCE + "/" + menssages;
                 ListMessages LMessages = new ListMessages();
                 HttpResponseMessage result;
@@ -381,14 +250,6 @@ namespace Nodo.Hubs
                             row.time = UnixTimeToDateTime(Convert.ToInt64(row.time));
                             LMessages.messages[i].time = row.time.ToString("yyyy-MM-dd HH:mm");
                         }
-                        for(int i = 0; i < ConnectedUsers.Count; i++)
-                        {
-                            if(ConnectedUsers[i].idEmployee == pidEmployee)
-                            {
-                                ConnectedUsers[i].isOccupied = 1;
-                                ConnectedUsers[i].lastNumberChat = pidNumber;
-                            }
-                        }
                     }
                 }
                 Clients.Caller.DisplayAllMessages(LMessages.messages.OrderBy(e => e.timeUnix).ToList(), true, LMessages.lastMessageNumber);
@@ -407,7 +268,7 @@ namespace Nodo.Hubs
                 ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();
                 //dynamic rowCampaing = user.idCampaign;
 
-                string menssages = LConfig.Where(ee => ee.name == "urlMessages").First().value;
+                string menssages = "messages";
                 string UrlApi = "instance" + VINSTANCE + "/" + menssages;
                 ListMessages LMessages = new ListMessages();
                 HttpResponseMessage result;
@@ -432,14 +293,6 @@ namespace Nodo.Hubs
                                 row.time = UnixTimeToDateTime(Convert.ToInt64(row.time));
                                 LMessages.messages[i].time = row.time.ToString("yyyy-MM-dd HH:mm");
                             }
-                            for (int i = 0; i < ConnectedUsers.Count; i++)
-                            {
-                                if (ConnectedUsers[i].idEmployee == pidEmployee)
-                                {
-                                    ConnectedUsers[i].isOccupied = 1;
-                                    ConnectedUsers[i].lastNumberChat = pidNumber;
-                                }
-                            }
                         }
                         Thread.Sleep(1000);
                     } while (LMessages.messages.Count == 0);
@@ -455,36 +308,36 @@ namespace Nodo.Hubs
         }
         public void storeMessages(string pContextConnet, List<Message> param)
         {
-            try
-            {
-                var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
-                if(user != null)
-                {
+            //try
+            //{
+            //    var user = ConnectedUsers.Where(e => e.ConnectionId == pContextConnet).FirstOrDefault();
+            //    if(user != null)
+            //    {
                 
-                    ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();                    
-                    for (int i = 0; i < param.Count; i++)
-                    {
-                        Message row = param[i];                      
-                        var numberPhone = row.chatId.Split('@')[0].ToString().ToCharArray();
-                        string numPhone = "", code = "";
-                        int oks = 1;
-                        for (int gg = numberPhone.Length - 1; gg >= 0; gg--)
-                        {
-                            if (oks < 11)
-                                numPhone = numberPhone[gg].ToString() + numPhone;
-                            else
-                                code = numberPhone[gg].ToString() + code;
-                            oks++;
-                        }
-                        dynamic aar = data.StoreMessagesByClient(row, Convert.ToInt32(user.idCampaign), numPhone.ToString(), user.idEmployee);
-                    }
-                    Clients.Caller.storeMessages("Se ha registrado todo cambio en la BD sin problemas");
-                }
-            }
-            catch (Exception ex)
-            {
-                Clients.Caller.storeMessages(ex.Message);
-            }
+            //        ConnectionDataBase.StoreProcediur data = new ConnectionDataBase.StoreProcediur();                    
+            //        for (int i = 0; i < param.Count; i++)
+            //        {
+            //            Message row = param[i];                      
+            //            var numberPhone = row.chatId.Split('@')[0].ToString().ToCharArray();
+            //            string numPhone = "", code = "";
+            //            int oks = 1;
+            //            for (int gg = numberPhone.Length - 1; gg >= 0; gg--)
+            //            {
+            //                if (oks < 11)
+            //                    numPhone = numberPhone[gg].ToString() + numPhone;
+            //                else
+            //                    code = numberPhone[gg].ToString() + code;
+            //                oks++;
+            //            }
+            //            dynamic aar = data.StoreMessagesByClient(row, Convert.ToInt32(user.idCampaign), numPhone.ToString(), user.idEmployee);
+            //        }
+            //        Clients.Caller.storeMessages("Se ha registrado todo cambio en la BD sin problemas");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Clients.Caller.storeMessages(ex.Message);
+            //}
         }
 
         public DateTime UnixTimeToDateTime(long unixtime)

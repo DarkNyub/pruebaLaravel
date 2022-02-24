@@ -29,7 +29,8 @@ namespace Nodo.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            return View("/Views/Home/login.cshtml");
+            return RedirectToAction("Index", "Messages");
+            //return View("/Views/Messages/tableMaster.cshtml");
         }
         public ActionResult SingIn(Models.Login model)
         {

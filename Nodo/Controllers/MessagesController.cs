@@ -21,14 +21,16 @@ namespace Nodo.Controllers
         public ActionResult Index()
         {
             Session["url"] = "mes";
-            if (Session["idClient"] == null)
-            {
-                Session["message"] = "Tiene que ingresar a la aplicación primero.";
-                Session["type"] = "error";
-                Session["title"] = "Error";
-                return RedirectToAction("Index", "Home");
-            }
-            
+            Session["idClient"] = "1";
+            Session["idProfile"] = "1";
+            //if (Session["idClient"] == null)
+            //{
+            //    Session["message"] = "Tiene que ingresar a la aplicación primero.";
+            //    Session["type"] = "error";
+            //    Session["title"] = "Error";
+            //    return RedirectToAction("Index", "Home");
+            //}
+
             return View("/Views/Messages/tableMaster.cshtml");
         }
         /******************* SmartData ********************/
@@ -338,50 +340,60 @@ namespace Nodo.Controllers
             List<Nodo.Models.Configuration> Lconfig = (List<Nodo.Models.Configuration>)Session["config"];
             string URLWORK = Session["urlHttp"].ToString();
             string UrlApi = "sendFile";
-            dynamic rowType = data.getTypeFiles().Rows;
             string UrlPath = "/Content/messages/others/";
             string vfilename = "";
             string vbody = "";
             List<Models.TypeFiles> LtypeF = new List<Models.TypeFiles>();
-            foreach (dynamic row in rowType)
-            {
-                LtypeF.Add(new Models.TypeFiles { idTypeFile = row["idTypeFile"], nameType = row["nameType"], idGroupFile = row["idGroupFile"], nameGroup = row["nameGroup"], srcFile = row["srcFile"] });
-            }
+            LtypeF.Add(new Models.TypeFiles { nameType = "doc", idGroupFile = "1"});
+            LtypeF.Add(new Models.TypeFiles { nameType = "docx", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "txt", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "xls", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "xlsx", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "pdf", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "zip", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "png", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "jpeg", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "jpg", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "webp", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "gif", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "mp4", idGroupFile = "1" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "mp3", idGroupFile = "3" });
+            LtypeF.Add(new Models.TypeFiles { nameType = "ogg", idGroupFile = "3" });
             //using (var client = new HttpClient())
             //{
-                //client.BaseAddress = new Uri(BASEURL);
-                //client.DefaultRequestHeaders.Accept.Clear();
-                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var nomaas = Request.Files;
-                string FileExtension = "";
-                for (var i = 0; i < nomaas.Count; i++)
+            //client.BaseAddress = new Uri(BASEURL);
+            //client.DefaultRequestHeaders.Accept.Clear();
+            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var nomaas = Request.Files;
+            string FileExtension = "";
+            for (var i = 0; i < nomaas.Count; i++)
+            {
+                if (nomaas[i].ContentLength > 0)
                 {
-                    if (nomaas[i].ContentLength > 0)
+                    vfilename = Path.GetFileNameWithoutExtension(nomaas[i].FileName);
+                    FileExtension = Path.GetExtension(nomaas[i].FileName);
+
+                    Models.TypeFiles vtypeF = LtypeF.Where(u => u.nameType.ToString().ToUpper().Contains(FileExtension.Replace(".", "").ToUpper())).FirstOrDefault();
+                    if (vtypeF != null)
                     {
-                        vfilename = Path.GetFileNameWithoutExtension(nomaas[i].FileName);
-                        FileExtension = Path.GetExtension(nomaas[i].FileName);
-
-                        Models.TypeFiles vtypeF = LtypeF.Where(u => u.nameType.ToString().ToUpper().Contains(FileExtension.Replace(".", "").ToUpper())).FirstOrDefault();
-                        if (vtypeF != null)
-                        {
-                            //UrlPath = vtypeF.srcFile.ToString();
-                            if (Convert.ToInt32(vtypeF.idGroupFile) == 3)
-                                UrlApi = "sendPTT";
-                        }
-
-                        vfilename = DateTime.Now.ToString("yyyyMMddHHmm") + "_" + vfilename.Trim() + FileExtension;
-                        string UploadPath = System.Web.HttpContext.Current.Server.MapPath(UrlPath);
-                        nomaas[i].SaveAs(UploadPath + vfilename);
-                        vbody = URLWORK + UrlPath + vfilename;
+                        //UrlPath = vtypeF.srcFile.ToString();
+                        if (Convert.ToInt32(vtypeF.idGroupFile) == 3)
+                            UrlApi = "sendPTT";
                     }
+
+                    vfilename = DateTime.Now.ToString("yyyyMMddHHmm") + "_" + vfilename.Trim() + FileExtension;
+                    string UploadPath = System.Web.HttpContext.Current.Server.MapPath(UrlPath);
+                    nomaas[i].SaveAs(UploadPath + vfilename);
+                    vbody = URLWORK + UrlPath + vfilename;
                 }
-                //dynamic result = "";
-                //if (UrlApi.Contains("File"))
-                //    result = await client.PostAsJsonAsync(UrlApi+TOKEN, new { chatId = "", phone = vphone, body = vbody, filename = vfilename, caption = vcaption, audio = vbody});
-                //if (UrlApi.Contains("PTT"))
-                //    result = await client.PostAsJsonAsync(UrlApi + TOKEN, new { chatId = "", phone = vphone, audio = vbody});
-                //resultContent = await result.Content.ReadAsStringAsync();
-                //resultContent = resultContent.Replace("\"", "'");
+            }
+            //dynamic result = "";
+            //if (UrlApi.Contains("File"))
+            //    result = await client.PostAsJsonAsync(UrlApi+TOKEN, new { chatId = "", phone = vphone, body = vbody, filename = vfilename, caption = vcaption, audio = vbody});
+            //if (UrlApi.Contains("PTT"))
+            //    result = await client.PostAsJsonAsync(UrlApi + TOKEN, new { chatId = "", phone = vphone, audio = vbody});
+            //resultContent = await result.Content.ReadAsStringAsync();
+            //resultContent = resultContent.Replace("\"", "'");
            // }
 
             return Json(new { respuesta = 1, href = vbody, filetype = FileExtension, filename = vfilename, sendUrl = UrlApi }, JsonRequestBehavior.AllowGet);
